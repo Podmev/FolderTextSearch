@@ -25,9 +25,9 @@ job("Build and run tests") {
             api.fileShare().put(sharedFile, "artifact")
 
             api.gradlew("build")
-            val recipient = MessageRecipient.Channel(ChatChannel.FromName("CI-Channel"))
-            val content = ChatMessage.Text("Build has completed - build number: " + api.executionNumber())
-            api.space().chats.messages.sendMessage(recipient, content)
+//            val recipient = MessageRecipient.Channel(ChatChannel.FromName("CI-Channel"))
+//            val content = ChatMessage.Text("Build has completed - build number: " + api.executionNumber())
+//            api.space().chats.messages.sendMessage(recipient, content)
         }
     }
 
@@ -39,9 +39,9 @@ job("Build and run tests") {
         kotlinScript { api ->
             println("Running in branch: " + api.gitBranch())
             api.gradlew("test")
-            val recipient = MessageRecipient.Channel(ChatChannel.FromName("CI-Channel"))
-            val content = ChatMessage.Text("Test has completed - build number: " + api.executionNumber())
-            api.space().chats.messages.sendMessage(recipient, content)
+//            val recipient = MessageRecipient.Channel(ChatChannel.FromName("CI-Channel"))
+//            val content = ChatMessage.Text("Test has completed - build number: " + api.executionNumber())
+//            api.space().chats.messages.sendMessage(recipient, content)
         }
     }
 
