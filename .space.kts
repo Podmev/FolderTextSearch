@@ -20,11 +20,12 @@ job("Build and run tests") {
         kotlinScript { api ->
             println("Running in branch: " + api.gitBranch())
 
-            val path = "~/build"
-            val sharedFile = File(path)
-            api.fileShare().put(sharedFile, "artifact")
-
             api.gradlew("build")
+
+//            val path = "~/build"
+//            val sharedFile = File(path)
+//            api.fileShare().put(sharedFile, "artifact")
+
 //            val recipient = MessageRecipient.Channel(ChatChannel.FromName("CI-Channel"))
 //            val content = ChatMessage.Text("Build has completed - build number: " + api.executionNumber())
 //            api.space().chats.messages.sendMessage(recipient, content)
