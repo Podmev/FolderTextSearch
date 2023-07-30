@@ -12,19 +12,16 @@ job("Build and run tests") {
         outOfMemory { enabled = true }
     }
 
+    //TODO maybe join steps
+    //FIXME writing messages in chat
     container("openjdk:11") {
         resources {
-            cpu = 512
             memory = 2048
         }
         kotlinScript { api ->
             println("Running in branch: " + api.gitBranch())
 
             api.gradlew("build")
-
-//            val path = "~/build"
-//            val sharedFile = File(path)
-//            api.fileShare().put(sharedFile, "artifact")
 
 //            val recipient = MessageRecipient.Channel(ChatChannel.FromName("CI-Channel"))
 //            val content = ChatMessage.Text("Build has completed - build number: " + api.executionNumber())
@@ -34,7 +31,6 @@ job("Build and run tests") {
 
     container("openjdk:11") {
         resources {
-            cpu = 512
             memory = 2048
         }
         kotlinScript { api ->
