@@ -1,3 +1,5 @@
+import java.io.*
+
 job("Build and run tests") {
     startOn {
         gitPush { enabled = true }
@@ -10,7 +12,7 @@ job("Build and run tests") {
         outOfMemory { enabled = true }
     }
 
-    sequencial {
+    sequential {
         container("openjdk:11") {
             resources {
                 cpu = 512
@@ -26,7 +28,7 @@ job("Build and run tests") {
 
                 api.gradlew("build")
                 val recipient = MessageRecipient.Channel(ChatChannel.FromName("CI-Channel"))
-                val content = ChatMessage.Text("Build has completed - build number: " + api.executionNumber)
+                val content = ChatMessage.Text("Build has completed - build number: " + api.executionNumber())
                 api.space().chats.message.sendMessage(recipient, content)
             }
 
@@ -42,7 +44,7 @@ job("Build and run tests") {
                 println("Running in branch: " + api.gitBranch())
                 api.gradlew("test")
                 val recipient = MessageRecipient.Channel(ChatChannel.FromName("CI-Channel"))
-                val content = ChatMessage.Text("Test has completed - build number: " + api.executionNumber)
+                val content = ChatMessage.Text("Test has completed - build number: " + api.executionNumber())
                 api.space().chats.message.sendMessage(recipient, content)
             }
 
