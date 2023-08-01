@@ -21,7 +21,7 @@ internal class SearchTest {
         val folderPathString = folderPath.toString()
         val searchApi = dummySearchApi
         val result = syncSearchToken(searchApi, folderPathString, token)
-        assertEqualsSearchResults(expectedResult, result)
+        assertEqualsTokenMatches(expectedResult, result)
     }
 
     @Test
@@ -36,7 +36,7 @@ internal class SearchTest {
         val folderPathString = folderPath.toString()
         val searchApi = dummySearchApi
         val result = syncSearchToken(searchApi, folderPathString, token)
-        assertEqualsSearchResults(expectedResult, result)
+        assertEqualsTokenMatches(expectedResult, result)
     }
 
 

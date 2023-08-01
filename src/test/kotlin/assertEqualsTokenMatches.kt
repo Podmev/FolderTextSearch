@@ -2,12 +2,12 @@ import api.TokenMatch
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.assertAll
 
-/*Detailed assert for SearchResult with no exact order of files in search result.
+/*Detailed assert for list fo tokenMatches with no exact order of files in search result.
 * If error happens, shows exact mismatch.
 * */
-fun assertEqualsSearchResults(expectedTokenMatches: List<TokenMatch>, actualTokenMatches: List<TokenMatch>) {
-    val expectedTokenMatchesSet = setOf(expectedTokenMatches)
-    val actualTokenMatchesSet = setOf(actualTokenMatches)
+fun assertEqualsTokenMatches(expectedTokenMatches: List<TokenMatch>, actualTokenMatches: List<TokenMatch>) {
+    val expectedTokenMatchesSet = expectedTokenMatches.toSet()
+    val actualTokenMatchesSet = actualTokenMatches.toSet()
 
     val notFoundChecks = buildList<() -> Unit> {
         for (notFoundExpectedTokenMatch in expectedTokenMatchesSet.minus(actualTokenMatchesSet)) {
