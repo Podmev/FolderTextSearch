@@ -4,18 +4,14 @@ import api.SearchResult
 import api.TokenMatch
 import dummy.DummySearchApi
 import dummy.DummySearchResult
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import java.nio.file.Paths
 
 internal class SearchTest {
     private val projectPath: Path = Paths.get("")
-    private val commonPath: Path = projectPath
-        .resolve("src")
-        .resolve("test")
-        .resolve("resources")
-        .resolve("searchTestFolders")
+    private val commonPath: Path =
+        projectPath.resolve("src").resolve("test").resolve("resources").resolve("searchTestFolders")
 
     private val dummySearchApi: SearchApi = DummySearchApi()
 
@@ -28,16 +24,14 @@ internal class SearchTest {
         val expectedResult = DummySearchResult(
             fileMatches = listOf(
                 FileMatch(
-                    filePath = folderPath.resolve("a.txt").toString(),
-                    tokenMatches = listOf(TokenMatch(0L, 2L))
+                    filePath = folderPath.resolve("a.txt").toString(), tokenMatches = listOf(TokenMatch(0L, 2L))
                 )
-            ),
-            totalTokenMatches = 1
+            ), totalTokenMatches = 1
         )
         val folderPathString = folderPath.toString()
         val searchApi = dummySearchApi
         val result = syncSearchToken(searchApi, folderPathString, token)
-        Assertions.assertEquals(expectedResult, result)
+        assertEqualsSearchResults(expectedResult, result)
     }
 
     @Test
@@ -49,21 +43,17 @@ internal class SearchTest {
         val expectedResult = DummySearchResult(
             fileMatches = listOf(
                 FileMatch(
-                    filePath = folderPath.resolve("a.txt").toString(),
-                    tokenMatches = listOf(TokenMatch(0L, 2L))
-                ),
-                FileMatch(
+                    filePath = folderPath.resolve("a.txt").toString(), tokenMatches = listOf(TokenMatch(0L, 2L))
+                ), FileMatch(
                     filePath = folderPath.resolve("b").resolve("c.txt").toString(),
                     tokenMatches = listOf(TokenMatch(0L, 0L))
                 )
-            ),
-            totalTokenMatches = 2
+            ), totalTokenMatches = 2
         )
         val folderPathString = folderPath.toString()
         val searchApi = dummySearchApi
         val result = syncSearchToken(searchApi, folderPathString, token)
-        println(result)
-        Assertions.assertEquals(expectedResult, result)
+        assertEqualsSearchResults(expectedResult, result)
     }
 
 
