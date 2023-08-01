@@ -1,13 +1,14 @@
 package dummy
 
 import api.*
+import utils.WithLogging
 import java.io.File
 import java.util.concurrent.CompletableFuture
 
 /*Dummy implementation of Search Api without indexing and any optimizations
   Can be used as etalon to check results, but not for performance and flexibility
 * */
-class DummySearchApi : SearchApi {
+class DummySearchApi : SearchApi, WithLogging() {
     /*in this implementation index is empty, so even no files are added*/
     override fun createIndexAtFolder(folderPath: String): IndexingState {
         val completableFuture = CompletableFuture<List<String>>()
@@ -24,7 +25,7 @@ class DummySearchApi : SearchApi {
     }
 
     private fun searchStringInFolder(folderPath: String, token: String): List<TokenMatch> {
-        println("searchStringInFolder: $folderPath, token: $token")
+        LOG.info("$folderPath, token: $token")
         val file = File(folderPath)
         if (!file.isDirectory) {
             return emptyList()
@@ -46,7 +47,7 @@ class DummySearchApi : SearchApi {
     }
 
     private fun searchStringInFile(filePath: String, token: String): List<TokenMatch> {
-        println("searchStringInFile: $filePath, token: $token")
+        LOG.info("$filePath, token: $token")
         val file = File(filePath)
         val lines = file.readLines()
         val tokenMatches = ArrayList<TokenMatch>()
@@ -61,7 +62,7 @@ class DummySearchApi : SearchApi {
     }
 
     private fun searchStringInLine(filePath: String, line: String, token: String, lineIndex: Int): List<TokenMatch> {
-        println("searchStringInLine: #$lineIndex, \"$line\", token: $token")
+        LOG.info("#$lineIndex, \"$line\", token: $token")
         val positionsInLine = line.indicesOf(token)
         return positionsInLine.map { TokenMatch(filePath, lineIndex.toLong(), it.toLong()) }
     }
