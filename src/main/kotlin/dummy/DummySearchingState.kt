@@ -2,32 +2,26 @@ package dummy
 
 import api.SearchException
 import api.SearchingState
+import api.TokenMatch
+import java.util.concurrent.Future
 
-class DummySearchingState : SearchingState {
-    private var currentResult = DummySearchResult(emptyList(), 0)
-    private var _finished = false
 
+class DummySearchingState(override val result: Future<List<TokenMatch>>) : SearchingState {
     override val finished: Boolean
         get() {
-            return _finished
+            return result.isDone
         }
 
     override val progress: Double
         get() {
-            return if (_finished) 1.0 else 0.0
-        }
-
-    override val result: DummySearchResult
-        get() {
-            return currentResult
+            return if (finished) 1.0 else 0.0
         }
 
     override fun cancel() {
         throw SearchException("Not supported cancel for searching in dummy api")
     }
 
-    fun setCurrentSearchResult(searchResult: DummySearchResult) {
-        currentResult = searchResult
-        _finished = true
+    override fun getBufferPartResult(flush: Boolean): List<TokenMatch> {
+        TODO("Not yet implemented")
     }
 }

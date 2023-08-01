@@ -1,9 +1,6 @@
-import api.FileMatch
 import api.SearchApi
-import api.SearchResult
 import api.TokenMatch
 import dummy.DummySearchApi
-import dummy.DummySearchResult
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -20,14 +17,7 @@ internal class SearchTest {
         val folderName = "singleFile"
         val token = "cde"
         val folderPath = commonPath.resolve(folderName)
-
-        val expectedResult = DummySearchResult(
-            fileMatches = listOf(
-                FileMatch(
-                    filePath = folderPath.resolve("a.txt").toString(), tokenMatches = listOf(TokenMatch(0L, 2L))
-                )
-            ), totalTokenMatches = 1
-        )
+        val expectedResult = listOf(TokenMatch(folderPath.resolve("a.txt").toString(), 0L, 2L))
         val folderPathString = folderPath.toString()
         val searchApi = dummySearchApi
         val result = syncSearchToken(searchApi, folderPathString, token)
@@ -39,16 +29,9 @@ internal class SearchTest {
         val folderName = "fileAndFolderWithFile"
         val token = "cde"
         val folderPath = commonPath.resolve(folderName)
-
-        val expectedResult = DummySearchResult(
-            fileMatches = listOf(
-                FileMatch(
-                    filePath = folderPath.resolve("a.txt").toString(), tokenMatches = listOf(TokenMatch(0L, 2L))
-                ), FileMatch(
-                    filePath = folderPath.resolve("b").resolve("c.txt").toString(),
-                    tokenMatches = listOf(TokenMatch(0L, 0L))
-                )
-            ), totalTokenMatches = 2
+        val expectedResult = listOf(
+            TokenMatch(folderPath.resolve("a.txt").toString(), 0L, 2L),
+            TokenMatch(folderPath.resolve("b").resolve("c.txt").toString(), 0L, 0L)
         )
         val folderPathString = folderPath.toString()
         val searchApi = dummySearchApi
@@ -57,16 +40,11 @@ internal class SearchTest {
     }
 
 
-    private fun syncSearchToken(searchApi: SearchApi, folderPathString: String, token: String): SearchResult {
+    private fun syncSearchToken(searchApi: SearchApi, folderPathString: String, token: String): List<TokenMatch> {
         val indexingState = searchApi.createIndexAtFolder(folderPathString)
-        while (!indexingState.finished) {
-            Thread.sleep(10)
-        }
+        indexingState.result.get()!!
+        assert(indexingState.finished)
         val searchingState = searchApi.searchString(folderPathString, token)
-
-        while (!searchingState.finished) {
-            Thread.sleep(10)
-        }
-        return searchingState.result
+        return searchingState.result.get()
     }
 }
