@@ -1,8 +1,9 @@
 package api
 
 interface SearchingState {
-    fun isFinished(): Boolean
+    val finished: Boolean
+    /*can be from 0 till 1 inclusive borders, where 0 means not started, and 1  - finished*/
+    val progress: Double
+    val result: SearchResult
     fun cancel()
-    fun getProgress(): Double
-    fun getResult(): SearchResult
 }

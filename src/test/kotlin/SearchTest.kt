@@ -59,14 +59,14 @@ internal class SearchTest {
 
     private fun syncSearchToken(searchApi: SearchApi, folderPathString: String, token: String): SearchResult {
         val indexingState = searchApi.createIndexAtFolder(folderPathString)
-        while (!indexingState.isFinished()) {
+        while (!indexingState.finished) {
             Thread.sleep(10)
         }
         val searchingState = searchApi.searchString(folderPathString, token)
 
-        while (!searchingState.isFinished()) {
+        while (!searchingState.finished) {
             Thread.sleep(10)
         }
-        return searchingState.getResult()
+        return searchingState.result
     }
 }
