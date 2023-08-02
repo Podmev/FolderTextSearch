@@ -197,6 +197,23 @@ internal class SearchApiCorrectnessTest {
         )
     }
 
+    /*Folder with emojis
+    * Attention: emojis take 2 characters
+    * */
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("searchApiProvider")
+    fun fileWithEmojisTest(searchApi: SearchApi) {
+        val folderName = "fileWithEmojis"
+        val token = "\uD83E\uDD51\uD83E\uDD66\uD83C\uDF49"
+        val folderPath = commonPath.resolve(folderName)
+        assertEqualsTokenMatches(
+            expectedTokenMatches = listOf(
+                TokenMatch(folderPath.resolve("a.txt"), 0L, 6L)
+            ),
+            actualTokenMatches = syncSearchToken(searchApi, folderPath, token)
+        )
+    }
+
     companion object {
         private val dummySearchApi: SearchApi = DummySearchApi()
 
