@@ -12,7 +12,6 @@ import java.util.stream.Stream
 * File instead of folder
 * 0,1,2 symbols token test with exception
 * \n test
-* Search "a a"
 * Empty folder - how to add to git? maybe generated
 * Empty inner folder - how to add to git? maybe generated
 * Test with natural test
@@ -155,7 +154,7 @@ internal class SearchApiCorrectnessTest {
         )
     }
 
-    /*Folder file with has one time with 3 spaces ("   "), it will be 1 match*/
+    /*Folder with file which has one time with 3 spaces ("   "), it will be 1 match*/
     @ParameterizedTest(name = "{0}")
     @MethodSource("searchApiProvider")
     fun fileWith3SpacesTest(searchApi: SearchApi) {
@@ -170,7 +169,7 @@ internal class SearchApiCorrectnessTest {
         )
     }
 
-    /*Folder file with has one time with 3 doubleQuotes ("""), it will be 1 match*/
+    /*Folder with file which has one time with 3 doubleQuotes ("""), it will be 1 match*/
     @ParameterizedTest(name = "{0}")
     @MethodSource("searchApiProvider")
     fun fileWith3DoubleQuotesTest(searchApi: SearchApi) {
@@ -180,6 +179,21 @@ internal class SearchApiCorrectnessTest {
         assertEqualsTokenMatches(
             expectedTokenMatches = listOf(
                 TokenMatch(folderPath.resolve("a.txt"), 0L, 3L)
+            ),
+            actualTokenMatches = syncSearchToken(searchApi, folderPath, token)
+        )
+    }
+
+    /*Folder with file which has 1 space between words "aaa", if we look for "a a" it will be 1 match*/
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("searchApiProvider")
+    fun fileWith1SpaceBetweenWordsTest(searchApi: SearchApi) {
+        val folderName = "fileWith1Space"
+        val token = "a a"
+        val folderPath = commonPath.resolve(folderName)
+        assertEqualsTokenMatches(
+            expectedTokenMatches = listOf(
+                TokenMatch(folderPath.resolve("a.txt"), 0L, 2L)
             ),
             actualTokenMatches = syncSearchToken(searchApi, folderPath, token)
         )
