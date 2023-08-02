@@ -12,7 +12,6 @@ import java.util.stream.Stream
 * File instead of folder
 * 0,1,2 symbols token test with exception
 * \n test
-* Search  3 spaces
 * Search "a a"
 * Search """
 * Empty folder - how to add to git? maybe generated
@@ -151,6 +150,21 @@ internal class SearchApiCorrectnessTest {
                 TokenMatch(folderPath.resolve("4.txt"), 0L, 2L),
                 TokenMatch(folderPath.resolve("5.txt"), 0L, 1L),
                 TokenMatch(folderPath.resolve("6.txt"), 0L, 0L)
+            ),
+            actualTokenMatches = syncSearchToken(searchApi, folderPath, token)
+        )
+    }
+
+    /*Folder file with has one time with 3 spaces ("   "), it will be match*/
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("searchApiProvider")
+    fun fileWith3SpacesTest(searchApi: SearchApi) {
+        val folderName = "fileWith3Spaces"
+        val token = "   "
+        val folderPath = commonPath.resolve(folderName)
+        assertEqualsTokenMatches(
+            expectedTokenMatches = listOf(
+                TokenMatch(folderPath.resolve("a.txt"), 0L, 3L)
             ),
             actualTokenMatches = syncSearchToken(searchApi, folderPath, token)
         )
