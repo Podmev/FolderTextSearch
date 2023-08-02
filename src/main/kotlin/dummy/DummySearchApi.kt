@@ -37,6 +37,11 @@ class DummySearchApi : SearchApi, WithLogging() {
         if (token.length < 3) {
             throw IllegalArgumentSearchException("Token is too small, it has length less than 3 characters.")
         }
+        for(forbiddenChar in forbiddenCharsInToken){
+            if(token.contains(forbiddenChar)){
+                throw IllegalArgumentSearchException("Token has forbidden character")
+            }
+        }
     }
 
     private fun validatePath(folderPath: Path) {
@@ -64,6 +69,9 @@ class DummySearchApi : SearchApi, WithLogging() {
         LOG.info("#$lineIndex, \"$line\", token: $token")
         val positionsInLine = line.indicesOf(token)
         return positionsInLine.map { TokenMatch(filePath, lineIndex.toLong(), it.toLong()) }.toList()
+    }
+    companion object{
+        private val forbiddenCharsInToken: List<Char> = listOf('\n', '\r')
     }
 }
 

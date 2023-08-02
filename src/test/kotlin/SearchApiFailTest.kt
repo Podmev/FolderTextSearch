@@ -11,7 +11,6 @@ import kotlin.test.assertFailsWith
 
 /*TODO add tests:
 * File instead of folder
-* \n test
 * */
 
 /*
@@ -49,6 +48,36 @@ internal class SearchApiFailTest {
     fun token2LengthTest(searchApi: SearchApi) {
         val folderName = "singleFile"
         val token = "ab"
+        val folderPath = commonPath.resolve(folderName)
+        assertFailsWith(IllegalArgumentSearchException::class) { syncSearchToken(searchApi, folderPath, token) }
+    }
+
+    /*searching token has symbol \n, should be thrown IllegalArgumentSearchException*/
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("searchApiProvider")
+    fun tokenWithEscapeNTest(searchApi: SearchApi) {
+        val folderName = "singleFile"
+        val token = "a\nb"
+        val folderPath = commonPath.resolve(folderName)
+        assertFailsWith(IllegalArgumentSearchException::class) { syncSearchToken(searchApi, folderPath, token) }
+    }
+
+    /*searching token has symbol \r, should be thrown IllegalArgumentSearchException*/
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("searchApiProvider")
+    fun tokenWithEscapeRTest(searchApi: SearchApi) {
+        val folderName = "singleFile"
+        val token = "a\rb"
+        val folderPath = commonPath.resolve(folderName)
+        assertFailsWith(IllegalArgumentSearchException::class) { syncSearchToken(searchApi, folderPath, token) }
+    }
+
+    /*searching token has 2 symbols \n\r, should be thrown IllegalArgumentSearchException*/
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("searchApiProvider")
+    fun tokenWithEscapeNEscapeRTest(searchApi: SearchApi) {
+        val folderName = "singleFile"
+        val token = "a\n\rb"
         val folderPath = commonPath.resolve(folderName)
         assertFailsWith(IllegalArgumentSearchException::class) { syncSearchToken(searchApi, folderPath, token) }
     }
