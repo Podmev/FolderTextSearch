@@ -11,16 +11,15 @@ import java.util.stream.Stream
 /*TODO add tests:
 * File instead of folder
 * 0,1,2 symbols token test with exception
-* 10 files in one dir
 * \n test
 * Search  3 spaces
 * Search "a a"
 * Search """
-* Empty folder
-* Empty inner folder
+* Empty folder - how to add to git? maybe generated
+* Empty inner folder - how to add to git? maybe generated
 * Test with natural test
 * Long one line in file and in token
-* Generator for folder heirarchy
+* Generator for folder hierarchy
 * */
 
 /*
@@ -135,6 +134,23 @@ internal class SearchApiCorrectnessTest {
                         .resolve("a.txt"),
                     line = 0L, column = 3L
                 )
+            ),
+            actualTokenMatches = syncSearchToken(searchApi, folderPath, token)
+        )
+    }
+
+    /*Folder with 10 files, only 3 of them have match*/
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("searchApiProvider")
+    fun tenFilesAndHasMatchTest(searchApi: SearchApi) {
+        val folderName = "tenFiles"
+        val token = "fgh"
+        val folderPath = commonPath.resolve(folderName)
+        assertEqualsTokenMatches(
+            expectedTokenMatches = listOf(
+                TokenMatch(folderPath.resolve("4.txt"), 0L, 2L),
+                TokenMatch(folderPath.resolve("5.txt"), 0L, 1L),
+                TokenMatch(folderPath.resolve("6.txt"), 0L, 0L)
             ),
             actualTokenMatches = syncSearchToken(searchApi, folderPath, token)
         )
