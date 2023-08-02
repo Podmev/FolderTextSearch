@@ -5,6 +5,7 @@ import dummy.DummySearchApi
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import trigram.TrigramSearchApi
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.stream.Stream
@@ -101,13 +102,14 @@ internal class SearchApiFailTest {
 
     companion object {
         private val dummySearchApi: SearchApi = DummySearchApi()
+        private val trigramSearchApi: SearchApi = TrigramSearchApi()
 
         /*list of implementations of SearchApi*/
         @JvmStatic
         fun searchApiProvider(): Stream<Arguments> {
             return Stream.of(
                 Arguments.of(dummySearchApi),
-                //TODO other implementations
+                Arguments.of(trigramSearchApi)
             )
         }
     }
