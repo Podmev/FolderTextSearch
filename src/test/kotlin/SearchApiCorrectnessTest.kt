@@ -9,7 +9,6 @@ import java.nio.file.Paths
 import java.util.stream.Stream
 
 /*TODO add tests:
-* emoji
 * Empty folder - how to add to git? maybe generated
 * Empty inner folder - how to add to git? maybe generated
 * Test with natural test

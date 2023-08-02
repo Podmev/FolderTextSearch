@@ -89,6 +89,16 @@ internal class SearchApiFailTest {
         assertFailsWith(NotDirSearchException::class) { syncSearchToken(searchApi, folderPath, token) }
     }
 
+    /*folder path is wrong - there is nothing on this way, should be thrown NotDirSearchException*/
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("searchApiProvider")
+    fun notExistingFolderTest(searchApi: SearchApi) {
+        val folderName = "notExistingFolder"
+        val token = "abc"
+        val folderPath = commonPath.resolve(folderName)
+        assertFailsWith(NotDirSearchException::class) { syncSearchToken(searchApi, folderPath, token) }
+    }
+
     companion object {
         private val dummySearchApi: SearchApi = DummySearchApi()
 
