@@ -1,5 +1,6 @@
 import api.SearchApi
 import api.exception.IllegalArgumentSearchException
+import api.exception.NotDirSearchException
 import dummy.DummySearchApi
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -8,10 +9,6 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.stream.Stream
 import kotlin.test.assertFailsWith
-
-/*TODO add tests:
-* File instead of folder
-* */
 
 /*
 * Set of unit test for checking search for invalid situations for all implementations
@@ -80,6 +77,16 @@ internal class SearchApiFailTest {
         val token = "a\n\rb"
         val folderPath = commonPath.resolve(folderName)
         assertFailsWith(IllegalArgumentSearchException::class) { syncSearchToken(searchApi, folderPath, token) }
+    }
+
+    /*folder path is actually file, should be thrown NotDirSearchException*/
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("searchApiProvider")
+    fun folderPathIsFileTest(searchApi: SearchApi) {
+        val folderName = "notFolder.txt"
+        val token = "abc"
+        val folderPath = commonPath.resolve(folderName)
+        assertFailsWith(NotDirSearchException::class) { syncSearchToken(searchApi, folderPath, token) }
     }
 
     companion object {
