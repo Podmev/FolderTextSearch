@@ -13,10 +13,10 @@ import java.util.stream.Stream
 * 0,1,2 symbols token test with exception
 * \n test
 * Search "a a"
-* Search """
 * Empty folder - how to add to git? maybe generated
 * Empty inner folder - how to add to git? maybe generated
 * Test with natural test
+* Test with all lyrics of Beatles songs, find word "love" there. It should be more 500 times
 * Long one line in file and in token
 * Generator for folder hierarchy
 * */
@@ -155,11 +155,26 @@ internal class SearchApiCorrectnessTest {
         )
     }
 
-    /*Folder file with has one time with 3 spaces ("   "), it will be match*/
+    /*Folder file with has one time with 3 spaces ("   "), it will be 1 match*/
     @ParameterizedTest(name = "{0}")
     @MethodSource("searchApiProvider")
     fun fileWith3SpacesTest(searchApi: SearchApi) {
         val folderName = "fileWith3Spaces"
+        val token = "   "
+        val folderPath = commonPath.resolve(folderName)
+        assertEqualsTokenMatches(
+            expectedTokenMatches = listOf(
+                TokenMatch(folderPath.resolve("a.txt"), 0L, 3L)
+            ),
+            actualTokenMatches = syncSearchToken(searchApi, folderPath, token)
+        )
+    }
+
+    /*Folder file with has one time with 3 doubleQuotes ("""), it will be 1 match*/
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("searchApiProvider")
+    fun fileWith3DoubleQuotesTest(searchApi: SearchApi) {
+        val folderName = "fileWith3DoubleQuotes"
         val token = "   "
         val folderPath = commonPath.resolve(folderName)
         assertEqualsTokenMatches(
