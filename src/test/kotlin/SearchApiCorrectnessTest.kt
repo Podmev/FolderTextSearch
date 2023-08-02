@@ -9,7 +9,6 @@ import java.nio.file.Paths
 import java.util.stream.Stream
 
 /*TODO add tests:
-* Test several lines with several matches
 * One file has, one no
 * File instead of folder
 * 0,1,2 symbols token test with exception
@@ -77,6 +76,23 @@ internal class SearchApiCorrectnessTest {
                 TokenMatch(folderPath.resolve("a.txt"), 0L, 1L),
                 TokenMatch(folderPath.resolve("a.txt"), 0L, 2L),
                 TokenMatch(folderPath.resolve("a.txt"), 0L, 3L)
+            ),
+            actualTokenMatches = syncSearchToken(searchApi, folderPath, token)
+        )
+    }
+
+    /*Folder with single file with 3 lines, and each one of them has token on different position*/
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("searchApiProvider")
+    fun fileWithMatchesOnDifferentLinesTest(searchApi: SearchApi) {
+        val folderName = "fileWithMatchesOnDifferentLines"
+        val token = "ghi"
+        val folderPath = commonPath.resolve(folderName)
+        assertEqualsTokenMatches(
+            expectedTokenMatches = listOf(
+                TokenMatch(folderPath.resolve("a.txt"), 0L, 6L),
+                TokenMatch(folderPath.resolve("a.txt"), 1L, 3L),
+                TokenMatch(folderPath.resolve("a.txt"), 2L, 0L)
             ),
             actualTokenMatches = syncSearchToken(searchApi, folderPath, token)
         )
