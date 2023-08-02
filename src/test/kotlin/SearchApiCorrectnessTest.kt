@@ -9,7 +9,6 @@ import java.nio.file.Paths
 import java.util.stream.Stream
 
 /*TODO add tests:
-* One file has, one no
 * File instead of folder
 * 0,1,2 symbols token test with exception
 * Deep file, 10 level
@@ -93,6 +92,21 @@ internal class SearchApiCorrectnessTest {
                 TokenMatch(folderPath.resolve("a.txt"), 0L, 6L),
                 TokenMatch(folderPath.resolve("a.txt"), 1L, 3L),
                 TokenMatch(folderPath.resolve("a.txt"), 2L, 0L)
+            ),
+            actualTokenMatches = syncSearchToken(searchApi, folderPath, token)
+        )
+    }
+
+    /*Folder with 2 files, only 1 has token*/
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("searchApiProvider")
+    fun twoFilesOneMatch(searchApi: SearchApi) {
+        val folderName = "twoFilesOneMatch"
+        val token = "mnopq"
+        val folderPath = commonPath.resolve(folderName)
+        assertEqualsTokenMatches(
+            expectedTokenMatches = listOf(
+                TokenMatch(folderPath.resolve("b.txt"), 0L, 2L)
             ),
             actualTokenMatches = syncSearchToken(searchApi, folderPath, token)
         )
