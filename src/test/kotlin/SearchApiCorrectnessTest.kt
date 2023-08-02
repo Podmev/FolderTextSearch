@@ -11,7 +11,6 @@ import java.util.stream.Stream
 /*TODO add tests:
 * File instead of folder
 * 0,1,2 symbols token test with exception
-* Deep file, 10 level
 * 10 files in one dir
 * \n test
 * Search  3 spaces
@@ -100,13 +99,42 @@ internal class SearchApiCorrectnessTest {
     /*Folder with 2 files, only 1 has token*/
     @ParameterizedTest(name = "{0}")
     @MethodSource("searchApiProvider")
-    fun twoFilesOneMatch(searchApi: SearchApi) {
+    fun twoFilesOneMatchTest(searchApi: SearchApi) {
         val folderName = "twoFilesOneMatch"
         val token = "mnopq"
         val folderPath = commonPath.resolve(folderName)
         assertEqualsTokenMatches(
             expectedTokenMatches = listOf(
                 TokenMatch(folderPath.resolve("b.txt"), 0L, 2L)
+            ),
+            actualTokenMatches = syncSearchToken(searchApi, folderPath, token)
+        )
+    }
+
+    /*Folder with sequence of 10 inner folder with single file, which has 1 match*/
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("searchApiProvider")
+    fun deepFileTest(searchApi: SearchApi) {
+        val folderName = "deepFile"
+        val token = "def"
+        val folderPath = commonPath.resolve(folderName)
+        assertEqualsTokenMatches(
+            expectedTokenMatches = listOf(
+                TokenMatch(
+                    filePath = folderPath
+                        .resolve("1")
+                        .resolve("2")
+                        .resolve("3")
+                        .resolve("4")
+                        .resolve("5")
+                        .resolve("6")
+                        .resolve("7")
+                        .resolve("8")
+                        .resolve("9")
+                        .resolve("10")
+                        .resolve("a.txt"),
+                    line = 0L, column = 3L
+                )
             ),
             actualTokenMatches = syncSearchToken(searchApi, folderPath, token)
         )
