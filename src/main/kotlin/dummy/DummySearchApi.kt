@@ -1,22 +1,28 @@
 package dummy
 
 import api.*
+import api.exception.NotDirSearchException
 import utils.WithLogging
-import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.concurrent.CompletableFuture
+import kotlin.io.path.isDirectory
+import kotlin.io.path.isRegularFile
+import kotlin.io.path.useLines
+import kotlin.streams.asSequence
 
 /*Dummy implementation of Search Api without indexing and any optimizations
   Can be used as etalon to check results, but not for performance and flexibility
 * */
 class DummySearchApi : SearchApi, WithLogging() {
     /*in this implementation index is empty, so even no files are added*/
-    override fun createIndexAtFolder(folderPath: String): IndexingState {
-        val completableFuture = CompletableFuture<List<String>>()
+    override fun createIndexAtFolder(folderPath: Path): IndexingState {
+        val completableFuture = CompletableFuture<List<Path>>()
         completableFuture.complete(emptyList())
         return DummyIndexingState(completableFuture)
     }
 
-    override fun searchString(folderPath: String, token: String, settings: SearchSettings): SearchingState {
+    override fun searchString(folderPath: Path, token: String, settings: SearchSettings): SearchingState {
         val completableFuture = CompletableFuture<List<TokenMatch>>()
         //TODO put in async code search
         val tokenMatches = searchStringInFolder(folderPath, token)
@@ -24,63 +30,34 @@ class DummySearchApi : SearchApi, WithLogging() {
         return DummySearchingState(completableFuture)
     }
 
-    private fun searchStringInFolder(folderPath: String, token: String): List<TokenMatch> {
+    private fun searchStringInFolder(folderPath: Path, token: String): List<TokenMatch> {
         LOG.info("$folderPath, token: $token")
-        val file = File(folderPath)
-        if (!file.isDirectory) {
-            return emptyList()
+        if (!folderPath.isDirectory()) {
+            throw NotDirSearchException(folderPath)
         }
-        val childrenFiles = file.listFiles()!!.toList().filterNotNull()
-        val tokenMatches = ArrayList<TokenMatch>()
-        for (childFile in childrenFiles) {
-            when {
-                childFile.isDirectory -> {
-                    tokenMatches.addAll(searchStringInFolder(childFile.path, token))
-                }
-
-                childFile.isFile -> {
-                    tokenMatches.addAll(searchStringInFile(childFile.path, token))
-                }
-            }
+        return Files.walk(folderPath).use {
+            it.asSequence()
+                .filter { path -> path.isRegularFile() }
+                .flatMap { file -> searchStringInFile(file, token) }
+                .toList()
         }
-        return tokenMatches
     }
 
-    private fun searchStringInFile(filePath: String, token: String): List<TokenMatch> {
-        LOG.info("$filePath, token: $token")
-        val file = File(filePath)
-        val lines = file.readLines()
-        val tokenMatches = ArrayList<TokenMatch>()
-        for (lineIndex in lines.indices) {
-            val line = lines[lineIndex]
-            tokenMatches.addAll(searchStringInLine(filePath, line, token, lineIndex))
+    private fun searchStringInFile(filePath: Path, token: String): List<TokenMatch> =
+        filePath.useLines { lines ->
+            lines
+                .flatMapIndexed { lineIndex, line -> searchStringInLine(filePath, line, token, lineIndex) }
+                .toList()
         }
-        if (tokenMatches.isEmpty()) {
-            return emptyList()
-        }
-        return tokenMatches
-    }
 
-    private fun searchStringInLine(filePath: String, line: String, token: String, lineIndex: Int): List<TokenMatch> {
+    private fun searchStringInLine(filePath: Path, line: String, token: String, lineIndex: Int): List<TokenMatch> {
         LOG.info("#$lineIndex, \"$line\", token: $token")
         val positionsInLine = line.indicesOf(token)
-        return positionsInLine.map { TokenMatch(filePath, lineIndex.toLong(), it.toLong()) }
+        return positionsInLine.map { TokenMatch(filePath, lineIndex.toLong(), it.toLong()) }.toList()
     }
 }
 
-fun String?.indicesOf(token: String, ignoreCase: Boolean = false): List<Int> {
-    return this?.let {
-        val indexes = mutableListOf<Int>()
-        var startIndex = 0
-        while (startIndex in indices) {
-            val index = this.indexOf(token, startIndex, ignoreCase)
-            startIndex = if (index != -1) {
-                indexes.add(index)
-                index + 1
-            } else {
-                index
-            }
-        }
-        return indexes
-    } ?: emptyList()
+fun String.indicesOf(token: String, ignoreCase: Boolean = false): Sequence<Int> {
+    fun next(startOffset: Int) = this.indexOf(token, startOffset, ignoreCase).takeIf { it != -1 }
+    return generateSequence(next(0)) { prevIndex -> next(prevIndex + 1) }
 }

@@ -1,5 +1,6 @@
 package api
 
+import java.nio.file.Path
 import java.util.concurrent.Future
 
 interface IndexingState {
@@ -10,7 +11,7 @@ interface IndexingState {
     val progress: Double
 
     /*result - all file paths in directory recursively, which were indexed*/
-    val result: Future<List<String>>
+    val result: Future<List<Path>>
 
     /*method to cancel the search process.
      It can be useful, if it takes long time*/
@@ -20,5 +21,5 @@ interface IndexingState {
     * You can set flush true, if you don't want to save current buffer value for next time.
     * Otherwise, buffer will grow till the end, and it will be equals result.
     * */
-    fun getBufferPartResult(flush: Boolean): List<String>
+    fun getBufferPartResult(flush: Boolean): List<Path>
 }

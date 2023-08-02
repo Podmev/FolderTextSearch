@@ -1,6 +1,6 @@
 package dummy
 
-import api.SearchException
+import api.exception.SearchException
 import api.SearchingState
 import api.TokenMatch
 import java.util.concurrent.Future
