@@ -9,9 +9,7 @@ import java.nio.file.Paths
 import java.util.stream.Stream
 
 /*TODO add tests:
-* File instead of folder
-* 0,1,2 symbols token test with exception
-* \n test
+* emoji
 * Empty folder - how to add to git? maybe generated
 * Empty inner folder - how to add to git? maybe generated
 * Test with natural test
@@ -197,14 +195,6 @@ internal class SearchApiCorrectnessTest {
             ),
             actualTokenMatches = syncSearchToken(searchApi, folderPath, token)
         )
-    }
-
-    private fun syncSearchToken(searchApi: SearchApi, folderPathString: Path, token: String): List<TokenMatch> {
-        val indexingState = searchApi.createIndexAtFolder(folderPathString)
-        indexingState.result.get()!!
-        assert(indexingState.finished)
-        val searchingState = searchApi.searchString(folderPathString, token)
-        return searchingState.result.get()
     }
 
     companion object {

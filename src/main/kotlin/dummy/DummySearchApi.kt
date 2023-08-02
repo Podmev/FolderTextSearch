@@ -1,6 +1,7 @@
 package dummy
 
 import api.*
+import api.exception.IllegalArgumentSearchException
 import api.exception.NotDirSearchException
 import utils.WithLogging
 import java.nio.file.Files
@@ -23,6 +24,8 @@ class DummySearchApi : SearchApi, WithLogging() {
     }
 
     override fun searchString(folderPath: Path, token: String, settings: SearchSettings): SearchingState {
+        validateToken(token)
+        validatePath(folderPath)
         val completableFuture = CompletableFuture<List<TokenMatch>>()
         //TODO put in async code search
         val tokenMatches = searchStringInFolder(folderPath, token)
@@ -30,18 +33,25 @@ class DummySearchApi : SearchApi, WithLogging() {
         return DummySearchingState(completableFuture)
     }
 
-    private fun searchStringInFolder(folderPath: Path, token: String): List<TokenMatch> {
-        LOG.info("$folderPath, token: $token")
+    private fun validateToken(token: String) {
+        if (token.length < 3) {
+            throw IllegalArgumentSearchException("Token is too small, it has length less than 3 characters.")
+        }
+    }
+
+    private fun validatePath(folderPath: Path) {
         if (!folderPath.isDirectory()) {
             throw NotDirSearchException(folderPath)
         }
-        return Files.walk(folderPath).use {
+    }
+
+    private fun searchStringInFolder(folderPath: Path, token: String): List<TokenMatch> =
+        Files.walk(folderPath).use {
             it.asSequence()
                 .filter { path -> path.isRegularFile() }
                 .flatMap { file -> searchStringInFile(file, token) }
                 .toList()
         }
-    }
 
     private fun searchStringInFile(filePath: Path, token: String): List<TokenMatch> =
         filePath.useLines { lines ->

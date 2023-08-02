@@ -10,7 +10,11 @@ interface SearchApi {
     /*Creates and saves index for folder. It will be used for searching*/
     fun createIndexAtFolder(folderPath: Path): IndexingState
 
-    /*Searches token in the folder with using created index.*/
+    /*Searches token in the folder with using created index.
+    *  Restrictions for token:
+    *  - at least 3 characters
+    *  - no breaking line characters
+    * */
     fun searchString(
         folderPath: Path,
         token: String,
