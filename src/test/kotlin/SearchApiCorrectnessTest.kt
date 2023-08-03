@@ -1,12 +1,14 @@
 import api.SearchApi
 import api.TokenMatch
+import common.assertEqualsTokenMatches
+import common.commonSetup
+import common.syncSearchToken
 import dummy.DummySearchApi
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import trigram.TrigramSearchApi
 import java.nio.file.Path
-import java.nio.file.Paths
 import java.util.stream.Stream
 
 /*TODO add tests:
@@ -23,9 +25,7 @@ import java.util.stream.Stream
 * Some tests use ready folders with files from test resources
 */
 internal class SearchApiCorrectnessTest {
-    private val projectPath: Path = Paths.get("")
-    private val commonPath: Path =
-        projectPath.resolve("src").resolve("test").resolve("resources").resolve("searchTestFolders")
+    private val commonPath: Path = commonSetup.commonPath
 
     /*Folder with single file with single line, which contains token 1 time*/
     @ParameterizedTest(name = "{0}")

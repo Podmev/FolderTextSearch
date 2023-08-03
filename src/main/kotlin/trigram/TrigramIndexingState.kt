@@ -8,10 +8,15 @@ import java.util.concurrent.Future
 /*State is complete at the start, so no indexing
 * */
 class TrigramIndexingState(override val result: Future<List<Path>>) : IndexingState {
+
     override val finished: Boolean = true
     override val progress: Double = 1.0
     override fun cancel() {}
     override fun getBufferPartResult(flush: Boolean): List<Path> {
+        TODO("Not yet implemented")
+    }
+
+    fun addPathToBuffer(path: Path){
         TODO("Not yet implemented")
     }
 }
