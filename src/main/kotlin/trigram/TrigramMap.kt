@@ -23,14 +23,14 @@ class TrigramMap : WithLogging() {
         if (existingPathsWithTriplet != null) {
             val isAdded = existingPathsWithTriplet.add(path)
             if (isAdded) {
-                LOG.info("add by triplet \"$charTriplet\" (now total ${existingPathsWithTriplet.size}) new path: $path")
+                LOG.finest("add by triplet \"$charTriplet\" (now total ${existingPathsWithTriplet.size}) new path: $path")
             } else {
-                LOG.info("duplicate by triplet \"$charTriplet\" (saved before) path $path")
+                LOG.finest("duplicate by triplet \"$charTriplet\" (saved before) path $path")
             }
             return
         }
         map[charTriplet] = mutableSetOf(path)
-        LOG.info("add by triplet \"$charTriplet\" new path: $path")
+        LOG.finest("add by triplet \"$charTriplet\" new path: $path")
 
     }
 

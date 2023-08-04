@@ -45,14 +45,14 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         future: CompletableFuture<List<Path>>,
         indexingState: TrigramIndexingState
     ) = coroutineScope {
-        LOG.info("started for folder: $folderPath")
+        LOG.finest("started for folder: $folderPath")
         val resultPathList = ArrayList<Path>()
         val foundTrigramMap: TrigramMap? = trigramMapByFolder[folderPath]
         coroutineScope {
             if (foundTrigramMap == null) {
                 val trigramMap = TrigramMap()
                 trigramMapByFolder[folderPath] = trigramMap
-                LOG.info("created new trigramMap for folder $folderPath")
+                LOG.finest("created new trigramMap for folder $folderPath")
                 val indexedPathChannel = Channel<Path>(UNLIMITED)
                 val tripletInPathChannel = Channel<Pair<String, Path>>()
                 launch { asyncWalkingFiles(folderPath, indexedPathChannel, tripletInPathChannel) }
@@ -62,7 +62,7 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         }
         //here we wait all coroutines to finish
         future.complete(resultPathList)
-        LOG.info("finished for folder: $folderPath")
+        LOG.finest("finished for folder: $folderPath")
     }
 
     private suspend fun asyncWalkingFiles(
@@ -70,7 +70,7 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         indexedPathChannel: Channel<Path>,
         tripletInPathChannel: Channel<Pair<String, Path>>
     ) = coroutineScope {
-        LOG.info("started for folder: $folderPath")
+        LOG.finest("started for folder: $folderPath")
 
         //TODO try to use stream
         val filePaths: List<Path> = withContext(Dispatchers.IO) {
@@ -78,25 +78,25 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         }.use { it: Stream<Path> ->
             it.asSequence()
                 .filter { path -> path.isRegularFile() }
-                .map { path -> path.apply { println(path) } }
+                //.map { path -> path.apply { println(path) } }
                 .toList()
         }
-        LOG.info("created filePaths: ${filePaths.size}")
+        LOG.finest("created filePaths: ${filePaths.size}")
 
 //        coroutineScope {
         filePaths.asFlow().onEach { path ->
-            LOG.info("visiting file by path $path")
+            LOG.finest("visiting file by path $path")
             constructIndexForFile(path, tripletInPathChannel)
             //indexedPathChannel.send(path)
         }
             //.launchIn(this)
-            .collect { println(it) }
+            .collect {  }
 //            .collectLatest{
 //                println(it)
         indexedPathChannel.close()
-        LOG.info("closed indexedPathChannel")
+        LOG.finest("closed indexedPathChannel")
         tripletInPathChannel.close()
-        LOG.info("closed tripletInPathChannel")
+        LOG.finest("closed tripletInPathChannel")
 //            }
 //        }
 //        LOG.info("finished iterating paths and indexing files")
@@ -117,11 +117,11 @@ class TrigramSearchApi : SearchApi, WithLogging() {
 ////        { path ->
 ////            LOG.info("visiting file by path $path")
 ////        }
-        LOG.info("finished for folder: $folderPath")
+        LOG.finest("finished for folder: $folderPath")
     }
 
     private suspend fun constructIndexForFile(path: Path, tripletInPathChannel: Channel<Pair<String, Path>>) {
-        LOG.info("started for path: $path")
+        LOG.finest("started for path: $path")
         //TODO maybe add flow too
         path.useLines { lines ->
             lines
@@ -134,7 +134,7 @@ class TrigramSearchApi : SearchApi, WithLogging() {
                     )
                 }
         }
-        LOG.info("finished for path: $path")
+        LOG.finest("finished for path: $path")
     }
 
     private suspend fun constructIndexForLine(
@@ -143,14 +143,14 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         lineIndex: Int,
         tripletInPathChannel: Channel<Pair<String, Path>>
     ) {
-        LOG.info("started line $lineIndex for path: $path")
+        LOG.finest("started line $lineIndex for path: $path")
         if (line.length < 3) return
         for (column in 0 until line.length - 2) {
             val triplet = line.substring(column, column + 3)
-            LOG.info("saving triplet $triplet at line $lineIndex, column: $column for path: $path")
+            LOG.finest("saving triplet $triplet at line $lineIndex, column: $column for path: $path")
             tripletInPathChannel.send(Pair(triplet, path))
         }
-        LOG.info("finished line $lineIndex for path: $path")
+        LOG.finest("finished line $lineIndex for path: $path")
     }
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -159,13 +159,13 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         resultPathList: MutableList<Path>,
         indexingState: TrigramIndexingState
     ) = coroutineScope {
-        LOG.info("started")
+        LOG.finest("started")
         for (path in indexedPathChannel) {
-            LOG.info("received indexed path and saving to state: $path")
+            LOG.finest("received indexed path and saving to state: $path")
             indexingState.addPathToBuffer(path)
             resultPathList.add(path)
         }
-        LOG.info("finished")
+        LOG.finest("finished")
     }
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -173,26 +173,26 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         tripletInPathChannel: Channel<Pair<String, Path>>,
         trigramMap: TrigramMap,
     ) = coroutineScope {
-        LOG.info("started")
+        LOG.finest("started")
         for ((triplet, path) in tripletInPathChannel) {
-            LOG.info("received path for triplet: $triplet $path")
+            LOG.finest("received path for triplet: $triplet $path")
             trigramMap.addCharTripletByPath(triplet, path)
         }
-        LOG.info("finished")
+        LOG.finest("finished")
     }
 
 
     override fun searchString(folderPath: Path, token: String, settings: SearchSettings): SearchingState {
-        LOG.info("started")
+        LOG.finest("started")
         validateToken(token)
         validatePath(folderPath)
         val completableFuture = CompletableFuture<List<TokenMatch>>()
         //TODO put in async code search
         val trigramMap: TrigramMap = getTrigramMapOrCalculate(folderPath)
         val paths = getPathsByToken(trigramMap, token)
-        LOG.info("got ${paths.size} paths for token $token by trigramMap in folder $folderPath: $paths")
+        LOG.finest("got ${paths.size} paths for token $token by trigramMap in folder $folderPath: $paths")
         val tokenMatches = searchStringInPaths(paths, token)
-        LOG.info("got ${tokenMatches.size} token matches for token $token in folder $folderPath: $paths")
+        LOG.finest("got ${tokenMatches.size} token matches for token $token in folder $folderPath: $paths")
         completableFuture.complete(tokenMatches)
         return TrigramSearchingState(completableFuture)
     }
@@ -247,7 +247,7 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         }
 
     private fun searchStringInLine(filePath: Path, line: String, token: String, lineIndex: Int): List<TokenMatch> {
-        LOG.info("#$lineIndex, \"$line\", token: $token")
+        LOG.finest("#$lineIndex, \"$line\", token: $token")
         val positionsInLine = line.indicesOf(token)
         return positionsInLine.map { TokenMatch(filePath, lineIndex.toLong(), it.toLong()) }.toList()
     }
