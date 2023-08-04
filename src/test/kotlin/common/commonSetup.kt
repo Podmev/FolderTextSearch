@@ -10,6 +10,8 @@ object commonSetup {
     val commonPath: Path =
         projectPath.resolve("src").resolve("test").resolve("resources").resolve("searchTestFolders")
 
+    val srcFolder: Path = projectPath.resolve("src")
+
     val intellijIdeaProjectPath = projectPath.absolute().parent.resolve("intellij-community")
 
 }
