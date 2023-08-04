@@ -2,7 +2,7 @@ import api.SearchApi
 import api.TokenMatch
 import common.assertEqualsTokenMatches
 import common.commonSetup
-import api.tools.syncSearchToken
+import api.tools.syncSearchTokenAfterIndex
 import dummy.DummySearchApi
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -36,7 +36,7 @@ internal class SearchApiCorrectnessTest {
         val folderPath = commonPath.resolve(folderName)
         assertEqualsTokenMatches(
             expectedTokenMatches = listOf(TokenMatch(folderPath.resolve("a.txt"), 0L, 2L)),
-            actualTokenMatches = searchApi.syncSearchToken(folderPath, token)
+            actualTokenMatches = searchApi.syncSearchTokenAfterIndex(folderPath, token)
         )
     }
 
@@ -52,7 +52,7 @@ internal class SearchApiCorrectnessTest {
                 TokenMatch(folderPath.resolve("a.txt"), 0L, 2L),
                 TokenMatch(folderPath.resolve("b").resolve("c.txt"), 0L, 0L)
             ),
-            actualTokenMatches = searchApi.syncSearchToken(folderPath, token)
+            actualTokenMatches = searchApi.syncSearchTokenAfterIndex(folderPath, token)
         )
     }
 
@@ -70,7 +70,7 @@ internal class SearchApiCorrectnessTest {
                 TokenMatch(folderPath.resolve("a.txt"), 0L, 2L),
                 TokenMatch(folderPath.resolve("a.txt"), 0L, 3L)
             ),
-            actualTokenMatches = searchApi.syncSearchToken(folderPath, token)
+            actualTokenMatches = searchApi.syncSearchTokenAfterIndex(folderPath, token)
         )
     }
 
@@ -87,7 +87,7 @@ internal class SearchApiCorrectnessTest {
                 TokenMatch(folderPath.resolve("a.txt"), 1L, 3L),
                 TokenMatch(folderPath.resolve("a.txt"), 2L, 0L)
             ),
-            actualTokenMatches = searchApi.syncSearchToken(folderPath, token)
+            actualTokenMatches = searchApi.syncSearchTokenAfterIndex(folderPath, token)
         )
     }
 
@@ -102,7 +102,7 @@ internal class SearchApiCorrectnessTest {
             expectedTokenMatches = listOf(
                 TokenMatch(folderPath.resolve("b.txt"), 0L, 2L)
             ),
-            actualTokenMatches = searchApi.syncSearchToken(folderPath, token)
+            actualTokenMatches = searchApi.syncSearchTokenAfterIndex(folderPath, token)
         )
     }
 
@@ -131,7 +131,7 @@ internal class SearchApiCorrectnessTest {
                     line = 0L, column = 3L
                 )
             ),
-            actualTokenMatches = searchApi.syncSearchToken(folderPath, token)
+            actualTokenMatches = searchApi.syncSearchTokenAfterIndex(folderPath, token)
         )
     }
 
@@ -148,7 +148,7 @@ internal class SearchApiCorrectnessTest {
                 TokenMatch(folderPath.resolve("5.txt"), 0L, 1L),
                 TokenMatch(folderPath.resolve("6.txt"), 0L, 0L)
             ),
-            actualTokenMatches = searchApi.syncSearchToken(folderPath, token)
+            actualTokenMatches = searchApi.syncSearchTokenAfterIndex(folderPath, token)
         )
     }
 
@@ -163,7 +163,7 @@ internal class SearchApiCorrectnessTest {
             expectedTokenMatches = listOf(
                 TokenMatch(folderPath.resolve("a.txt"), 0L, 3L)
             ),
-            actualTokenMatches = searchApi.syncSearchToken(folderPath, token)
+            actualTokenMatches = searchApi.syncSearchTokenAfterIndex(folderPath, token)
         )
     }
 
@@ -178,7 +178,7 @@ internal class SearchApiCorrectnessTest {
             expectedTokenMatches = listOf(
                 TokenMatch(folderPath.resolve("a.txt"), 0L, 3L)
             ),
-            actualTokenMatches = searchApi.syncSearchToken(folderPath, token)
+            actualTokenMatches = searchApi.syncSearchTokenAfterIndex(folderPath, token)
         )
     }
 
@@ -193,7 +193,7 @@ internal class SearchApiCorrectnessTest {
             expectedTokenMatches = listOf(
                 TokenMatch(folderPath.resolve("a.txt"), 0L, 2L)
             ),
-            actualTokenMatches = searchApi.syncSearchToken(folderPath, token)
+            actualTokenMatches = searchApi.syncSearchTokenAfterIndex(folderPath, token)
         )
     }
 
@@ -210,7 +210,7 @@ internal class SearchApiCorrectnessTest {
             expectedTokenMatches = listOf(
                 TokenMatch(folderPath.resolve("a.txt"), 0L, 6L)
             ),
-            actualTokenMatches = searchApi.syncSearchToken(folderPath, token)
+            actualTokenMatches = searchApi.syncSearchTokenAfterIndex(folderPath, token)
         )
     }
 

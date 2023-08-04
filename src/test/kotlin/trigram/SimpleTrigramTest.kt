@@ -4,7 +4,7 @@ import api.TokenMatch
 import common.assertEqualsTokenMatches
 import common.assertEqualsTrigramMap
 import common.commonSetup
-import api.tools.syncSearchToken
+import api.tools.syncSearchTokenAfterIndex
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 import java.nio.file.Path
@@ -22,7 +22,7 @@ class SimpleTrigramTest {
         val folderName = "tenFiles"
         val token = "fgh"
         val folder = commonPath.resolve(folderName)
-        val actualTokenMatches = searchApi.syncSearchToken(folder, token)
+        val actualTokenMatches = searchApi.syncSearchTokenAfterIndex(folder, token)
         assertAll(
             { ->
                 assertEqualsTokenMatches(
