@@ -5,6 +5,7 @@ import java.nio.file.Path
 import java.util.concurrent.Future
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
+import java.util.concurrent.atomic.AtomicReference
 
 //TODO cancel
 //TODO buffer
@@ -17,6 +18,8 @@ class TrigramIndexingState(override val result: Future<List<Path>>) : IndexingSt
     private val indexedFilesNumberRef = AtomicLong(ON_START_INDEXED_FILES_NUMBER)
     private val totalFilesNumberRef = AtomicLong(NOT_SET_TOTAL_FILES_NUMBER)
     private val totalFilesNumberUpdatedRef = AtomicBoolean(false)
+
+    private val pathBufferRef = AtomicReference(ArrayList<Path>())
 
     /*Shows indexing is finished of now, takes value from result future.*/
     override val finished: Boolean
@@ -48,14 +51,33 @@ class TrigramIndexingState(override val result: Future<List<Path>>) : IndexingSt
         }
 
     override fun cancel() {}
+
+    /*Gets current buffer with part of result: indexed files.
+    * If flush = true, it returns entire buffer (copied) and set current buffer empty.
+    * Else it just returns copy of buffer
+    * */
     override fun getBufferPartResult(flush: Boolean): List<Path> {
-        //TODO("Not yet implemented")
-        return emptyList()
+        synchronized(pathBufferRef) {
+            if (!flush) {
+                //Old values we don't erase
+                //making copy of list
+                return ArrayList(pathBufferRef.get())
+            }
+            //Need to erase old values
+            val currentBuffer = pathBufferRef.getAndSet(ArrayList())
+            //TODO better to make copy, but it can work probably without copying
+            return ArrayList(currentBuffer)
+        }
     }
 
+    /*Adds path to current result buffer: indexed files
+    * Slight inconsistance of indexedFilesNumberRef and pathBufferRef, but it not critical
+    * */
     fun addPathToBuffer(path: Path) {
         indexedFilesNumberRef.incrementAndGet()
-        //TODO saving to local buffer
+        synchronized(pathBufferRef) {
+            pathBufferRef.get().add(path)
+        }
     }
 
     /*Sets totalFilesNumber maximum single time for live time of TrigramIndexingState.
