@@ -6,13 +6,17 @@ import api.exception.NotDirSearchException
 import api.tools.syncPerformIndex
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.Channel.Factory.UNLIMITED
+import kotlinx.coroutines.channels.onFailure
+import kotlinx.coroutines.channels.onSuccess
+import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.onEach
 import utils.WithLogging
 import java.nio.file.Files
 import java.nio.file.Path
+import java.util.*
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.LinkedBlockingQueue
 import java.util.stream.Stream
 import kotlin.io.path.isDirectory
 import kotlin.io.path.isRegularFile
@@ -46,23 +50,25 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         indexingState: TrigramIndexingState
     ) = coroutineScope {
         LOG.finest("started for folder: $folderPath")
-        val resultPathList = ArrayList<Path>()
+        //TODO think about which structure is better choice for resultPathQueue: LinkedBlockingQueue or others
+        val resultPathQueue: Queue<Path> = LinkedBlockingQueue()
         val foundTrigramMap: TrigramMap? = trigramMapByFolder[folderPath]
         coroutineScope {
             if (foundTrigramMap == null) {
                 val trigramMap = TrigramMap()
                 trigramMapByFolder[folderPath] = trigramMap
                 LOG.finest("created new trigramMap for folder $folderPath")
-                val indexedPathChannel = Channel<Path>(UNLIMITED)
+                val indexedPathChannel = Channel<Path>()
                 val tripletInPathChannel = Channel<Pair<String, Path>>()
                 launch { asyncWalkingFiles(folderPath, indexedPathChannel, tripletInPathChannel) }
-                launch { asyncReadingIndexedPathChannel(indexedPathChannel, resultPathList, indexingState) }
+                launch { asyncReadingIndexedPathChannel(indexedPathChannel, resultPathQueue, indexingState) }
                 launch { asyncReadingTripletInPathChannel(tripletInPathChannel, trigramMap) }
             }
         }
         //here we wait all coroutines to finish
+        val resultPathList = resultPathQueue.toList()
         future.complete(resultPathList)
-        LOG.finest("finished for folder: $folderPath")
+        LOG.info("finished for folder: $folderPath, indexed ${resultPathList.size} files")
     }
 
     private suspend fun asyncWalkingFiles(
@@ -83,40 +89,18 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         }
         LOG.finest("created filePaths: ${filePaths.size}")
 
-//        coroutineScope {
         filePaths.asFlow().onEach { path ->
             LOG.finest("visiting file by path $path")
             constructIndexForFile(path, tripletInPathChannel)
-            //indexedPathChannel.send(path)
+            indexedPathChannel.trySendBlocking(path)
+                .onSuccess { LOG.finest("send successfully path $path to indexedPathChannel") }
+                .onFailure { t: Throwable? -> LOG.severe("Cannot send path in indexedPathChannel: ${t?.message}") }
         }
-            //.launchIn(this)
-            .collect {  }
-//            .collectLatest{
-//                println(it)
+            .collect { }
         indexedPathChannel.close()
         LOG.finest("closed indexedPathChannel")
         tripletInPathChannel.close()
         LOG.finest("closed tripletInPathChannel")
-//            }
-//        }
-//        LOG.info("finished iterating paths and indexing files")
-//        indexedPathChannel.close()
-//        LOG.info("closed indexedPathChannel")
-//        tripletInPathChannel.close()
-//        LOG.info("closed tripletInPathChannel")
-//        flow<Path> {
-//            for (path in filePaths) {
-//                //TODO Decide where should be logic here or in "collect" down here
-//                constructIndexForFile(path, tripletInPathChannel)
-//                indexedPathChannel.send(path)
-//                emit(path)
-//            }
-//        }
-//        LOG.info("created pathFlow")
-//        pathFlow.collectFlowAsState()
-////        { path ->
-////            LOG.info("visiting file by path $path")
-////        }
         LOG.finest("finished for folder: $folderPath")
     }
 
@@ -153,17 +137,16 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         LOG.finest("finished line $lineIndex for path: $path")
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     private suspend fun asyncReadingIndexedPathChannel(
         indexedPathChannel: Channel<Path>,
-        resultPathList: MutableList<Path>,
+        resultPathQueue: Queue<Path>,
         indexingState: TrigramIndexingState
     ) = coroutineScope {
         LOG.finest("started")
         for (path in indexedPathChannel) {
             LOG.finest("received indexed path and saving to state: $path")
             indexingState.addPathToBuffer(path)
-            resultPathList.add(path)
+            resultPathQueue.add(path)
         }
         LOG.finest("finished")
     }

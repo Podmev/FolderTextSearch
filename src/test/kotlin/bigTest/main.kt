@@ -1,5 +1,6 @@
 package bigTest
 
 fun main() {
-    CurProjectTrigramTest().indexWithSearchOneToken()
+//    CurProjectTrigramTest().indexWithSearchOneToken()
+    IntellijIdeaTrigramTest().indexWithSearchOneToken()
 }
