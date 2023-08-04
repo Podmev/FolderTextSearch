@@ -1,7 +1,7 @@
 import api.SearchApi
 import api.TokenMatch
 import common.assertEqualsTokenMatches
-import common.commonSetup
+import common.CommonSetup
 import common.syncSearchToken
 import dummy.DummySearchApi
 import org.junit.jupiter.params.ParameterizedTest
@@ -25,7 +25,7 @@ import java.util.stream.Stream
 * Some tests use ready folders with files from test resources
 */
 internal class SearchApiCorrectnessTest {
-    private val commonPath: Path = commonSetup.commonPath
+    private val commonPath: Path = CommonSetup.commonPath
 
     /*Folder with single file with single line, which contains token 1 time*/
     @ParameterizedTest(name = "{0}")

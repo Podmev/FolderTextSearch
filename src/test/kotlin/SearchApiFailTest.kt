@@ -1,7 +1,7 @@
 import api.SearchApi
 import api.exception.IllegalArgumentSearchException
 import api.exception.NotDirSearchException
-import common.commonSetup
+import common.CommonSetup
 import common.syncSearchToken
 import dummy.DummySearchApi
 import org.junit.jupiter.params.ParameterizedTest
@@ -17,7 +17,7 @@ import kotlin.test.assertFailsWith
 * Some tests use ready folders with files from test resources
 */
 internal class SearchApiFailTest {
-    private val commonPath: Path = commonSetup.commonPath
+    private val commonPath: Path = CommonSetup.commonPath
 
     /*searching token with length 0, should be thrown IllegalArgumentSearchException*/
     @ParameterizedTest(name = "{0}")
