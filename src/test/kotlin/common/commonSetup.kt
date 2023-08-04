@@ -4,7 +4,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 /*Global consts for tests*/
-object CommonSetup {
+object commonSetup {
     private val projectPath: Path = Paths.get("")
     val commonPath: Path =
         projectPath.resolve("src").resolve("test").resolve("resources").resolve("searchTestFolders")

@@ -3,14 +3,14 @@ package trigram
 import api.TokenMatch
 import common.assertEqualsTokenMatches
 import common.assertEqualsTrigramMap
-import common.CommonSetup
+import common.commonSetup
 import common.syncSearchToken
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 import java.nio.file.Path
 
 class SimpleTrigramTest {
-    private val commonPath: Path = CommonSetup.commonPath
+    private val commonPath: Path = commonSetup.commonPath
 
     /*using not by interface, because we use methods exactly from TrigramSearchApi*/
     private val searchApi: TrigramSearchApi = TrigramSearchApi()
