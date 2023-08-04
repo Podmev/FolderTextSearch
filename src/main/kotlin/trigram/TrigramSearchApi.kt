@@ -3,6 +3,7 @@ package trigram
 import api.*
 import api.exception.IllegalArgumentSearchException
 import api.exception.NotDirSearchException
+import api.tools.syncPerformIndex
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.UNLIMITED
@@ -89,13 +90,13 @@ class TrigramSearchApi : SearchApi, WithLogging() {
             //indexedPathChannel.send(path)
         }
             //.launchIn(this)
-        .collect{ println(it) }
+            .collect { println(it) }
 //            .collectLatest{
 //                println(it)
-                indexedPathChannel.close()
-                LOG.info("closed indexedPathChannel")
-                tripletInPathChannel.close()
-                LOG.info("closed tripletInPathChannel")
+        indexedPathChannel.close()
+        LOG.info("closed indexedPathChannel")
+        tripletInPathChannel.close()
+        LOG.info("closed tripletInPathChannel")
 //            }
 //        }
 //        LOG.info("finished iterating paths and indexing files")
@@ -159,7 +160,7 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         indexingState: TrigramIndexingState
     ) = coroutineScope {
         LOG.info("started")
-        for (path in indexedPathChannel){
+        for (path in indexedPathChannel) {
             LOG.info("received indexed path and saving to state: $path")
             indexingState.addPathToBuffer(path)
             resultPathList.add(path)
@@ -173,7 +174,7 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         trigramMap: TrigramMap,
     ) = coroutineScope {
         LOG.info("started")
-        for((triplet, path) in tripletInPathChannel){
+        for ((triplet, path) in tripletInPathChannel) {
             LOG.info("received path for triplet: $triplet $path")
             trigramMap.addCharTripletByPath(triplet, path)
         }
@@ -182,13 +183,37 @@ class TrigramSearchApi : SearchApi, WithLogging() {
 
 
     override fun searchString(folderPath: Path, token: String, settings: SearchSettings): SearchingState {
+        LOG.info("started")
         validateToken(token)
         validatePath(folderPath)
         val completableFuture = CompletableFuture<List<TokenMatch>>()
         //TODO put in async code search
-        val tokenMatches = searchStringInFolder(folderPath, token)
+        val trigramMap: TrigramMap = getTrigramMapOrCalculate(folderPath)
+        val paths = getPathsByToken(trigramMap, token)
+        LOG.info("got ${paths.size} paths for token $token by trigramMap in folder $folderPath: $paths")
+        val tokenMatches = searchStringInPaths(paths, token)
+        LOG.info("got ${tokenMatches.size} token matches for token $token in folder $folderPath: $paths")
         completableFuture.complete(tokenMatches)
         return TrigramSearchingState(completableFuture)
+    }
+
+    private fun getTrigramMapOrCalculate(folderPath: Path): TrigramMap {
+        val previouslyCalculatedTrigramMap = trigramMapByFolder[folderPath]
+        if (previouslyCalculatedTrigramMap != null) {
+            return previouslyCalculatedTrigramMap
+        }
+        syncPerformIndex(folderPath)
+        return trigramMapByFolder[folderPath]!! //now it should exist
+    }
+
+    /*Find all file paths, which contains all sequence char triplets from token
+    * */
+    private fun getPathsByToken(trigramMap: TrigramMap, token: String): Set<Path> {
+        if (token.length < 3) return emptySet()
+        return (0 until token.length - 2)
+            .map { column -> token.substring(column, column + 3) }
+            .map { triplet -> trigramMap.getPathsByCharTriplet(triplet) }
+            .reduce { pathSet1: Set<Path>, pathSet2: Set<Path> -> pathSet1.intersect(pathSet2) }
     }
 
     private fun validateToken(token: String) {
@@ -208,13 +233,11 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         }
     }
 
-    private fun searchStringInFolder(folderPath: Path, token: String): List<TokenMatch> =
-        Files.walk(folderPath).use {
-            it.asSequence()
-                .filter { path -> path.isRegularFile() }
-                .flatMap { file -> searchStringInFile(file, token) }
-                .toList()
-        }
+    private fun searchStringInPaths(paths: Collection<Path>, token: String): List<TokenMatch> =
+        paths.asSequence()
+            .filter { path -> path.isRegularFile() }
+            .flatMap { file -> searchStringInFile(file, token) }
+            .toList()
 
     private fun searchStringInFile(filePath: Path, token: String): List<TokenMatch> =
         filePath.useLines { lines ->
