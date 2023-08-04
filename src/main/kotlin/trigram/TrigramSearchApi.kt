@@ -108,6 +108,10 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         indexingContext.visitedPathChannel.close()
         LOG.finest("closed visitedPathChannel")
 
+        val totalFilesNumber = indexingContext.visitedFilesNumber.get()
+        val setupSuccessful = indexingContext.indexingState.setTotalFilesNumber(totalFilesNumber)
+        LOG.finest("setup totalFilesNumber (successfully: $setupSuccessful) in indexing state: $totalFilesNumber")
+
         LOG.finest("finished for folder: ${indexingContext.folderPath}")
     }
 
