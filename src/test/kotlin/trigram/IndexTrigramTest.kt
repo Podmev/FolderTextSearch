@@ -2,7 +2,7 @@ package trigram
 
 import common.assertEqualsTrigramMap
 import common.commonSetup
-import common.syncPerformIndex
+import api.tools.syncPerformIndex
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
 
@@ -18,7 +18,7 @@ class IndexTrigramTest {
     fun singleFileTest() {
         val folderName = "singleFile"
         val folder = commonPath.resolve(folderName)
-        syncPerformIndex(searchApi, folder)
+        searchApi.syncPerformIndex(folder)
         assertEqualsTrigramMap(
             mapOf(
                 Pair("abc", setOf(folder.resolve("a.txt"))),
@@ -36,7 +36,7 @@ class IndexTrigramTest {
     fun fileAndFolderWithFileTest() {
         val folderName = "fileAndFolderWithFile"
         val folder = commonPath.resolve(folderName)
-        syncPerformIndex(searchApi, folder)
+        searchApi.syncPerformIndex(folder)
         assertEqualsTrigramMap(
             mapOf(
                 Pair("abc", setOf(folder.resolve("a.txt"))),
@@ -54,7 +54,7 @@ class IndexTrigramTest {
     fun fileWithMatchesOnDifferentLinesTest() {
         val folderName = "fileWithMatchesOnDifferentLines"
         val folder = commonPath.resolve(folderName)
-        syncPerformIndex(searchApi, folder)
+        searchApi.syncPerformIndex(folder)
         assertEqualsTrigramMap(
             mapOf(
                 Pair("abc", setOf(folder.resolve("a.txt"))),
@@ -82,7 +82,7 @@ class IndexTrigramTest {
     fun twoFilesOneMatchTest() {
         val folderName = "twoFilesOneMatch"
         val folder = commonPath.resolve(folderName)
-        syncPerformIndex(searchApi, folder)
+        searchApi.syncPerformIndex(folder)
         assertEqualsTrigramMap(
             mapOf(
                 Pair("abc", setOf(folder.resolve("a.txt"))),
@@ -125,7 +125,7 @@ class IndexTrigramTest {
             .resolve("10")
             .resolve("a.txt")
 
-        syncPerformIndex(searchApi, folder)
+        searchApi.syncPerformIndex(folder)
         assertEqualsTrigramMap(
             mapOf(
                 Pair("abc", setOf(innerPath)),
@@ -146,7 +146,7 @@ class IndexTrigramTest {
     fun tenFilesAndHasMatchTest() {
         val folderName = "tenFiles"
         val folder = commonPath.resolve(folderName)
-        syncPerformIndex(searchApi, folder)
+        searchApi.syncPerformIndex(folder)
         assertEqualsTrigramMap(
             mapOf(
                 Pair("abc", setOf(folder.resolve("1.txt"))),

@@ -2,7 +2,7 @@ import api.SearchApi
 import api.exception.IllegalArgumentSearchException
 import api.exception.NotDirSearchException
 import common.commonSetup
-import common.syncSearchToken
+import api.tools.syncSearchToken
 import dummy.DummySearchApi
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -26,7 +26,7 @@ internal class SearchApiFailTest {
         val folderName = "singleFile"
         val token = ""
         val folderPath = commonPath.resolve(folderName)
-        assertFailsWith(IllegalArgumentSearchException::class) { syncSearchToken(searchApi, folderPath, token) }
+        assertFailsWith(IllegalArgumentSearchException::class) { searchApi.syncSearchToken(folderPath, token) }
     }
 
     /*searching token with length 1, should be thrown IllegalArgumentSearchException*/
@@ -36,7 +36,7 @@ internal class SearchApiFailTest {
         val folderName = "singleFile"
         val token = "a"
         val folderPath = commonPath.resolve(folderName)
-        assertFailsWith(IllegalArgumentSearchException::class) { syncSearchToken(searchApi, folderPath, token) }
+        assertFailsWith(IllegalArgumentSearchException::class) { searchApi.syncSearchToken(folderPath, token) }
     }
 
     /*searching token with length 2, should be thrown IllegalArgumentSearchException*/
@@ -46,7 +46,7 @@ internal class SearchApiFailTest {
         val folderName = "singleFile"
         val token = "ab"
         val folderPath = commonPath.resolve(folderName)
-        assertFailsWith(IllegalArgumentSearchException::class) { syncSearchToken(searchApi, folderPath, token) }
+        assertFailsWith(IllegalArgumentSearchException::class) { searchApi.syncSearchToken(folderPath, token) }
     }
 
     /*searching token has symbol \n, should be thrown IllegalArgumentSearchException*/
@@ -56,7 +56,7 @@ internal class SearchApiFailTest {
         val folderName = "singleFile"
         val token = "a\nb"
         val folderPath = commonPath.resolve(folderName)
-        assertFailsWith(IllegalArgumentSearchException::class) { syncSearchToken(searchApi, folderPath, token) }
+        assertFailsWith(IllegalArgumentSearchException::class) { searchApi.syncSearchToken(folderPath, token) }
     }
 
     /*searching token has symbol \r, should be thrown IllegalArgumentSearchException*/
@@ -66,7 +66,7 @@ internal class SearchApiFailTest {
         val folderName = "singleFile"
         val token = "a\rb"
         val folderPath = commonPath.resolve(folderName)
-        assertFailsWith(IllegalArgumentSearchException::class) { syncSearchToken(searchApi, folderPath, token) }
+        assertFailsWith(IllegalArgumentSearchException::class) { searchApi.syncSearchToken(folderPath, token) }
     }
 
     /*searching token has 2 symbols \n\r, should be thrown IllegalArgumentSearchException*/
@@ -76,7 +76,7 @@ internal class SearchApiFailTest {
         val folderName = "singleFile"
         val token = "a\n\rb"
         val folderPath = commonPath.resolve(folderName)
-        assertFailsWith(IllegalArgumentSearchException::class) { syncSearchToken(searchApi, folderPath, token) }
+        assertFailsWith(IllegalArgumentSearchException::class) { searchApi.syncSearchToken(folderPath, token) }
     }
 
     /*folder path is actually file, should be thrown NotDirSearchException*/
@@ -86,7 +86,7 @@ internal class SearchApiFailTest {
         val folderName = "notFolder.txt"
         val token = "abc"
         val folderPath = commonPath.resolve(folderName)
-        assertFailsWith(NotDirSearchException::class) { syncSearchToken(searchApi, folderPath, token) }
+        assertFailsWith(NotDirSearchException::class) { searchApi.syncSearchToken(folderPath, token) }
     }
 
     /*folder path is wrong - there is nothing on this way, should be thrown NotDirSearchException*/
@@ -96,7 +96,7 @@ internal class SearchApiFailTest {
         val folderName = "notExistingFolder"
         val token = "abc"
         val folderPath = commonPath.resolve(folderName)
-        assertFailsWith(NotDirSearchException::class) { syncSearchToken(searchApi, folderPath, token) }
+        assertFailsWith(NotDirSearchException::class) { searchApi.syncSearchToken(folderPath, token) }
     }
 
     companion object {
