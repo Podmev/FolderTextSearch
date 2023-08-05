@@ -4,6 +4,7 @@ import api.SearchApi
 import api.tools.syncSearchToken
 import common.commonSetup
 import trigram.TrigramSearchApi
+import utils.prettyDiffTime
 import java.nio.file.Path
 import java.time.LocalDateTime
 
