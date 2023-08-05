@@ -16,8 +16,13 @@ class CurProjectTrigramTest {
 
     private val searchApi: SearchApi = TrigramSearchApi()
 
-    /*doesn't finish in 12 minutes. how long in fact I don't know
-    * */
+    fun justIndex() {
+        val folder = commonPath
+        val startTime = LocalDateTime.now()
+        println(startTime)
+        searchApi.syncPerformIndexWithLogging(folder)
+    }
+
     fun indexWithSearchOneToken() {
         val token = "class"
         val folder = commonPath

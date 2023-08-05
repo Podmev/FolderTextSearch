@@ -1,6 +1,7 @@
 package trigram
 
 import api.IndexingState
+import utils.WithLogging
 import java.nio.file.Path
 import java.util.concurrent.Future
 import java.util.concurrent.atomic.AtomicBoolean
@@ -14,7 +15,7 @@ import java.util.concurrent.atomic.AtomicReference
 *  - finished
 *  - progress
 * */
-class TrigramIndexingState(override val result: Future<List<Path>>) : IndexingState {
+class TrigramIndexingState(override val result: Future<List<Path>>) : IndexingState, WithLogging() {
     private val indexedFilesNumberRef = AtomicLong(ON_START_INDEXED_FILES_NUMBER)
     private val totalFilesNumberRef = AtomicLong(NOT_SET_TOTAL_FILES_NUMBER)
     private val totalFilesNumberUpdatedRef = AtomicBoolean(false)
@@ -41,7 +42,7 @@ class TrigramIndexingState(override val result: Future<List<Path>>) : IndexingSt
                 ON_START_INDEXED_FILES_NUMBER -> COMPLETELY_FINISHED_PROGRESS //if there are no files
                 else -> {
                     val totalDouble = total.toDouble()
-                    val curDouble = totalFilesNumberRef.toDouble()
+                    val curDouble = indexedFilesNumberRef.toDouble()
                     curDouble / totalDouble
                 }
             }
@@ -74,7 +75,8 @@ class TrigramIndexingState(override val result: Future<List<Path>>) : IndexingSt
     * Slight inconsistance of indexedFilesNumberRef and pathBufferRef, but it not critical
     * */
     fun addPathToBuffer(path: Path) {
-        indexedFilesNumberRef.incrementAndGet()
+        val indexedFileNumber = indexedFilesNumberRef.incrementAndGet()
+        LOG.finest("add path $path, indexedFileNumber:$indexedFileNumber, total:${totalFilesNumberRef.get()}")
         synchronized(pathBufferRef) {
             pathBufferRef.get().add(path)
         }
@@ -84,9 +86,11 @@ class TrigramIndexingState(override val result: Future<List<Path>>) : IndexingSt
     * Single time is checked by setupTotalFilesNumberRef
     * */
     fun setTotalFilesNumber(totalFilesNumber: Long): Boolean {
+        LOG.finest("trying to set total:$totalFilesNumber")
         val changed = totalFilesNumberUpdatedRef.compareAndSet(false, true)
         if (changed) {
             totalFilesNumberRef.set(totalFilesNumber)
+            LOG.finest("set total:$totalFilesNumber")
         }
         return changed
     }
@@ -94,7 +98,7 @@ class TrigramIndexingState(override val result: Future<List<Path>>) : IndexingSt
     companion object {
         private const val ALMOST_FINISHED_PROGRESS = 0.9999
         private const val COMPLETELY_FINISHED_PROGRESS = 1.0
-        private const val JUST_STARTED_PROGRESS = 1.0
+        private const val JUST_STARTED_PROGRESS = 0.0
         private const val NOT_SET_TOTAL_FILES_NUMBER = -1L
         private const val ON_START_INDEXED_FILES_NUMBER = 0L
     }

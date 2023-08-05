@@ -96,7 +96,11 @@ class TrigramSearchApi : SearchApi, WithLogging() {
                 //.map { path -> path.apply { println(path) } }
                 .toList()
         }
-        LOG.finest("created filePaths: ${filePaths.size}")
+        val pathsNumber = filePaths.size
+        LOG.finest("created filePaths: $pathsNumber")
+        val totalFilesNumber = pathsNumber.toLong()
+        val setupSuccessful = indexingContext.indexingState.setTotalFilesNumber(totalFilesNumber)
+        LOG.finest("setup totalFilesNumber (successfully: $setupSuccessful) in indexing state: $totalFilesNumber")
 
         filePaths.asFlow().onEach { path ->
             LOG.finest("visiting file by path $path")
@@ -107,10 +111,6 @@ class TrigramSearchApi : SearchApi, WithLogging() {
 
         indexingContext.visitedPathChannel.close()
         LOG.finest("closed visitedPathChannel")
-
-        val totalFilesNumber = indexingContext.visitedFilesNumber.get()
-        val setupSuccessful = indexingContext.indexingState.setTotalFilesNumber(totalFilesNumber)
-        LOG.finest("setup totalFilesNumber (successfully: $setupSuccessful) in indexing state: $totalFilesNumber")
 
         LOG.finest("finished for folder: ${indexingContext.folderPath}")
     }
