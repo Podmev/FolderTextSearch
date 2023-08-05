@@ -27,9 +27,9 @@ class SimpleTrigramTest {
             { ->
                 assertEqualsTokenMatches(
                     expectedTokenMatches = listOf(
-                        TokenMatch(folder.resolve("4.txt"), 0L, 2L),
-                        TokenMatch(folder.resolve("5.txt"), 0L, 1L),
-                        TokenMatch(folder.resolve("6.txt"), 0L, 0L)
+                        TokenMatch(folder.resolve("4.txt"), 1L, 3L),
+                        TokenMatch(folder.resolve("5.txt"), 1L, 2L),
+                        TokenMatch(folder.resolve("6.txt"), 1L, 1L)
                     ),
                     actualTokenMatches = actualTokenMatches
                 )

@@ -130,7 +130,7 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         LOG.finest("started for folder: ${indexingContext.folderPath}")
 
         for (path in indexingContext.visitedPathChannel) {
-            if(isPossibleToIndexFile(path)){
+            if (isPossibleToIndexFile(path)) {
                 constructIndexForFile(path, indexingContext)
             }
             indexingContext.indexedPathChannel.trySendBlocking(path)
@@ -298,7 +298,7 @@ class TrigramSearchApi : SearchApi, WithLogging() {
     private fun searchStringInLine(filePath: Path, line: String, token: String, lineIndex: Int): List<TokenMatch> {
         LOG.finest("#$lineIndex, \"$line\", token: $token")
         val positionsInLine = line.indicesOf(token)
-        return positionsInLine.map { TokenMatch(filePath, lineIndex.toLong(), it.toLong()) }.toList()
+        return positionsInLine.map { TokenMatch(filePath, lineIndex.toLong() + 1, it.toLong() + 1) }.toList()
     }
 
     //TODO fix without using direct list of exceptions
@@ -306,10 +306,10 @@ class TrigramSearchApi : SearchApi, WithLogging() {
     /*Predicate for file if it is possible and reasonable to index.
     *
     * */
-    private fun isPossibleToIndexFile(path: Path): Boolean{
+    private fun isPossibleToIndexFile(path: Path): Boolean {
         val fileName: String = path.fileName.toString()
-        for(forbiddenIndexExtension in forbiddenIndexExtensions){
-            if(fileName.endsWith(forbiddenIndexExtension)){
+        for (forbiddenIndexExtension in forbiddenIndexExtensions) {
+            if (fileName.endsWith(forbiddenIndexExtension)) {
                 return false
             }
         }

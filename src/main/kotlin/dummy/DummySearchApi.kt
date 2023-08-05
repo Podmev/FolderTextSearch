@@ -37,8 +37,8 @@ class DummySearchApi : SearchApi, WithLogging() {
         if (token.length < 3) {
             throw IllegalArgumentSearchException("Token is too small, it has length less than 3 characters.")
         }
-        for(forbiddenChar in forbiddenCharsInToken){
-            if(token.contains(forbiddenChar)){
+        for (forbiddenChar in forbiddenCharsInToken) {
+            if (token.contains(forbiddenChar)) {
                 throw IllegalArgumentSearchException("Token has forbidden character")
             }
         }
@@ -68,9 +68,10 @@ class DummySearchApi : SearchApi, WithLogging() {
     private fun searchStringInLine(filePath: Path, line: String, token: String, lineIndex: Int): List<TokenMatch> {
         LOG.info("#$lineIndex, \"$line\", token: $token")
         val positionsInLine = line.indicesOf(token)
-        return positionsInLine.map { TokenMatch(filePath, lineIndex.toLong(), it.toLong()) }.toList()
+        return positionsInLine.map { TokenMatch(filePath, lineIndex.toLong() + 1, it.toLong() + 1) }.toList()
     }
-    companion object{
+
+    companion object {
         private val forbiddenCharsInToken: List<Char> = listOf('\n', '\r')
     }
 }

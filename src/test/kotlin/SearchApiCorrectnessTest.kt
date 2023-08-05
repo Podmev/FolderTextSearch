@@ -35,7 +35,7 @@ internal class SearchApiCorrectnessTest {
         val token = "cde"
         val folderPath = commonPath.resolve(folderName)
         assertEqualsTokenMatches(
-            expectedTokenMatches = listOf(TokenMatch(folderPath.resolve("a.txt"), 0L, 2L)),
+            expectedTokenMatches = listOf(TokenMatch(folderPath.resolve("a.txt"), 1L, 3L)),
             actualTokenMatches = searchApi.syncSearchTokenAfterIndex(folderPath, token)
         )
     }
@@ -49,8 +49,8 @@ internal class SearchApiCorrectnessTest {
         val folderPath = commonPath.resolve(folderName)
         assertEqualsTokenMatches(
             expectedTokenMatches = listOf(
-                TokenMatch(folderPath.resolve("a.txt"), 0L, 2L),
-                TokenMatch(folderPath.resolve("b").resolve("c.txt"), 0L, 0L)
+                TokenMatch(folderPath.resolve("a.txt"), 1L, 3L),
+                TokenMatch(folderPath.resolve("b").resolve("c.txt"), 1L, 1L)
             ),
             actualTokenMatches = searchApi.syncSearchTokenAfterIndex(folderPath, token)
         )
@@ -65,10 +65,10 @@ internal class SearchApiCorrectnessTest {
         val folderPath = commonPath.resolve(folderName)
         assertEqualsTokenMatches(
             expectedTokenMatches = listOf(
-                TokenMatch(folderPath.resolve("a.txt"), 0L, 0L),
-                TokenMatch(folderPath.resolve("a.txt"), 0L, 1L),
-                TokenMatch(folderPath.resolve("a.txt"), 0L, 2L),
-                TokenMatch(folderPath.resolve("a.txt"), 0L, 3L)
+                TokenMatch(folderPath.resolve("a.txt"), 1L, 1L),
+                TokenMatch(folderPath.resolve("a.txt"), 1L, 2L),
+                TokenMatch(folderPath.resolve("a.txt"), 1L, 3L),
+                TokenMatch(folderPath.resolve("a.txt"), 1L, 4L)
             ),
             actualTokenMatches = searchApi.syncSearchTokenAfterIndex(folderPath, token)
         )
@@ -83,9 +83,9 @@ internal class SearchApiCorrectnessTest {
         val folderPath = commonPath.resolve(folderName)
         assertEqualsTokenMatches(
             expectedTokenMatches = listOf(
-                TokenMatch(folderPath.resolve("a.txt"), 0L, 6L),
-                TokenMatch(folderPath.resolve("a.txt"), 1L, 3L),
-                TokenMatch(folderPath.resolve("a.txt"), 2L, 0L)
+                TokenMatch(folderPath.resolve("a.txt"), 1L, 7L),
+                TokenMatch(folderPath.resolve("a.txt"), 2L, 4L),
+                TokenMatch(folderPath.resolve("a.txt"), 3L, 1L)
             ),
             actualTokenMatches = searchApi.syncSearchTokenAfterIndex(folderPath, token)
         )
@@ -100,7 +100,7 @@ internal class SearchApiCorrectnessTest {
         val folderPath = commonPath.resolve(folderName)
         assertEqualsTokenMatches(
             expectedTokenMatches = listOf(
-                TokenMatch(folderPath.resolve("b.txt"), 0L, 2L)
+                TokenMatch(folderPath.resolve("b.txt"), 1L, 3L)
             ),
             actualTokenMatches = searchApi.syncSearchTokenAfterIndex(folderPath, token)
         )
@@ -128,7 +128,7 @@ internal class SearchApiCorrectnessTest {
                         .resolve("9")
                         .resolve("10")
                         .resolve("a.txt"),
-                    line = 0L, column = 3L
+                    line = 1L, column = 4L
                 )
             ),
             actualTokenMatches = searchApi.syncSearchTokenAfterIndex(folderPath, token)
@@ -144,9 +144,9 @@ internal class SearchApiCorrectnessTest {
         val folderPath = commonPath.resolve(folderName)
         assertEqualsTokenMatches(
             expectedTokenMatches = listOf(
-                TokenMatch(folderPath.resolve("4.txt"), 0L, 2L),
-                TokenMatch(folderPath.resolve("5.txt"), 0L, 1L),
-                TokenMatch(folderPath.resolve("6.txt"), 0L, 0L)
+                TokenMatch(folderPath.resolve("4.txt"), 1L, 3L),
+                TokenMatch(folderPath.resolve("5.txt"), 1L, 2L),
+                TokenMatch(folderPath.resolve("6.txt"), 1L, 1L)
             ),
             actualTokenMatches = searchApi.syncSearchTokenAfterIndex(folderPath, token)
         )
@@ -161,7 +161,7 @@ internal class SearchApiCorrectnessTest {
         val folderPath = commonPath.resolve(folderName)
         assertEqualsTokenMatches(
             expectedTokenMatches = listOf(
-                TokenMatch(folderPath.resolve("a.txt"), 0L, 3L)
+                TokenMatch(folderPath.resolve("a.txt"), 1L, 4L)
             ),
             actualTokenMatches = searchApi.syncSearchTokenAfterIndex(folderPath, token)
         )
@@ -176,7 +176,7 @@ internal class SearchApiCorrectnessTest {
         val folderPath = commonPath.resolve(folderName)
         assertEqualsTokenMatches(
             expectedTokenMatches = listOf(
-                TokenMatch(folderPath.resolve("a.txt"), 0L, 3L)
+                TokenMatch(folderPath.resolve("a.txt"), 1L, 4L)
             ),
             actualTokenMatches = searchApi.syncSearchTokenAfterIndex(folderPath, token)
         )
@@ -191,7 +191,7 @@ internal class SearchApiCorrectnessTest {
         val folderPath = commonPath.resolve(folderName)
         assertEqualsTokenMatches(
             expectedTokenMatches = listOf(
-                TokenMatch(folderPath.resolve("a.txt"), 0L, 2L)
+                TokenMatch(folderPath.resolve("a.txt"), 1L, 3L)
             ),
             actualTokenMatches = searchApi.syncSearchTokenAfterIndex(folderPath, token)
         )
@@ -208,7 +208,7 @@ internal class SearchApiCorrectnessTest {
         val folderPath = commonPath.resolve(folderName)
         assertEqualsTokenMatches(
             expectedTokenMatches = listOf(
-                TokenMatch(folderPath.resolve("a.txt"), 0L, 6L)
+                TokenMatch(folderPath.resolve("a.txt"), 1L, 7L)
             ),
             actualTokenMatches = searchApi.syncSearchTokenAfterIndex(folderPath, token)
         )
