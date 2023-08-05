@@ -57,26 +57,31 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         future: CompletableFuture<List<Path>>,
         indexingState: TrigramIndexingState
     ) = coroutineScope {
-        LOG.finest("started for folder: $folderPath")
-        //TODO think about which structure is better choice for resultPathQueue: LinkedBlockingQueue or others
-        val resultPathQueue: Queue<Path> = LinkedBlockingQueue()
-        val foundTrigramMap: TrigramMap? = trigramMapByFolder[folderPath]
-        coroutineScope {
-            if (foundTrigramMap == null) {
-                val trigramMap = TrigramMap()
-                trigramMapByFolder[folderPath] = trigramMap
-                LOG.finest("created new trigramMap for folder $folderPath")
-                val indexingContext = TrigramIndexingContext(folderPath, indexingState, resultPathQueue, trigramMap)
-                launch { asyncWalkingFiles(indexingContext) }
-                launch { asyncIndexingFiles(indexingContext) }
-                launch { asyncReadingIndexedPathChannel(indexingContext) }
-                launch { asyncReadingTripletInPathChannel(indexingContext) }
+        try {
+            LOG.finest("started for folder: $folderPath")
+            //TODO think about which structure is better choice for resultPathQueue: LinkedBlockingQueue or others
+            val resultPathQueue: Queue<Path> = LinkedBlockingQueue()
+            val foundTrigramMap: TrigramMap? = trigramMapByFolder[folderPath]
+            coroutineScope {
+                if (foundTrigramMap == null) {
+                    val trigramMap = TrigramMap()
+                    trigramMapByFolder[folderPath] = trigramMap
+                    LOG.finest("created new trigramMap for folder $folderPath")
+                    val indexingContext = TrigramIndexingContext(folderPath, indexingState, resultPathQueue, trigramMap)
+                    launch { asyncWalkingFiles(indexingContext) }
+                    launch { asyncIndexingFiles(indexingContext) }
+                    launch { asyncReadingIndexedPathChannel(indexingContext) }
+                    launch { asyncReadingTripletInPathChannel(indexingContext) }
+                }
             }
+            //here we wait all coroutines to finish
+            val resultPathList = resultPathQueue.toList()
+            future.complete(resultPathList)
+            LOG.finest("finished for folder: $folderPath, indexed ${resultPathList.size} files")
+        } catch (th: Throwable) {
+            LOG.severe("exception during making index: ${th.message}")
+            th.printStackTrace()
         }
-        //here we wait all coroutines to finish
-        val resultPathList = resultPathQueue.toList()
-        future.complete(resultPathList)
-        LOG.finest("finished for folder: $folderPath, indexed ${resultPathList.size} files")
     }
 
     /*Walks files: on each file - increment counter and send path in visited path channel.
@@ -142,20 +147,26 @@ class TrigramSearchApi : SearchApi, WithLogging() {
     /*Lazy for each line separately constructs index.
     * */
     private suspend fun constructIndexForFile(path: Path, indexingContext: TrigramIndexingContext) {
-        LOG.finest("started for path: $path")
         //TODO maybe add flow too
-        path.useLines { lines ->
-            lines
-                .forEachIndexed { lineIndex, line ->
-                    constructIndexForLine(
-                        path = path,
-                        line = line,
-                        lineIndex = lineIndex,
-                        indexingContext = indexingContext
-                    )
-                }
+        try {
+            path.useLines { lines ->
+                lines
+                    .map { line -> line.apply { println(line) } }
+                    .forEachIndexed { lineIndex, line ->
+                        constructIndexForLine(
+                            path = path,
+                            line = line,
+                            lineIndex = lineIndex,
+                            indexingContext = indexingContext
+                        )
+                    }
+            }
+            LOG.finest("finished for path: $path")
+        } catch (th: Throwable) {
+            LOG.severe("exception during constructing index for file ${path}: ${th.message}")
+            th.printStackTrace()
+            throw th
         }
-        LOG.finest("finished for path: $path")
     }
 
     /*Runs with sliding window of 3 characters and sends to triplet in path channel.*/
