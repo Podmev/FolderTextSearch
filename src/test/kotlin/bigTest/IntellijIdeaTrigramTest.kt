@@ -1,6 +1,7 @@
 package bigTest
 
 import api.SearchApi
+import api.tools.syncPerformIndexWithLogging
 import api.tools.syncSearchToken
 import common.commonSetup
 import trigram.TrigramSearchApi
@@ -17,11 +18,19 @@ class IntellijIdeaTrigramTest {
 
     /*doesn't finish in 12 minutes. how long in fact I don't know
     * */
+    fun justIndex() {
+        val folder = commonPath
+        val startTime = LocalDateTime.now()
+        println(startTime)
+        searchApi.syncPerformIndexWithLogging(folder)
+    }
+
     fun indexWithSearchOneToken() {
         val token = "class"
         val folder = commonPath
         val startTime = LocalDateTime.now()
         println(startTime)
+        searchApi.syncPerformIndexWithLogging(folder)
         val actualTokenMatches = searchApi.syncSearchToken(folder, token)
         val finishTime = LocalDateTime.now()
         println("total time: ${prettyDiffTime(startTime, finishTime)}")

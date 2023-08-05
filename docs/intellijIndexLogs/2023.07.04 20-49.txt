@@ -1,0 +1,33 @@
+started indexing folder C:\Users\user\programming\personal\intellij-community\java at 2023-08-05T03:47:29.767028500
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 177 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 256 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 320 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 382 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 445 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 508 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 572 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 633 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 697 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 759 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 823 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 886 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 950 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 1 seconds 1959 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 3 seconds 3019 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 4 seconds 4081 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 5 seconds 5143 milliseconds, indexed more 0 files
+indexing folder 0,07 %, passed time:0 minutes 6 seconds 6159 milliseconds, indexed more 35 files, last file: C:\Users\user\programming\personal\intellij-community\java\compiler\forms-compiler\src\com\intellij\uiDesigner\compiler\Utils.java
+indexing folder 0,26 %, passed time:0 minutes 7 seconds 7160 milliseconds, indexed more 91 files, last file: C:\Users\user\programming\personal\intellij-community\java\compiler\impl\src\com\intellij\compiler\backwardRefs\IsUpToDateCheckStartupActivity.kt
+indexing folder 0,47 %, passed time:0 minutes 8 seconds 8160 milliseconds, indexed more 101 files, last file: C:\Users\user\programming\personal\intellij-community\java\compiler\impl\src\com\intellij\compiler\impl\ProjectCompileScope.java
+indexing folder 0,67 %, passed time:0 minutes 9 seconds 9222 milliseconds, indexed more 96 files, last file: C:\Users\user\programming\personal\intellij-community\java\compiler\impl\src\com\intellij\packaging\impl\artifacts\workspacemodel\EntityToElement.kt
+indexing folder 1,48 %, passed time:0 minutes 14 seconds 14246 milliseconds, indexed more 392 files, last file: C:\Users\user\programming\personal\intellij-community\java\debugger\impl\src\com\intellij\debugger\engine\JavaStaticGroup.java
+indexing folder 2,10 %, passed time:0 minutes 19 seconds 19257 milliseconds, indexed more 297 files, last file: C:\Users\user\programming\personal\intellij-community\java\debugger\impl\src\com\intellij\debugger\ui\impl\watch\MethodReturnValueDescriptorImpl.java
+indexing folder 2,39 %, passed time:0 minutes 24 seconds 24272 milliseconds, indexed more 141 files, last file: C:\Users\user\programming\personal\intellij-community\java\execution\impl\intellij.java.execution.impl.iml
+indexing folder 2,39 %, passed time:0 minutes 29 seconds 29320 milliseconds, indexed more 0 files
+indexing folder 2,39 %, passed time:0 minutes 34 seconds 34367 milliseconds, indexed more 0 files
+indexing folder 2,39 %, passed time:0 minutes 39 seconds 39412 milliseconds, indexed more 0 files
+indexing folder 2,39 %, passed time:0 minutes 44 seconds 44464 milliseconds, indexed more 0 files
+indexing folder 2,39 %, passed time:0 minutes 49 seconds 49512 milliseconds, indexed more 0 files
+indexing folder 2,39 %, passed time:0 minutes 54 seconds 54559 milliseconds, indexed more 0 files
+indexing folder 2,39 %, passed time:0 minutes 59 seconds 59558 milliseconds, indexed more 0 files
+indexing folder 2,39 %, passed time:1 minutes 14 seconds 74587 milliseconds, indexed more 0 files
