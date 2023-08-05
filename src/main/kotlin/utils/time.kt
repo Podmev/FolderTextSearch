@@ -20,5 +20,5 @@ fun prettyMillis(millis: Long): String =
         TimeUnit.MILLISECONDS.toMinutes(millis),
         TimeUnit.MILLISECONDS.toSeconds(millis) -
                 TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)),
-        millis - TimeUnit.MILLISECONDS.toSeconds(millis)
+        millis - TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(millis))
     )

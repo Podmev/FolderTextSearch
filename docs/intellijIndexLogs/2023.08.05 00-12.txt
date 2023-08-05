@@ -1,0 +1,89 @@
+started indexing folder C:\Users\user\programming\personal\intellij-community\java at 2023-08-05T07:05:45.292568200
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 221 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 299 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 362 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 425 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 488 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 549 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 613 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 677 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 741 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 803 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 866 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 930 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 993 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 2 seconds 53 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 3 seconds 115 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 4 seconds 122 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 5 seconds 132 milliseconds, indexed more 0 files
+indexing folder 0,08 %, passed time:0 minutes 6 seconds 149 milliseconds, indexed more 40 files, last file: C:\Users\user\programming\personal\intellij-community\java\compiler\forms-compiler\src\com\intellij\uiDesigner\lw\ComponentVisitor.java
+indexing folder 0,27 %, passed time:0 minutes 7 seconds 159 milliseconds, indexed more 91 files, last file: C:\Users\user\programming\personal\intellij-community\java\compiler\impl\src\com\intellij\compiler\backwardRefs\OccurrenceCounter.java
+indexing folder 0,49 %, passed time:0 minutes 8 seconds 166 milliseconds, indexed more 106 files, last file: C:\Users\user\programming\personal\intellij-community\java\compiler\impl\src\com\intellij\compiler\options\AnnotationProcessorsConfigurable.java
+indexing folder 0,69 %, passed time:0 minutes 9 seconds 223 milliseconds, indexed more 96 files, last file: C:\Users\user\programming\personal\intellij-community\java\compiler\impl\src\com\intellij\packaging\impl\elements\ArchivePackagingElement.java
+indexing folder 1,73 %, passed time:0 minutes 14 seconds 275 milliseconds, indexed more 499 files, last file: C:\Users\user\programming\personal\intellij-community\java\debugger\impl\src\com\intellij\debugger\memory\action\ClassesActionBase.java
+indexing folder 2,79 %, passed time:0 minutes 19 seconds 323 milliseconds, indexed more 513 files, last file: C:\Users\user\programming\personal\intellij-community\java\execution\openapi\src\com\intellij\execution\configurations\RemoteConnectionCreator.java
+indexing folder 3,85 %, passed time:0 minutes 24 seconds 332 milliseconds, indexed more 512 files, last file: C:\Users\user\programming\personal\intellij-community\java\idea-ui\src\com\intellij\openapi\roots\ui\configuration\projectRoot\daemon\UsageInModuleClasspath.java
+indexing folder 4,54 %, passed time:0 minutes 29 seconds 333 milliseconds, indexed more 330 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-analysis-impl\src\com\intellij\codeInsight\daemon\impl\quickfix\ChangeTypeArgumentsFix.java
+indexing folder 5,33 %, passed time:0 minutes 34 seconds 351 milliseconds, indexed more 380 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-analysis-impl\src\com\intellij\lang\java\JavaSyntaxHighlighterFactory.java
+indexing folder 6,27 %, passed time:0 minutes 39 seconds 364 milliseconds, indexed more 456 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-analysis-impl\src\com\siyeh\ig\packaging\PackageWithTooManyClassesInspection.java
+indexing folder 7,20 %, passed time:0 minutes 44 seconds 378 milliseconds, indexed more 446 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-impl\src\com\intellij\codeInsight\completion\JavaClassNameCompletionContributor.java
+indexing folder 8,07 %, passed time:0 minutes 49 seconds 437 milliseconds, indexed more 421 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-impl\src\com\intellij\codeInsight\generation\GenerationInfoBase.java
+indexing folder 9,00 %, passed time:0 minutes 54 seconds 468 milliseconds, indexed more 447 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-impl\src\com\intellij\ide\bookmark\providers\PackageBookmark.kt
+indexing folder 9,98 %, passed time:0 minutes 59 seconds 523 milliseconds, indexed more 473 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-impl\src\com\intellij\refactoring\ui\ClassNameReferenceEditor.java
+indexing folder 13,52 %, passed time:1 minutes 14 seconds 577 milliseconds, indexed more 1706 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-impl\src\intentionDescriptions\MakeExternalAnnotationExplicit\after.java.template
+indexing folder 15,24 %, passed time:1 minutes 29 seconds 605 milliseconds, indexed more 832 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-impl-refactorings\src\com\intellij\refactoring\move\moveInstanceMethod\MoveInstanceMethodHandlerDelegate.java
+indexing folder 17,19 %, passed time:1 minutes 44 seconds 641 milliseconds, indexed more 940 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-psi-impl\src\com\intellij\psi\impl\light\LightParameterListBuilder.java
+indexing folder 19,96 %, passed time:1 minutes 59 seconds 668 milliseconds, indexed more 1335 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-tests\testData\codeInsight\completion\methodChains\testResultRelevance\TestIndex.java
+indexing folder 23,75 %, passed time:2 minutes 14 seconds 686 milliseconds, indexed more 1827 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-tests\testData\codeInsight\completion\smartType\second\SingletonMap-out.java
+indexing folder 26,97 %, passed time:2 minutes 29 seconds 709 milliseconds, indexed more 1552 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-tests\testData\codeInsight\daemonCodeAnalyzer\genericsHighlighting8\IDEA57362.java
+авг. 05, 2023 7:08:27 AM trigram.TrigramSearchApi constructIndexForFile
+SEVERE: exception during constructing index for file C:\Users\user\programming\personal\intellij-community\java\java-tests\testData\codeInsight\daemonCodeAnalyzer\lossyEncoding\Win1251.txt: Input length = 1
+java.nio.charset.MalformedInputException: Input length = 1
+	at java.base/java.nio.charset.CoderResult.throwException(CoderResult.java:274)
+	at java.base/sun.nio.cs.StreamDecoder.implRead(StreamDecoder.java:326)
+	at java.base/sun.nio.cs.StreamDecoder.read(StreamDecoder.java:188)
+	at java.base/java.io.InputStreamReader.read(InputStreamReader.java:177)
+	at java.base/java.io.BufferedReader.fill(BufferedReader.java:162)
+	at java.base/java.io.BufferedReader.readLine(BufferedReader.java:329)
+	at java.base/java.io.BufferedReader.readLine(BufferedReader.java:396)
+	at kotlin.io.LinesSequence$iterator$1.hasNext(ReadWrite.kt:79)
+	at trigram.TrigramSearchApi.constructIndexForFile(TrigramSearchApi.kt:338)
+	at trigram.TrigramSearchApi.access$constructIndexForFile(TrigramSearchApi.kt:28)
+	at trigram.TrigramSearchApi$asyncIndexingFiles$2.invokeSuspend(TrigramSearchApi.kt:134)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:108)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:584)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:793)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:697)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:684)
+авг. 05, 2023 7:08:27 AM trigram.TrigramSearchApi$asyncIndexing$2 invokeSuspend
+SEVERE: exception during making index: Input length = 1
+java.nio.charset.MalformedInputException: Input length = 1
+	at java.base/java.nio.charset.CoderResult.throwException(CoderResult.java:274)
+	at java.base/sun.nio.cs.StreamDecoder.implRead(StreamDecoder.java:326)
+	at java.base/sun.nio.cs.StreamDecoder.read(StreamDecoder.java:188)
+	at java.base/java.io.InputStreamReader.read(InputStreamReader.java:177)
+	at java.base/java.io.BufferedReader.fill(BufferedReader.java:162)
+	at java.base/java.io.BufferedReader.readLine(BufferedReader.java:329)
+	at java.base/java.io.BufferedReader.readLine(BufferedReader.java:396)
+	at kotlin.io.LinesSequence$iterator$1.hasNext(ReadWrite.kt:79)
+	at trigram.TrigramSearchApi.constructIndexForFile(TrigramSearchApi.kt:338)
+	at trigram.TrigramSearchApi.access$constructIndexForFile(TrigramSearchApi.kt:28)
+	at trigram.TrigramSearchApi$asyncIndexingFiles$2.invokeSuspend(TrigramSearchApi.kt:134)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:108)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:584)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:793)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:697)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:684)
+indexing folder 29,86 %, passed time:2 minutes 44 seconds 712 milliseconds, indexed more 1389 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-tests\testData\codeInsight\daemonCodeAnalyzer\lossyEncoding\Text.txt
+indexing folder 29,86 %, passed time:2 minutes 59 seconds 773 milliseconds, indexed more 0 files
+indexing folder 29,86 %, passed time:3 minutes 14 seconds 817 milliseconds, indexed more 0 files
+indexing folder 29,86 %, passed time:3 minutes 29 seconds 855 milliseconds, indexed more 0 files
+indexing folder 29,86 %, passed time:3 minutes 44 seconds 878 milliseconds, indexed more 0 files
+indexing folder 29,86 %, passed time:3 minutes 59 seconds 895 milliseconds, indexed more 0 files
+indexing folder 29,86 %, passed time:4 minutes 14 seconds 903 milliseconds, indexed more 0 files
+indexing folder 29,86 %, passed time:4 minutes 29 seconds 932 milliseconds, indexed more 0 files
+indexing folder 29,86 %, passed time:4 minutes 44 seconds 938 milliseconds, indexed more 0 files
+indexing folder 29,86 %, passed time:4 minutes 59 seconds 983 milliseconds, indexed more 0 files
+indexing folder 29,86 %, passed time:6 minutes 0 seconds 23 milliseconds, indexed more 0 files

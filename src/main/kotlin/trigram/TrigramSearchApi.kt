@@ -121,7 +121,7 @@ class TrigramSearchApi : SearchApi, WithLogging() {
     }
 
     /*On each visited path from visited path channel.
-    * It constructs index for file and sends file path to indexed path channel.
+    * It constructs index for file (only if it is possible) and sends file path to indexed path channel.
     * In the end it closes 2 channels: indexed path channel and triplet in path channel.
     * */
     private suspend fun asyncIndexingFiles(
@@ -130,7 +130,9 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         LOG.finest("started for folder: ${indexingContext.folderPath}")
 
         for (path in indexingContext.visitedPathChannel) {
-            constructIndexForFile(path, indexingContext)
+            if(isPossibleToIndexFile(path)){
+                constructIndexForFile(path, indexingContext)
+            }
             indexingContext.indexedPathChannel.trySendBlocking(path)
                 .onSuccess { LOG.finest("send successfully path $path to indexedPathChannel") }
                 .onFailure { t: Throwable? -> LOG.severe("Cannot send path in indexedPathChannel: ${t?.message}") }
@@ -151,7 +153,7 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         try {
             path.useLines { lines ->
                 lines
-                    .map { line -> line.apply { println(line) } }
+                    //.map { line -> line.apply { println(line) } }
                     .forEachIndexed { lineIndex, line ->
                         constructIndexForLine(
                             path = path,
@@ -285,7 +287,7 @@ class TrigramSearchApi : SearchApi, WithLogging() {
     * Searches for every line separately.
     * */
     private fun searchStringInFile(filePath: Path, token: String): List<TokenMatch> =
-        filePath.useLines { lines ->
+        filePath.useLines() { lines ->
             lines
                 .flatMapIndexed { lineIndex, line -> searchStringInLine(filePath, line, token, lineIndex) }
                 .toList()
@@ -299,9 +301,40 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         return positionsInLine.map { TokenMatch(filePath, lineIndex.toLong(), it.toLong()) }.toList()
     }
 
+    //TODO fix without using direct list of exceptions
+    //https://stackoverflow.com/questions/620993/determining-binary-text-file-type-in-java
+    /*Predicate for file if it is possible and reasonable to index.
+    *
+    * */
+    private fun isPossibleToIndexFile(path: Path): Boolean{
+        val fileName: String = path.fileName.toString()
+        for(forbiddenIndexExtension in forbiddenIndexExtensions){
+            if(fileName.endsWith(forbiddenIndexExtension)){
+                return false
+            }
+        }
+        return true
+    }
+
     companion object {
         /*Forbidden to use these characters in token.*/
         private val forbiddenCharsInToken: List<Char> = listOf('\n', '\r')
+
+        /*extensions of files which are not supposed to be indexed
+        * */
+        private val forbiddenIndexExtensions: List<String> = listOf(
+            ".jar",
+            ".png",
+            ".bin",
+            ".zip",
+            "Win1251.txt", //problem with encoding. It is incorrect to put .txt to extenstions
+            ".class",
+            "TipoMensagem.java", // problem with encoding in some symbols
+            "image1",
+            "image2",
+            "Test_ISO_8859_15.java",
+            //TODO add more
+        )
     }
 }
 

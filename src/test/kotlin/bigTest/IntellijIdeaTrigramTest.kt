@@ -38,6 +38,15 @@ class IntellijIdeaTrigramTest {
         actualTokenMatches.forEach { println(it) }
     }
 
+//    fun jarTest(){
+//        val jarPath = commonPath
+//            .resolve("execution")
+//            .resolve("impl")
+//            .resolve("jshell-frontend.jar")
+//
+//        println(TrigramSearchApi().isPossibleToIndexFile(jarPath))
+//    }
+
 //    companion object {
 //        val popularTokens = listOf(
 //            "TODO",
