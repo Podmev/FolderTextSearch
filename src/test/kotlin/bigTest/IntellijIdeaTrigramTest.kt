@@ -28,14 +28,23 @@ class IntellijIdeaTrigramTest {
     fun indexWithSearchOneToken() {
         val token = "class"
         val folder = commonPath
-        val startTime = LocalDateTime.now()
-        println(startTime)
         searchApi.syncPerformIndexWithLogging(folder)
+        val startTime = LocalDateTime.now()
         val actualTokenMatches = searchApi.syncSearchToken(folder, token)
         val finishTime = LocalDateTime.now()
-        println("total time: ${prettyDiffTime(startTime, finishTime)}")
-        println(actualTokenMatches.size)
-        actualTokenMatches.forEach { println(it) }
+        println("searching time for looking for token \"${token}\": ${prettyDiffTime(startTime, finishTime)}, #${actualTokenMatches.size}")
+    }
+
+    fun indexWithSearchManyTokens() {
+        val folder = commonPath
+        searchApi.syncPerformIndexWithLogging(folder)
+        for(token in popularTokens) {
+            val startTime = LocalDateTime.now()
+            val actualTokenMatches = searchApi.syncSearchToken(folder, token)
+            val finishTime = LocalDateTime.now()
+            println("searching time for looking for token \"${token}\": ${prettyDiffTime(startTime, finishTime)}, #${actualTokenMatches.size}")
+            println(actualTokenMatches.size)
+        }
     }
 
 //    fun jarTest(){
@@ -47,15 +56,15 @@ class IntellijIdeaTrigramTest {
 //        println(TrigramSearchApi().isPossibleToIndexFile(jarPath))
 //    }
 
-//    companion object {
-//        val popularTokens = listOf(
-//            "TODO",
-//            "class",
-//            "deprecated",
-//            "getName",
-//            "volatile"
-//        )
-//    }
+    companion object {
+        val popularTokens = listOf(
+            "TODO",
+            "class",
+            "deprecated",
+            "getName",
+            "volatile"
+        )
+    }
 
 }
 

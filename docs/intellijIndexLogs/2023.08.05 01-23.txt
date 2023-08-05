@@ -1,0 +1,55 @@
+started indexing folder C:\Users\user\programming\personal\intellij-community\java at 2023-08-05T08:11:54.324678400
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 189 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 266 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 329 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 392 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 454 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 519 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 579 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 641 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 704 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 766 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 827 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 890 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 0 seconds 952 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 2 seconds 12 milliseconds, indexed more 0 files
+indexing folder 0,00 %, passed time:0 minutes 3 seconds 74 milliseconds, indexed more 2 files, last file: C:\Users\user\programming\personal\intellij-community\java\compiler\forms-compiler\src\com\intellij\uiDesigner\compiler\AlienFormFileException.java
+indexing folder 0,18 %, passed time:0 minutes 4 seconds 132 milliseconds, indexed more 84 files, last file: C:\Users\user\programming\personal\intellij-community\java\compiler\forms-compiler\src\com\intellij\uiDesigner\shared\BorderType.java
+indexing folder 0,36 %, passed time:0 minutes 5 seconds 189 milliseconds, indexed more 86 files, last file: C:\Users\user\programming\personal\intellij-community\java\compiler\impl\src\com\intellij\compiler\CompilerConfigurationSettings.kt
+indexing folder 0,54 %, passed time:0 minutes 6 seconds 248 milliseconds, indexed more 90 files, last file: C:\Users\user\programming\personal\intellij-community\java\compiler\impl\src\com\intellij\compiler\progress\BuildViewService.java
+indexing folder 0,70 %, passed time:0 minutes 7 seconds 306 milliseconds, indexed more 76 files, last file: C:\Users\user\programming\personal\intellij-community\java\compiler\impl\src\com\intellij\packaging\impl\elements\DirectoryCopyElementType.java
+indexing folder 0,88 %, passed time:0 minutes 8 seconds 319 milliseconds, indexed more 88 files, last file: C:\Users\user\programming\personal\intellij-community\java\compiler\openapi\src\com\intellij\openapi\compiler\CompilerFilter.java
+indexing folder 1,10 %, passed time:0 minutes 9 seconds 380 milliseconds, indexed more 104 files, last file: C:\Users\user\programming\personal\intellij-community\java\compiler\tests\com\intellij\compiler\artifacts\UpdateArtifactsAfterRenameTest.java
+indexing folder 1,92 %, passed time:0 minutes 14 seconds 396 milliseconds, indexed more 394 files, last file: C:\Users\user\programming\personal\intellij-community\java\debugger\impl\src\com\intellij\debugger\settings\TextComponentBinding.java
+indexing folder 2,83 %, passed time:0 minutes 19 seconds 447 milliseconds, indexed more 438 files, last file: C:\Users\user\programming\personal\intellij-community\java\execution\openapi\src\com\intellij\execution\filters\ExceptionInfo.java
+indexing folder 3,67 %, passed time:0 minutes 24 seconds 487 milliseconds, indexed more 408 files, last file: C:\Users\user\programming\personal\intellij-community\java\idea-ui\src\com\intellij\openapi\roots\ui\configuration\JavaVfsSourceRootDetectionUtil.java
+indexing folder 4,41 %, passed time:0 minutes 29 seconds 540 milliseconds, indexed more 355 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-analysis-impl\intellij.java.analysis.impl.iml
+indexing folder 4,96 %, passed time:0 minutes 34 seconds 593 milliseconds, indexed more 264 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-analysis-impl\src\com\intellij\codeInspection\dataFlow\java\inst\PrimitiveConversionInstruction.java
+indexing folder 5,72 %, passed time:0 minutes 39 seconds 619 milliseconds, indexed more 370 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-analysis-impl\src\com\siyeh\ig\controlflow\ConfusingElseInspection.java
+indexing folder 6,49 %, passed time:0 minutes 44 seconds 650 milliseconds, indexed more 370 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-analysis-impl\src\com\siyeh\ig\psiutils\TrackingEquivalenceChecker.java
+indexing folder 7,33 %, passed time:0 minutes 49 seconds 683 milliseconds, indexed more 405 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-impl\src\com\intellij\codeInsight\daemon\impl\analysis\JavaErrorQuickFixProvider.java
+indexing folder 8,16 %, passed time:0 minutes 54 seconds 813 milliseconds, indexed more 401 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-impl\src\com\intellij\codeInsight\generation\surroundWith\JavaWithRunnableSurrounder.java
+indexing folder 9,00 %, passed time:0 minutes 59 seconds 828 milliseconds, indexed more 405 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-impl\src\com\intellij\ide\favoritesTreeView\PsiClassFavoriteNodeProvider.java
+indexing folder 11,66 %, passed time:1 minutes 14 seconds 845 milliseconds, indexed more 1279 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-impl\src\inspectionDescriptions\EnumerationCanBeIteration.html
+indexing folder 14,74 %, passed time:1 minutes 29 seconds 877 milliseconds, indexed more 1486 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-impl-refactorings\src\com\intellij\refactoring\extractMethod\preview\PreviewPanel.java
+indexing folder 17,02 %, passed time:1 minutes 44 seconds 901 milliseconds, indexed more 1098 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-psi-impl\src\com\intellij\psi\impl\java\stubs\JavaAnnotationElementType.java
+indexing folder 20,51 %, passed time:1 minutes 59 seconds 903 milliseconds, indexed more 1684 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-tests\testData\codeInsight\completion\normal\DestroyingCompletedClassDeclaration.java
+indexing folder 24,56 %, passed time:2 minutes 14 seconds 953 milliseconds, indexed more 1950 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-tests\testData\codeInsight\convertToStringLiteral\Simple_after.java
+indexing folder 28,11 %, passed time:2 minutes 30 seconds 7 milliseconds, indexed more 1714 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-tests\testData\codeInsight\daemonCodeAnalyzer\lambda\expressions\RecursiveApplicabilityCheck.java
+indexing folder 32,08 %, passed time:2 minutes 45 seconds 9 milliseconds, indexed more 1910 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-tests\testData\codeInsight\daemonCodeAnalyzer\quickFix\changeParameterClass\afterWildcardInTypeParameterBound.java
+indexing folder 36,06 %, passed time:3 minutes 0 seconds 50 milliseconds, indexed more 1919 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-tests\testData\codeInsight\daemonCodeAnalyzer\quickFix\i18n\beforeNonNlsEquals.java
+indexing folder 40,03 %, passed time:3 minutes 15 seconds 87 milliseconds, indexed more 1913 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-tests\testData\codeInsight\daemonCodeAnalyzer\quickFix\replaceAddAllArrayToCollections\before2.java
+indexing folder 43,97 %, passed time:3 minutes 30 seconds 150 milliseconds, indexed more 1900 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-tests\testData\codeInsight\daemonCodeAnalyzer\quickFix\trivialFunctionalExpressionUsage\beforeBlockLambdaNoSurroundingBlock.java
+indexing folder 47,55 %, passed time:3 minutes 45 seconds 194 milliseconds, indexed more 1727 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-tests\testData\codeInsight\javadocIG\unknownClassTag.java
+indexing folder 51,13 %, passed time:4 minutes 0 seconds 237 milliseconds, indexed more 1725 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-tests\testData\codeInspection\bytecodeAnalysis\annotations\org\apache\commons\collections\keyvalue\annotations.xml
+indexing folder 54,94 %, passed time:4 minutes 15 seconds 269 milliseconds, indexed more 1836 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-tests\testData\compileServer\incremental\methodModifiers\decConstructorAccess\src\Client.java
+indexing folder 58,93 %, passed time:4 minutes 30 seconds 282 milliseconds, indexed more 1924 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-tests\testData\ig\com\siyeh\igfixes\style\methodRefs2lambda\Subst.after.java
+indexing folder 62,72 %, passed time:4 minutes 45 seconds 331 milliseconds, indexed more 1827 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-tests\testData\inspection\commonIfParts\beforeCommonTailVariableExtract.java
+indexing folder 75,90 %, passed time:5 minutes 45 seconds 384 milliseconds, indexed more 6354 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-tests\testData\psi\parser-partial\expressions\LambdaExpression24.txt
+indexing folder 91,65 %, passed time:6 minutes 45 seconds 435 milliseconds, indexed more 7589 files, last file: C:\Users\user\programming\personal\intellij-community\java\java-tests\testSrc\com\intellij\codeInsight\daemon\impl\quickfix\RedundantCompareToJavaTimeInspectionTest.java
+indexing folder 100,00 %, passed time:7 minutes 31 seconds 858 milliseconds, indexed more 4026 files, last file: C:\Users\user\programming\personal\intellij-community\java\typeMigration\testData\refactoring\wildcard\threadLocalProducerSuper\before\test.java
+indexing folder "C:\Users\user\programming\personal\intellij-community\java" is finished with 48201 paths with total time: 7 minutes 31 seconds 860 milliseconds
+2023-08-05T08:19:26.189372200
+searching time for looking for token class: 0 minutes 5 seconds 863 milliseconds
+105997
+
