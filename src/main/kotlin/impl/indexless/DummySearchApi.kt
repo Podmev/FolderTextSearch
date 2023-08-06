@@ -1,4 +1,4 @@
-package impl.dummy
+package impl.indexless
 
 import api.*
 import api.exception.IllegalArgumentSearchException
@@ -12,15 +12,15 @@ import kotlin.io.path.isRegularFile
 import kotlin.io.path.useLines
 import kotlin.streams.asSequence
 
-/*Dummy implementation of Search Api without indexing and any optimizations
-  Can be used as etalon to check results, but not for performance and flexibility
+/*Indexless implementation of Search Api without indexing and any optimizations
+  Can be used as etalon to check search results, but not for performance and flexibility
 * */
-class DummySearchApi : SearchApi, WithLogging() {
+class IndexlessSearchApi : SearchApi, WithLogging() {
     /*in this implementation index is empty, so even no files are added*/
     override fun createIndexAtFolder(folderPath: Path): IndexingState {
         val completableFuture = CompletableFuture<List<Path>>()
         completableFuture.complete(emptyList())
-        return DummyIndexingState(completableFuture)
+        return IndexlessIndexingState(completableFuture)
     }
 
     override fun searchString(folderPath: Path, token: String, settings: SearchSettings): SearchingState {
@@ -30,7 +30,7 @@ class DummySearchApi : SearchApi, WithLogging() {
         //TODO put in async code search
         val tokenMatches = searchStringInFolder(folderPath, token)
         completableFuture.complete(tokenMatches)
-        return DummySearchingState(completableFuture)
+        return IndexlessSearchingState(completableFuture)
     }
 
     /*This implementation never has index at any folder. So it is false.*/

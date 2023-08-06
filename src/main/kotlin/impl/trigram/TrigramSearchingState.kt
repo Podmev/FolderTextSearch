@@ -18,7 +18,7 @@ class TrigramSearchingState(override val result: Future<List<TokenMatch>>) : Sea
         }
 
     override fun cancel() {
-        throw SearchException("Not supported cancel for searching in dummy api")
+        throw SearchException("Not supported cancel for searching in indexless api")
     }
 
     override fun getBufferPartResult(flush: Boolean): List<TokenMatch> {

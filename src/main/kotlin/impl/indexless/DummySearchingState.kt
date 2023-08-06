@@ -1,4 +1,4 @@
-package impl.dummy
+package impl.indexless
 
 import api.exception.SearchException
 import api.SearchingState
@@ -6,7 +6,7 @@ import api.TokenMatch
 import java.util.concurrent.Future
 
 
-class DummySearchingState(override val result: Future<List<TokenMatch>>) : SearchingState {
+class IndexlessSearchingState(override val result: Future<List<TokenMatch>>) : SearchingState {
     override val finished: Boolean
         get() {
             return result.isDone
@@ -18,7 +18,7 @@ class DummySearchingState(override val result: Future<List<TokenMatch>>) : Searc
         }
 
     override fun cancel() {
-        throw SearchException("Not supported cancel for searching in dummy api")
+        throw SearchException("Not supported cancel for searching in indexless api")
     }
 
     override fun getBufferPartResult(flush: Boolean): List<TokenMatch> {

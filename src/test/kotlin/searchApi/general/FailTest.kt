@@ -5,7 +5,7 @@ import api.exception.IllegalArgumentSearchException
 import api.exception.NotDirSearchException
 import common.commonSetup
 import api.tools.syncSearchTokenAfterIndex
-import impl.dummy.DummySearchApi
+import impl.indexless.IndexlessSearchApi
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -102,14 +102,14 @@ internal class FailTest {
     }
 
     companion object {
-        private val dummySearchApi: SearchApi = DummySearchApi()
+        private val indexlessSearchApi: SearchApi = IndexlessSearchApi()
         private val trigramSearchApi: SearchApi = TrigramSearchApi()
 
         /*list of implementations of SearchApi*/
         @JvmStatic
         fun searchApiProvider(): Stream<Arguments> {
             return Stream.of(
-                Arguments.of(dummySearchApi),
+                Arguments.of(indexlessSearchApi),
                 Arguments.of(trigramSearchApi)
             )
         }
