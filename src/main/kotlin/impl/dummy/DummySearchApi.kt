@@ -1,4 +1,4 @@
-package dummy
+package impl.dummy
 
 import api.*
 import api.exception.IllegalArgumentSearchException

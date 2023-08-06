@@ -1,9 +1,10 @@
-package trigram
+package searchApi.trigram
 
 import common.assertEqualsTrigramMap
 import common.commonSetup
 import api.tools.syncPerformIndex
 import org.junit.jupiter.api.Test
+import impl.trigram.TrigramSearchApi
 import java.nio.file.Path
 
 /*Checking creating index for TrigramSearchApi*/

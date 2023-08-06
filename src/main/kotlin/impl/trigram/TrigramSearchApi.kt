@@ -1,4 +1,4 @@
-package trigram
+package impl.trigram
 
 import api.*
 import api.exception.IllegalArgumentSearchException
@@ -38,8 +38,16 @@ class TrigramSearchApi : SearchApi, WithLogging() {
     override fun createIndexAtFolder(folderPath: Path): IndexingState {
         validatePath(folderPath) // TODO good question - should be thrown exception here or no?
         val completableFuture = CompletableFuture<List<Path>>()
+        val deferred: Deferred<Unit>
+
         val indexingState = TrigramIndexingState(completableFuture)
-        val deferred = GlobalScope.async { asyncIndexing(folderPath, completableFuture, indexingState) }
+        deferred = GlobalScope.async { asyncIndexing(folderPath, completableFuture, indexingState) }
+        //TODO optimize canceling logic
+        fun cancelIndexing(){
+            completableFuture.cancel(true)
+            deferred.cancel()
+        }
+        indexingState.addCancelationAction(::cancelIndexing)
         return indexingState
     }
 

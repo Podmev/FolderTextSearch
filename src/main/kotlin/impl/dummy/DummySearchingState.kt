@@ -1,4 +1,4 @@
-package dummy
+package impl.dummy
 
 import api.exception.SearchException
 import api.SearchingState

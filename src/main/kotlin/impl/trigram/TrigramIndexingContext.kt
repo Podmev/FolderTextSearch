@@ -1,4 +1,4 @@
-package trigram
+package impl.trigram
 
 import kotlinx.coroutines.channels.Channel
 import java.nio.file.Path
@@ -9,7 +9,8 @@ class TrigramIndexingContext(
     val folderPath: Path,
     val indexingState: TrigramIndexingState,
     val resultPathQueue: Queue<Path>,
-    val trigramMap: TrigramMap) {
+    val trigramMap: TrigramMap
+) {
 
     val visitedFilesNumber = AtomicLong(0L)
     val indexedFilesNumber = AtomicLong(0L)

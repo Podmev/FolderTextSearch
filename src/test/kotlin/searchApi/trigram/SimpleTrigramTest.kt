@@ -1,4 +1,4 @@
-package trigram
+package searchApi.trigram
 
 import api.TokenMatch
 import common.assertEqualsTokenMatches
@@ -7,6 +7,7 @@ import common.commonSetup
 import api.tools.syncSearchTokenAfterIndex
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
+import impl.trigram.TrigramSearchApi
 import java.nio.file.Path
 
 class SimpleTrigramTest {

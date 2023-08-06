@@ -1,4 +1,4 @@
-package trigram
+package impl.trigram
 
 import api.IndexingState
 import utils.WithLogging
@@ -21,6 +21,7 @@ class TrigramIndexingState(override val result: Future<List<Path>>) : IndexingSt
     private val totalFilesNumberUpdatedRef = AtomicBoolean(false)
 
     private val pathBufferRef = AtomicReference(ArrayList<Path>())
+    private val cancelationActionRef = AtomicReference<()->Unit>(/* no-op */)
 
     /*Shows indexing is finished of now, takes value from result future.*/
     override val finished: Boolean
@@ -51,7 +52,9 @@ class TrigramIndexingState(override val result: Future<List<Path>>) : IndexingSt
             else calculatedProgress
         }
 
-    override fun cancel() {}
+    override fun cancel() {
+        cancelationActionRef.get()()
+    }
 
     /*Gets current buffer with part of result: indexed files.
     * If flush = true, it returns entire buffer (copied) and set current buffer empty.
@@ -93,6 +96,10 @@ class TrigramIndexingState(override val result: Future<List<Path>>) : IndexingSt
             LOG.finest("set total:$totalFilesNumber")
         }
         return changed
+    }
+
+    fun addCancelationAction(action: ()->Unit){
+        cancelationActionRef.set(action)
     }
 
     companion object {

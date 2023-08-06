@@ -1,4 +1,4 @@
-package trigram
+package impl.trigram
 
 import api.exception.SearchException
 import api.SearchingState

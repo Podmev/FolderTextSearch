@@ -1,13 +1,15 @@
+package searchApi.general
+
 import api.SearchApi
 import api.TokenMatch
 import common.assertEqualsTokenMatches
 import common.commonSetup
 import api.tools.syncSearchTokenAfterIndex
-import dummy.DummySearchApi
+import impl.dummy.DummySearchApi
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import trigram.TrigramSearchApi
+import impl.trigram.TrigramSearchApi
 import java.nio.file.Path
 import java.util.stream.Stream
 
@@ -24,7 +26,7 @@ import java.util.stream.Stream
 * Set of unit test for checking search for correctness for all implementations
 * Some tests use ready folders with files from test resources
 */
-internal class SearchApiCorrectnessTest {
+internal class CorrectnessTest {
     private val commonPath: Path = commonSetup.commonPath
 
     /*Folder with single file with single line, which contains token 1 time*/

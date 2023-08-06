@@ -1,4 +1,4 @@
-package dummy
+package impl.dummy
 
 import api.IndexingState
 import java.nio.file.Path

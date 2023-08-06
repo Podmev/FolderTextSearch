@@ -1,13 +1,15 @@
+package searchApi.general
+
 import api.SearchApi
 import api.exception.IllegalArgumentSearchException
 import api.exception.NotDirSearchException
 import common.commonSetup
 import api.tools.syncSearchTokenAfterIndex
-import dummy.DummySearchApi
+import impl.dummy.DummySearchApi
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import trigram.TrigramSearchApi
+import impl.trigram.TrigramSearchApi
 import java.nio.file.Path
 import java.util.stream.Stream
 import kotlin.test.assertFailsWith
@@ -16,7 +18,7 @@ import kotlin.test.assertFailsWith
 * Set of unit test for checking search for invalid situations for all implementations
 * Some tests use ready folders with files from test resources
 */
-internal class SearchApiFailTest {
+internal class FailTest {
     private val commonPath: Path = commonSetup.commonPath
 
     /*searching token with length 0, should be thrown IllegalArgumentSearchException*/

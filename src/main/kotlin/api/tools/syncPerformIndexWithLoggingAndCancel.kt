@@ -1,14 +1,11 @@
 package api.tools
 
-import api.IndexingState
 import api.SearchApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import utils.diffTime
-import utils.format
 import utils.prettyDiffTimeFrom
-import utils.prettyMillis
 import java.nio.file.Path
 import java.time.LocalDateTime
 
@@ -16,7 +13,7 @@ import java.time.LocalDateTime
 /*Util function to calculate index for folder with detailed logging, then after it is done returns
 * Used in tests
 * */
-fun SearchApi.syncPerformIndexWithLogging(folderPathString: Path) {
+fun SearchApi.syncPerformIndexWithLoggingAndCancel(folderPathString: Path, cancelAtProgress: Double) {
     val startTime = LocalDateTime.now()
     val indexingState = createIndexAtFolder(folderPathString)
     runBlocking {
@@ -25,6 +22,11 @@ fun SearchApi.syncPerformIndexWithLogging(folderPathString: Path) {
             println("started indexing folder $folderPathString at $startTime")
             while (!indexingState.finished) {
                 delay(50)
+                val progress = indexingState.progress
+                if(progress >=cancelAtProgress){
+                    indexingState.cancel()
+                    println("cancel at progress $progress (>${cancelAtProgress})")
+                }
                 val curTime = LocalDateTime.now()
                 val millis = diffTime(startTime, curTime)
                 val millisFromLastLogging = diffTime(lastLogged, curTime)
@@ -45,22 +47,3 @@ fun SearchApi.syncPerformIndexWithLogging(folderPathString: Path) {
     assert(indexingState.finished)
 }
 
-fun printStepLog(indexingState: IndexingState, millis: Long) {
-    val progressPercents = indexingState.progress * 100.0
-    val indexedFilesBuffer = indexingState.getBufferPartResult(true)
-    val lastPath = indexedFilesBuffer.lastOrNull()
-    val lastFileMessage: String = if (lastPath != null) ", last file: $lastPath" else ""
-    println(
-        "indexing folder ${progressPercents.format(2)} %, " +
-                "passed time:${prettyMillis(millis)}, " +
-                "indexed more ${indexedFilesBuffer.size} files$lastFileMessage"
-    )
-}
-
-fun getLogStepMillis(millis: Long) = when (millis) {
-    in 0 until 1000 -> 50
-    in 1000 until 10_000 -> 1000
-    in 10_000 until 60_000 -> 5_000
-    in 60_000 until 300_000 -> 15_000
-    else -> 60_000
-}

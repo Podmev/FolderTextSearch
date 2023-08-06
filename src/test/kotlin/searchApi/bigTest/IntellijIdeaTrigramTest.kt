@@ -1,10 +1,11 @@
-package bigTest
+package searchApi.bigTest
 
 import api.SearchApi
 import api.tools.syncPerformIndexWithLogging
+import api.tools.syncPerformIndexWithLoggingAndCancel
 import api.tools.syncSearchToken
 import common.commonSetup
-import trigram.TrigramSearchApi
+import impl.trigram.TrigramSearchApi
 import utils.prettyDiffTime
 import java.nio.file.Path
 import java.time.LocalDateTime
@@ -16,14 +17,20 @@ class IntellijIdeaTrigramTest {
 
     private val searchApi: SearchApi = TrigramSearchApi()
 
-    /*doesn't finish in 12 minutes. how long in fact I don't know
-    * */
     fun justIndex() {
         val folder = commonPath
         val startTime = LocalDateTime.now()
         println(startTime)
         searchApi.syncPerformIndexWithLogging(folder)
     }
+
+    fun justIndexWithCancel() {
+        val folder = commonPath
+        val startTime = LocalDateTime.now()
+        println(startTime)
+        searchApi.syncPerformIndexWithLoggingAndCancel(folderPathString = folder, cancelAtProgress = 0.1)
+    }
+
 
     fun indexWithSearchOneToken() {
         val token = "class"
