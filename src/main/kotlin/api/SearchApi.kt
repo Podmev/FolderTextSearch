@@ -20,4 +20,21 @@ interface SearchApi {
         token: String,
         settings: SearchSettings = defaultSearchSettings
     ): SearchingState
+
+    /*Checks if exists already index for folder
+    * On fresh start should be false
+    * After successful indexing at folder, it should be true normally
+    * */
+    fun hasIndexAtFolder(folderPath: Path): Boolean
+
+    /*Removes index at folder
+    * */
+    fun removeIndexAtFolder(folderPath: Path): Boolean
+
+    /*Removes full index. If there is index for several folders, they all will be removed
+    * */
+    fun removeFullIndex()
+
+    /*Returns all folders, where index is calculated*/
+    fun getAllIndexedFolders(): List<Path>
 }

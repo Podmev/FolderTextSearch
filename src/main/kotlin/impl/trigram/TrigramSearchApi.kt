@@ -43,7 +43,7 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         val indexingState = TrigramIndexingState(completableFuture)
         deferred = GlobalScope.async { asyncIndexing(folderPath, completableFuture, indexingState) }
         //TODO optimize canceling logic
-        fun cancelIndexing(){
+        fun cancelIndexing() {
             completableFuture.cancel(true)
             deferred.cancel()
         }
@@ -236,6 +236,18 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         completableFuture.complete(tokenMatches)
         return TrigramSearchingState(completableFuture)
     }
+
+    /*Checks if there is index for folder in inner structure*/
+    override fun hasIndexAtFolder(folderPath: Path): Boolean = trigramMapByFolder.contains(folderPath)
+
+    /*Removes index at folder in inner structure*/
+    override fun removeIndexAtFolder(folderPath: Path): Boolean = trigramMapByFolder.remove(folderPath) != null
+
+    /*Removes full index by clearing inner structure*/
+    override fun removeFullIndex() = trigramMapByFolder.clear()
+
+    /*Takes folders with index from inner structure*/
+    override fun getAllIndexedFolders(): List<Path> = trigramMapByFolder.keys.toList()
 
     /*Gets or recalculate trigram map*/
     private fun getTrigramMapOrCalculate(folderPath: Path): TrigramMap {

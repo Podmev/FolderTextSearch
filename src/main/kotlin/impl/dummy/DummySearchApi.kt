@@ -33,6 +33,18 @@ class DummySearchApi : SearchApi, WithLogging() {
         return DummySearchingState(completableFuture)
     }
 
+    /*This implementation never has index at any folder. So it is false.*/
+    override fun hasIndexAtFolder(folderPath: Path): Boolean = false
+
+    /*Cannot remove index at folder in this implementation.*/
+    override fun removeIndexAtFolder(folderPath: Path): Boolean = false
+
+    /*Nothing to remove in this implementation.*/
+    override fun removeFullIndex() { }
+
+    /*This implementation never has index at any folder. So it is empty list.*/
+    override fun getAllIndexedFolders(): List<Path> = emptyList()
+
     private fun validateToken(token: String) {
         if (token.length < 3) {
             throw IllegalArgumentSearchException("Token is too small, it has length less than 3 characters.")
