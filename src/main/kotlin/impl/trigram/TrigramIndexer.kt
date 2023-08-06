@@ -16,6 +16,7 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.stream.Stream
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.io.path.isRegularFile
 import kotlin.io.path.useLines
 import kotlin.streams.asSequence
@@ -60,7 +61,13 @@ internal class TrigramIndexer : WithLogging() {
             val resultPathList = resultPathQueue.toList()
             future.complete(resultPathList)
             LOG.finest("finished for folder: $folderPath, indexed ${resultPathList.size} files")
+        } catch (ex: CancellationException) {
+            //TODO check if it is correct behaviour
+            future.complete(emptyList())
+            throw ex // Must let the CancellationException propagate
         } catch (th: Throwable) {
+            //TODO check if it is correct behaviour
+            future.complete(emptyList())
             LOG.severe("exception during making index: ${th.message}")
             th.printStackTrace()
         }
@@ -146,6 +153,8 @@ internal class TrigramIndexer : WithLogging() {
                     }
             }
             LOG.finest("finished for path: $path")
+        } catch (ex: CancellationException) {
+            throw ex // Must let the CancellationException propagate
         } catch (th: Throwable) {
             LOG.severe("exception during constructing index for file ${path}: ${th.message}")
             th.printStackTrace()

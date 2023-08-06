@@ -36,9 +36,7 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         deferred = GlobalScope.async {
             indexer.asyncIndexing(folderPath, completableFuture, indexingState, trigramMapByFolder)
         }
-        //TODO optimize canceling logic
         fun cancelIndexing() {
-            completableFuture.cancel(true)
             deferred.cancel(CancellationException())
         }
         indexingState.addCancelationAction(::cancelIndexing)

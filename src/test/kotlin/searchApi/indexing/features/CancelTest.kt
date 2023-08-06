@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import searchApi.common.commonSetup
 import java.nio.file.Path
-import kotlin.test.Ignore
 
 /*TODO make tests
 * - no progress increasing shortly after cancel
@@ -30,7 +29,6 @@ class CancelTest {
     * Code shouldn't throw any exception, it should be saved no index
     * */
     @Test
-    @Ignore("Doesn't work. Cancel logic should be fixed")
     fun curProjectIndexingAndCancelDuringIndexTest() {
         val searchApi = searchApiGenerator()
         val folder = commonPath
