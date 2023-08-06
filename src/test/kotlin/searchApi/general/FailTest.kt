@@ -3,7 +3,7 @@ package searchApi.general
 import api.SearchApi
 import api.exception.IllegalArgumentSearchException
 import api.exception.NotDirSearchException
-import common.commonSetup
+import searchApi.common.commonSetup
 import api.tools.syncSearchTokenAfterIndex
 import impl.indexless.IndexlessSearchApi
 import org.junit.jupiter.params.ParameterizedTest

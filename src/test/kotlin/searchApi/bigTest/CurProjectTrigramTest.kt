@@ -3,7 +3,7 @@ package searchApi.bigTest
 import api.SearchApi
 import api.tools.syncPerformIndexWithLogging
 import api.tools.syncSearchToken
-import common.commonSetup
+import searchApi.common.commonSetup
 import impl.trigram.TrigramSearchApi
 import utils.prettyDiffTime
 import java.nio.file.Path

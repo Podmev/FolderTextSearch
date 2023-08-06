@@ -2,8 +2,8 @@ package searchApi.general
 
 import api.SearchApi
 import api.TokenMatch
-import common.assertEqualsTokenMatches
-import common.commonSetup
+import searchApi.common.assertEqualsTokenMatches
+import searchApi.common.commonSetup
 import api.tools.syncSearchTokenAfterIndex
 import impl.indexless.IndexlessSearchApi
 import org.junit.jupiter.params.ParameterizedTest

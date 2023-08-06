@@ -1,4 +1,4 @@
-package common
+package searchApi.common
 
 import api.TokenMatch
 import org.junit.jupiter.api.Assertions

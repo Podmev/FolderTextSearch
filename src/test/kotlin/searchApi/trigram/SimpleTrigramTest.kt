@@ -1,9 +1,9 @@
 package searchApi.trigram
 
 import api.TokenMatch
-import common.assertEqualsTokenMatches
-import common.assertEqualsTrigramMap
-import common.commonSetup
+import searchApi.common.assertEqualsTokenMatches
+import searchApi.common.assertEqualsTrigramMap
+import searchApi.common.commonSetup
 import api.tools.syncSearchTokenAfterIndex
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
