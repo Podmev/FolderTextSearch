@@ -22,4 +22,6 @@ interface SearchingState {
     * Otherwise, buffer will grow till the end, and it will be equals result.
     * */
     fun getBufferPartResult(flush: Boolean): List<TokenMatch>
+
+    //TODO add inner index state for cases when we don't have index
 }

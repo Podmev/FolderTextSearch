@@ -18,9 +18,31 @@ interface IndexingState {
      It can be useful, if it takes long time*/
     fun cancel()
 
-    /*Get the newfound portion of file paths analyzed after previous call.
+    /*Get the newfound portion of file paths visited after previous call.
     * You can set flush true, if you don't want to save current buffer value for next time.
     * Otherwise, buffer will grow till the end, and it will be equals result.
     * */
-    fun getBufferPartResult(flush: Boolean): List<Path>
+    fun getVisitedPathsBuffer(flush: Boolean): List<Path>
+
+    /*Get the newfound portion of file paths analyzed (indexed) after previous call.
+    * You can set flush true, if you don't want to save current buffer value for next time.
+    * Otherwise, buffer will grow till the end, and it will be equals result.
+    * */
+    fun getIndexedPathsBuffer(flush: Boolean): List<Path>
+
+    /*Number of visited files during indexing.
+    * Value updates all the time. After successful finishing should be equal totalFiles
+    * */
+    val visitedFilesNumber: Long
+
+    /*Number of indexed files during indexing.
+    * Value updates all the time. After successful finishing should be equal totalFiles
+    * */
+    val indexedFilesNumber: Long
+
+    /*Total number of files in folder.
+    * Value updates once after finishing walking all files.
+    * At first, it is null.
+    * */
+    val totalFilesNumber: Long?
 }

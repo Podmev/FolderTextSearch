@@ -3,7 +3,6 @@ package impl.trigram
 import kotlinx.coroutines.channels.Channel
 import java.nio.file.Path
 import java.util.*
-import java.util.concurrent.atomic.AtomicLong
 
 class TrigramIndexingContext(
     val folderPath: Path,
@@ -11,9 +10,6 @@ class TrigramIndexingContext(
     val resultPathQueue: Queue<Path>,
     val trigramMap: TrigramMap
 ) {
-
-    val visitedFilesNumber = AtomicLong(0L)
-    val indexedFilesNumber = AtomicLong(0L)
 
     /*Unlimited capacity is used to achieve different independent speed of indexing parts: walking files, parsing files, saving triplets*/
     private val channelCapacity = Channel.UNLIMITED

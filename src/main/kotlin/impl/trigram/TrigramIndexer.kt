@@ -90,7 +90,7 @@ internal class TrigramIndexer : WithLogging() {
                 .asFlow().onEach { path ->
                     LOG.finest("visiting file by path $path")
                     indexingContext.visitedPathChannel.send(path)
-                    val visitedFilesNumber = indexingContext.visitedFilesNumber.incrementAndGet()
+                    val visitedFilesNumber = indexingContext.indexingState.addVisitedPathToBuffer(path)
                     LOG.finest("successfully visited $visitedFilesNumber")
                 }.collect { }
         }
@@ -98,7 +98,7 @@ internal class TrigramIndexer : WithLogging() {
         indexingContext.visitedPathChannel.close()
         LOG.finest("closed visitedPathChannel")
 
-        val totalFilesNumber = indexingContext.visitedFilesNumber.get()
+        val totalFilesNumber = indexingContext.indexingState.visitedFilesNumber
         val setupSuccessful = indexingContext.indexingState.setTotalFilesNumber(totalFilesNumber)
         LOG.finest("setup totalFilesNumber (successfully: $setupSuccessful) in indexing state: $totalFilesNumber")
 
@@ -121,8 +121,6 @@ internal class TrigramIndexer : WithLogging() {
             indexingContext.indexedPathChannel.trySendBlocking(path)
                 .onSuccess { LOG.finest("send successfully path $path to indexedPathChannel") }
                 .onFailure { t: Throwable? -> LOG.severe("Cannot send path in indexedPathChannel: ${t?.message}") }
-            val indexedFilesNumber = indexingContext.indexedFilesNumber.incrementAndGet()
-            LOG.finest("successfully visited $indexedFilesNumber")
         }
         indexingContext.indexedPathChannel.close()
         LOG.finest("closed indexedPathChannel")
@@ -182,8 +180,9 @@ internal class TrigramIndexer : WithLogging() {
         LOG.finest("started")
         for (path in indexingContext.indexedPathChannel) {
             LOG.finest("received indexed path and saving to state: $path")
-            indexingContext.indexingState.addPathToBuffer(path)
+            val indexedFilesNumber = indexingContext.indexingState.addIndexedPathToBuffer(path)
             indexingContext.resultPathQueue.add(path)
+            LOG.finest("successfully indexed $indexedFilesNumber files")
         }
         LOG.finest("finished")
     }

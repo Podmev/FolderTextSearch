@@ -46,14 +46,33 @@ fun SearchApi.syncPerformIndexWithLogging(folderPath: Path) {
 }
 
 fun printStepLog(indexingState: IndexingState, millis: Long) {
+    val visitedFilesNumber = indexingState.visitedFilesNumber
+    val indexedFilesNumber = indexingState.indexedFilesNumber
+    val totalFilesNumber = indexingState.totalFilesNumber
+    val totalMessage: String = if (totalFilesNumber != null) "$totalFilesNumber" else ">=${visitedFilesNumber}"
+
     val progressPercents = indexingState.progress * 100.0
-    val indexedFilesBuffer = indexingState.getBufferPartResult(true)
-    val lastPath = indexedFilesBuffer.lastOrNull()
-    val lastFileMessage: String = if (lastPath != null) ", last file: $lastPath" else ""
+
+    val visitedFilesBuffer = indexingState.getVisitedPathsBuffer(true)
+    val lastVisitedPath = visitedFilesBuffer.lastOrNull()
+    val lastVisitedFileMessage: String = if (lastVisitedPath != null) " last visited file: $lastVisitedPath" else ""
+
+    val indexedFilesBuffer = indexingState.getIndexedPathsBuffer(true)
+    val lastIndexedPath = indexedFilesBuffer.lastOrNull()
+    val lastIndexedFileMessage: String = if (lastIndexedPath != null) " last indexed file: $lastIndexedPath" else ""
+
+    val messageEnding =
+        if(lastVisitedFileMessage.isNotEmpty() && lastIndexedFileMessage.isNotEmpty()) ",$lastVisitedFileMessage,$lastIndexedFileMessage"
+        else if(lastVisitedFileMessage.isNotEmpty()) ",$lastVisitedFileMessage"
+        else if(lastIndexedFileMessage.isNotEmpty()) ",$lastIndexedFileMessage"
+        else ""
+
     println(
-        "indexing folder ${progressPercents.format(2)} %, " +
+        "indexing folder (visited ${visitedFilesNumber}, indexed ${indexedFilesNumber}, total: $totalMessage) " +
+                "${progressPercents.format(2)} %, " +
                 "passed time:${prettyMillis(millis)}, " +
-                "indexed more ${indexedFilesBuffer.size} files$lastFileMessage"
+                "visited more ${visitedFilesBuffer.size} files, " +
+                "indexed more ${indexedFilesBuffer.size} files" + messageEnding
     )
 }
 

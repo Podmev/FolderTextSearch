@@ -16,12 +16,21 @@ import java.util.concurrent.atomic.AtomicReference
 *  - progress
 * */
 class TrigramIndexingState(override val result: Future<List<Path>>) : IndexingState, WithLogging() {
+    private val visitedFilesNumberRef = AtomicLong(ON_START_VISITED_FILES_NUMBER)
     private val indexedFilesNumberRef = AtomicLong(ON_START_INDEXED_FILES_NUMBER)
     private val totalFilesNumberRef = AtomicLong(NOT_SET_TOTAL_FILES_NUMBER)
     private val totalFilesNumberUpdatedRef = AtomicBoolean(false)
 
-    private val pathBufferRef = AtomicReference(ArrayList<Path>())
-    private val cancelationActionRef = AtomicReference<()->Unit>(/* no-op */)
+    private val visitedPathsBufferRef = AtomicReference(ArrayList<Path>())
+    private val indexedPathsBufferRef = AtomicReference(ArrayList<Path>())
+    private val cancelationActionRef = AtomicReference<() -> Unit>(/* no-op */)
+
+    override val visitedFilesNumber: Long
+        get() = visitedFilesNumberRef.get()
+    override val indexedFilesNumber: Long
+        get() = indexedFilesNumberRef.get()
+    override val totalFilesNumber: Long?
+        get() = if (totalFilesNumberUpdatedRef.get()) totalFilesNumberRef.get() else null
 
     /*Shows indexing is finished of now, takes value from result future.*/
     override val finished: Boolean
@@ -56,33 +65,64 @@ class TrigramIndexingState(override val result: Future<List<Path>>) : IndexingSt
         cancelationActionRef.get()()
     }
 
-    /*Gets current buffer with part of result: indexed files.
+    /*Gets current buffer with part of visited files.
     * If flush = true, it returns entire buffer (copied) and set current buffer empty.
     * Else it just returns copy of buffer
     * */
-    override fun getBufferPartResult(flush: Boolean): List<Path> {
-        synchronized(pathBufferRef) {
+    override fun getVisitedPathsBuffer(flush: Boolean): List<Path> {
+        synchronized(visitedPathsBufferRef) {
             if (!flush) {
                 //Old values we don't erase
                 //making copy of list
-                return ArrayList(pathBufferRef.get())
+                return ArrayList(visitedPathsBufferRef.get())
             }
             //Need to erase old values
-            val currentBuffer = pathBufferRef.getAndSet(ArrayList())
+            val currentBuffer = visitedPathsBufferRef.getAndSet(ArrayList())
             //TODO better to make copy, but it can work probably without copying
             return ArrayList(currentBuffer)
         }
     }
 
-    /*Adds path to current result buffer: indexed files
-    * Slight inconsistance of indexedFilesNumberRef and pathBufferRef, but it not critical
+    /*Gets current buffer with part of result: indexed files.
+    * If flush = true, it returns entire buffer (copied) and set current buffer empty.
+    * Else it just returns copy of buffer
     * */
-    fun addPathToBuffer(path: Path) {
+    override fun getIndexedPathsBuffer(flush: Boolean): List<Path> {
+        synchronized(indexedPathsBufferRef) {
+            if (!flush) {
+                //Old values we don't erase
+                //making copy of list
+                return ArrayList(indexedPathsBufferRef.get())
+            }
+            //Need to erase old values
+            val currentBuffer = indexedPathsBufferRef.getAndSet(ArrayList())
+            //TODO better to make copy, but it can work probably without copying
+            return ArrayList(currentBuffer)
+        }
+    }
+
+    /*Adds path to current visited files buffer
+    * Slight inconsistance of visitedFilesNumberRef and visitedPathsBufferRef, but it not critical
+    * */
+    fun addVisitedPathToBuffer(path: Path): Long {
+        val visitedFileNumber = visitedFilesNumberRef.incrementAndGet()
+        LOG.finest("add path $path, visitedFileNumber:$visitedFileNumber")
+        synchronized(visitedPathsBufferRef) {
+            visitedPathsBufferRef.get().add(path)
+        }
+        return visitedFileNumber
+    }
+
+    /*Adds path to current result buffer: indexed files
+    * Slight inconsistance of indexedFilesNumberRef and indexedPathsBufferRef, but it not critical
+    * */
+    fun addIndexedPathToBuffer(path: Path): Long{
         val indexedFileNumber = indexedFilesNumberRef.incrementAndGet()
         LOG.finest("add path $path, indexedFileNumber:$indexedFileNumber, total:${totalFilesNumberRef.get()}")
-        synchronized(pathBufferRef) {
-            pathBufferRef.get().add(path)
+        synchronized(indexedPathsBufferRef) {
+            indexedPathsBufferRef.get().add(path)
         }
+        return indexedFileNumber
     }
 
     /*Sets totalFilesNumber maximum single time for live time of TrigramIndexingState.
@@ -98,7 +138,7 @@ class TrigramIndexingState(override val result: Future<List<Path>>) : IndexingSt
         return changed
     }
 
-    fun addCancelationAction(action: ()->Unit){
+    fun addCancelationAction(action: () -> Unit) {
         cancelationActionRef.set(action)
     }
 
@@ -108,5 +148,6 @@ class TrigramIndexingState(override val result: Future<List<Path>>) : IndexingSt
         private const val JUST_STARTED_PROGRESS = 0.0
         private const val NOT_SET_TOTAL_FILES_NUMBER = -1L
         private const val ON_START_INDEXED_FILES_NUMBER = 0L
+        private const val ON_START_VISITED_FILES_NUMBER = 0L
     }
 }
