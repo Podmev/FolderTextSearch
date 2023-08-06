@@ -4,6 +4,7 @@ import api.*
 import api.exception.IllegalArgumentSearchException
 import api.exception.NotDirSearchException
 import utils.WithLogging
+import utils.indicesOf
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.concurrent.CompletableFuture
@@ -86,9 +87,4 @@ class IndexlessSearchApi : SearchApi, WithLogging() {
     companion object {
         private val forbiddenCharsInToken: List<Char> = listOf('\n', '\r')
     }
-}
-
-fun String.indicesOf(token: String, ignoreCase: Boolean = false): Sequence<Int> {
-    fun next(startOffset: Int) = this.indexOf(token, startOffset, ignoreCase).takeIf { it != -1 }
-    return generateSequence(next(0)) { prevIndex -> next(prevIndex + 1) }
 }

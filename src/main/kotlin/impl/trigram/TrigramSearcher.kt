@@ -2,6 +2,7 @@ package impl.trigram
 
 import api.TokenMatch
 import utils.WithLogging
+import utils.indicesOf
 import java.nio.file.Path
 import kotlin.io.path.isRegularFile
 import kotlin.io.path.useLines
@@ -59,10 +60,4 @@ class TrigramSearcher : WithLogging() {
         val positionsInLine = line.indicesOf(token)
         return positionsInLine.map { TokenMatch(filePath, lineIndex.toLong() + 1, it.toLong() + 1) }.toList()
     }
-}
-
-/*Finds all indices of starts of token in line.*/
-fun String.indicesOf(token: String, ignoreCase: Boolean = false): Sequence<Int> {
-    fun next(startOffset: Int) = this.indexOf(token, startOffset, ignoreCase).takeIf { it != -1 }
-    return generateSequence(next(0)) { prevIndex -> next(prevIndex + 1) }
 }
