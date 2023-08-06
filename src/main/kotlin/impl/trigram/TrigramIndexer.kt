@@ -79,32 +79,28 @@ internal class TrigramIndexer : WithLogging() {
     private suspend fun asyncWalkingFiles(
         indexingContext: TrigramIndexingContext
     ) = coroutineScope {
+
         LOG.finest("started for folder: ${indexingContext.folderPath}")
 
-        //TODO try to use stream
-        val filePaths: List<Path> = withContext(Dispatchers.IO) {
+        withContext(Dispatchers.IO) {
             Files.walk(indexingContext.folderPath)
         }.use { it: Stream<Path> ->
             it.asSequence()
                 .filter { path -> path.isRegularFile() }
-                //.map { path -> path.apply { println(path) } }
-                .toList()
+                .asFlow().onEach { path ->
+                    LOG.finest("visiting file by path $path")
+                    indexingContext.visitedPathChannel.send(path)
+                    val visitedFilesNumber = indexingContext.visitedFilesNumber.incrementAndGet()
+                    LOG.finest("successfully visited $visitedFilesNumber")
+                }.collect { }
         }
-        val pathsNumber = filePaths.size
-        LOG.finest("created filePaths: $pathsNumber")
-        val totalFilesNumber = pathsNumber.toLong()
-        val setupSuccessful = indexingContext.indexingState.setTotalFilesNumber(totalFilesNumber)
-        LOG.finest("setup totalFilesNumber (successfully: $setupSuccessful) in indexing state: $totalFilesNumber")
-
-        filePaths.asFlow().onEach { path ->
-            LOG.finest("visiting file by path $path")
-            indexingContext.visitedPathChannel.send(path)
-            val visitedFilesNumber = indexingContext.visitedFilesNumber.incrementAndGet()
-            LOG.finest("successfully visited $visitedFilesNumber")
-        }.collect { }
 
         indexingContext.visitedPathChannel.close()
         LOG.finest("closed visitedPathChannel")
+
+        val totalFilesNumber = indexingContext.visitedFilesNumber.get()
+        val setupSuccessful = indexingContext.indexingState.setTotalFilesNumber(totalFilesNumber)
+        LOG.finest("setup totalFilesNumber (successfully: $setupSuccessful) in indexing state: $totalFilesNumber")
 
         LOG.finest("finished for folder: ${indexingContext.folderPath}")
     }

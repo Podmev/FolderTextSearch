@@ -20,12 +20,14 @@ fun SearchApi.syncPerformIndexWithLoggingAndCancel(folderPathString: Path, cance
         async {
             var lastLogged = startTime
             println("started indexing folder $folderPathString at $startTime")
+            var setCancelled = false
             while (!indexingState.finished) {
                 delay(50)
                 val progress = indexingState.progress
-                if(progress >=cancelAtProgress){
+                if (!setCancelled && progress >= cancelAtProgress) {
                     indexingState.cancel()
-                    println("cancel at progress $progress (>${cancelAtProgress})")
+                    setCancelled = true
+                    println("cancel at progress $progress (>=${cancelAtProgress})")
                 }
                 val curTime = LocalDateTime.now()
                 val millis = diffTime(startTime, curTime)
@@ -42,8 +44,10 @@ fun SearchApi.syncPerformIndexWithLoggingAndCancel(folderPathString: Path, cance
         }
     }
     val paths = indexingState.result.get()!!
-    println("indexing folder \"$folderPathString\" is finished with ${paths.size} paths " +
-            "with total time: ${prettyDiffTimeFrom(startTime)}")
+    println(
+        "indexing folder \"$folderPathString\" is finished with ${paths.size} paths " +
+                "with total time: ${prettyDiffTimeFrom(startTime)}"
+    )
     assert(indexingState.finished)
 }
 

@@ -25,6 +25,23 @@ class CancelTest {
     /*using not by interface, because we use methods exactly from TrigramSearchApi*/
     private val searchApiGenerator: () -> TrigramSearchApi = { TrigramSearchApi() }
 
+    /*Cancel at the start indexing.
+    * Code shouldn't throw any exception, it should be saved no index
+    * */
+    @Test
+    fun curProjectIndexingAndCancelAtStartIndexingTest() {
+        val searchApi = searchApiGenerator()
+        val folder = commonPath
+        val indexingState: IndexingState = searchApi.createIndexAtFolder(folder)
+        asyncCancelAtProgress(
+            indexingState = indexingState,
+            cancelAtProgress = 0.0,
+            checkProgressEveryMillis = 1
+        )
+        indexingState.result.get()!!
+        Assertions.assertTrue(searchApi.emptyIndex())
+    }
+
     /*Cancel during indexing.
     * Code shouldn't throw any exception, it should be saved no index
     * */
@@ -58,12 +75,12 @@ class CancelTest {
     fun asyncCancelAtProgress(indexingState: IndexingState, cancelAtProgress: Double, checkProgressEveryMillis: Long) {
         GlobalScope.async {
             while (!indexingState.finished) {
-                delay(checkProgressEveryMillis)
                 val progress = indexingState.progress
                 if (progress >= cancelAtProgress) {
                     indexingState.cancel()
                     break
                 }
+                delay(checkProgressEveryMillis)
             }
         }
     }

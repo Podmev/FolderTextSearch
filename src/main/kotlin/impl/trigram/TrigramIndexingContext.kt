@@ -15,8 +15,10 @@ class TrigramIndexingContext(
     val visitedFilesNumber = AtomicLong(0L)
     val indexedFilesNumber = AtomicLong(0L)
 
-    val visitedPathChannel = Channel<Path>()
-    val indexedPathChannel = Channel<Path>()
-    val tripletInPathChannel = Channel<Pair<String, Path>>()
+    /*Unlimited capacity is used to achieve different independent speed of indexing parts: walking files, parsing files, saving triplets*/
+    private val channelCapacity = Channel.UNLIMITED
+    val visitedPathChannel = Channel<Path>(channelCapacity)
+    val indexedPathChannel = Channel<Path>(channelCapacity)
+    val tripletInPathChannel = Channel<Pair<String, Path>>(channelCapacity)
 
 }
