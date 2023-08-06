@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 
 /*Searching in current project in source files*/
 class CurProjectTrigramTest {
-    /*source code of intellij idea*/
+    /*source code of current project*/
     private val commonPath: Path = commonSetup.srcFolder
 
     private val searchApi: SearchApi = TrigramSearchApi()

@@ -4,10 +4,7 @@ import api.*
 import api.exception.IllegalArgumentSearchException
 import api.exception.NotDirSearchException
 import api.tools.syncPerformIndex
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
+import kotlinx.coroutines.*
 import utils.WithLogging
 import java.nio.file.Path
 import java.util.concurrent.CompletableFuture
@@ -42,7 +39,7 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         //TODO optimize canceling logic
         fun cancelIndexing() {
             completableFuture.cancel(true)
-            deferred.cancel()
+            deferred.cancel(CancellationException())
         }
         indexingState.addCancelationAction(::cancelIndexing)
         return indexingState

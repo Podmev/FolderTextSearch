@@ -16,13 +16,13 @@ import java.time.LocalDateTime
 /*Util function to calculate index for folder with detailed logging, then after it is done returns
 * Used in tests
 * */
-fun SearchApi.syncPerformIndexWithLogging(folderPathString: Path) {
+fun SearchApi.syncPerformIndexWithLogging(folderPath: Path) {
     val startTime = LocalDateTime.now()
-    val indexingState = createIndexAtFolder(folderPathString)
+    val indexingState = createIndexAtFolder(folderPath)
     runBlocking {
         async {
             var lastLogged = startTime
-            println("started indexing folder $folderPathString at $startTime")
+            println("started indexing folder $folderPath at $startTime")
             while (!indexingState.finished) {
                 delay(50)
                 val curTime = LocalDateTime.now()
@@ -40,7 +40,7 @@ fun SearchApi.syncPerformIndexWithLogging(folderPathString: Path) {
         }
     }
     val paths = indexingState.result.get()!!
-    println("indexing folder \"$folderPathString\" is finished with ${paths.size} paths " +
+    println("indexing folder \"$folderPath\" is finished with ${paths.size} paths " +
             "with total time: ${prettyDiffTimeFrom(startTime)}")
     assert(indexingState.finished)
 }

@@ -39,3 +39,6 @@ interface SearchApi {
     /*Returns all folders, where index is calculated*/
     fun getAllIndexedFolders(): List<Path>
 }
+
+/*No index in Search at the moment*/
+fun SearchApi.emptyIndex() = getAllIndexedFolders().isEmpty()

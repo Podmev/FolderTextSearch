@@ -45,13 +45,15 @@ internal class TrigramIndexer : WithLogging() {
             coroutineScope {
                 if (foundTrigramMap == null) {
                     val trigramMap = TrigramMap()
-                    trigramMapByFolder[folderPath] = trigramMap
                     LOG.finest("created new trigramMap for folder $folderPath")
                     val indexingContext = TrigramIndexingContext(folderPath, indexingState, resultPathQueue, trigramMap)
-                    launch { asyncWalkingFiles(indexingContext) }
-                    launch { asyncIndexingFiles(indexingContext) }
-                    launch { asyncReadingIndexedPathChannel(indexingContext) }
-                    launch { asyncReadingTripletInPathChannel(indexingContext) }
+                    coroutineScope {
+                        launch { asyncWalkingFiles(indexingContext) }
+                        launch { asyncIndexingFiles(indexingContext) }
+                        launch { asyncReadingIndexedPathChannel(indexingContext) }
+                        launch { asyncReadingTripletInPathChannel(indexingContext) }
+                    }
+                    trigramMapByFolder[folderPath] = trigramMap
                 }
             }
             //here we wait all coroutines to finish
