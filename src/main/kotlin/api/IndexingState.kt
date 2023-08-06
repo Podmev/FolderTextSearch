@@ -3,6 +3,7 @@ package api
 import java.nio.file.Path
 import java.util.concurrent.Future
 
+//TODO add millis from start
 interface IndexingState {
     /*Shows if search finished*/
     val finished: Boolean
