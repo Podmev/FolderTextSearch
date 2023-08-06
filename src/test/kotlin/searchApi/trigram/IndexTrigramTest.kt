@@ -7,16 +7,19 @@ import org.junit.jupiter.api.Test
 import impl.trigram.TrigramSearchApi
 import java.nio.file.Path
 
-/*Checking creating index for TrigramSearchApi*/
+/*Checking creating index for TrigramSearchApi
+* Using generator for SearchApi to have fresh state in SearchApi
+* */
 class IndexTrigramTest {
     private val commonPath: Path = commonSetup.commonPath
 
     /*using not by interface, because we use methods exactly from TrigramSearchApi*/
-    private val searchApi: TrigramSearchApi = TrigramSearchApi()
+    private val searchApiGenerator: ()->TrigramSearchApi = {TrigramSearchApi()}
 
     /*Folder with single file with single line*/
     @Test
     fun singleFileTest() {
+        val searchApi = searchApiGenerator()
         val folderName = "singleFile"
         val folder = commonPath.resolve(folderName)
         searchApi.syncPerformIndex(folder)
@@ -35,6 +38,7 @@ class IndexTrigramTest {
     /*Folder with file and inner folder with file. Both files have single line, which contains token 1 time*/
     @Test
     fun fileAndFolderWithFileTest() {
+        val searchApi = searchApiGenerator()
         val folderName = "fileAndFolderWithFile"
         val folder = commonPath.resolve(folderName)
         searchApi.syncPerformIndex(folder)
@@ -53,6 +57,7 @@ class IndexTrigramTest {
     /*Folder with single file with 3 lines, there are repeats of same tokens in one file*/
     @Test
     fun fileWithMatchesOnDifferentLinesTest() {
+        val searchApi = searchApiGenerator()
         val folderName = "fileWithMatchesOnDifferentLines"
         val folder = commonPath.resolve(folderName)
         searchApi.syncPerformIndex(folder)
@@ -81,6 +86,7 @@ class IndexTrigramTest {
     /*Folder with 2 files*/
     @Test
     fun twoFilesOneMatchTest() {
+        val searchApi = searchApiGenerator()
         val folderName = "twoFilesOneMatch"
         val folder = commonPath.resolve(folderName)
         searchApi.syncPerformIndex(folder)
@@ -111,6 +117,7 @@ class IndexTrigramTest {
     /*Folder with sequence of 10 inner folder with single file*/
     @Test
     fun deepFileTest() {
+        val searchApi = searchApiGenerator()
         val folderName = "deepFile"
         val folder = commonPath.resolve(folderName)
         val innerPath = folder
@@ -145,6 +152,7 @@ class IndexTrigramTest {
     /*Folder with 10 files*/
     @Test
     fun tenFilesAndHasMatchTest() {
+        val searchApi = searchApiGenerator()
         val folderName = "tenFiles"
         val folder = commonPath.resolve(folderName)
         searchApi.syncPerformIndex(folder)

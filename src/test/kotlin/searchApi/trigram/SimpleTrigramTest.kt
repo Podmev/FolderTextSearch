@@ -9,17 +9,20 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 import impl.trigram.TrigramSearchApi
 import java.nio.file.Path
-
+/*Smoke test for TrigramSearchApi
+* Using generator for SearchApi to have fresh state in SearchApi
+* */
 class SimpleTrigramTest {
     private val commonPath: Path = commonSetup.commonPath
 
     /*using not by interface, because we use methods exactly from TrigramSearchApi*/
-    private val searchApi: TrigramSearchApi = TrigramSearchApi()
+    private val searchApiGenerator: ()->TrigramSearchApi ={TrigramSearchApi()}
 
     //TODO separate test in two
     /*Folder with 10 files, only 3 of them have match*/
     @Test
     fun tenFilesAndHasMatchTest() {
+        val searchApi = searchApiGenerator()
         val folderName = "tenFiles"
         val token = "fgh"
         val folder = commonPath.resolve(folderName)
