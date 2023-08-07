@@ -20,7 +20,9 @@ import java.util.concurrent.ConcurrentHashMap
 //TODO make more tests
 //TODO make tests decomposition
 
-/* Checks correctness of progress of indexing in SearchApi
+/* Checks correctness of progress, visitedPathsBuffer, indexedPathsBuffer,
+* totalFilesNumber, visitedFilesNumber, indexedFilesNumber in indexing for SearchApi
+*
 * */
 class ProgressTest {
 
@@ -31,7 +33,6 @@ class ProgressTest {
     private val searchApiGenerator: () -> TrigramSearchApi = { TrigramSearchApi() }
 
     /*Comparing snapshots for indexing state at different progresses
-    *
     * */
     @Test
     fun curProjectIndexingSequencialSnapshotsTest() {
@@ -47,7 +48,7 @@ class ProgressTest {
             )
         val resultPaths: List<Path> = state.result.get()!!
         val finishedSnapshot = state.toSnapshot()
-        //indexingStateSnapshotMap.forEach{println(it)}
+
         val snapshotListsByProgress: List<Pair<Double, IndexingStateSnapshot>> =
             indexingStateSnapshotMap.toSortedMap().toList()
         val snapshotList: List<IndexingStateSnapshot> = snapshotListsByProgress.map { it.second }
@@ -63,12 +64,17 @@ class ProgressTest {
         assertAll("progress checks", *allChecks.toTypedArray())
     }
 
+    /*General checks by map of snapshots by progress
+    * */
     private fun getChecksByMap(indexingStateSnapshotMap: Map<Double, IndexingStateSnapshot>): List<() -> Unit> =
         buildList<() -> Unit> {
             add { -> Assertions.assertTrue(indexingStateSnapshotMap.size > 5, "received at least 5 snapshots") }
+            add { -> Assertions.assertTrue(indexingStateSnapshotMap.containsKey(1.0), "map should have snapshot at 1.0 progress") }
         }
 
-
+    /*Creates checks for all snapshots together.
+    * Sum of all buffers for visiting and indexing should be the same as result paths
+    * */
     private fun getAccumulatingChecks(
         snapshotList: List<IndexingStateSnapshot>,
         resultPaths: List<Path>
@@ -85,7 +91,8 @@ class ProgressTest {
                 compareSets(resultPathsSet, aggregatedIndexedPathsSet, "resultPaths", "aggregatedIndexedPaths", "path")
     }
 
-
+    /*Creates independent checks for snapshots for different components
+     * */
     private fun getSingleChecks(snapshotList: List<IndexingStateSnapshot>): List<() -> Unit> =
         buildList<() -> Unit> {
             for (snapshot in snapshotList) {
@@ -153,6 +160,8 @@ class ProgressTest {
             }
         }
 
+    /*Creates checks for pairs of snapshots, which were created one after another
+    * */
     private fun getPairChecks(snapshotPairs: List<Pair<IndexingStateSnapshot, IndexingStateSnapshot>>): List<() -> Unit> =
         buildList<() -> Unit> {
             for ((snapshot1, snapshot2) in snapshotPairs) {
@@ -177,7 +186,13 @@ class ProgressTest {
             }
         }
 
-
+    /*Takes state snapshots at different time of indexing.
+    * Starts looking for moments between 'curLookingProgress'  and 'curLookingProgress' + progressStep.
+    * Starts always from 0.0.
+    * If it finds state between these values of progress, it takes snapshot and saves to map by progress value
+    * It returns map of snapshots taken at progress save as a key
+    * Additionally in the end it saves snapshot at 1.0, it wasn't saved before.
+    * */
     @OptIn(DelicateCoroutinesApi::class)
     fun getSnapshotsAtProgresses(
         indexingState: IndexingState,
@@ -198,7 +213,7 @@ class ProgressTest {
                 }
                 delay(checkProgressEveryMillis)
             }
-            if (!indexingStateSnapshotMap.contains(1.0)) {
+            if (!indexingStateSnapshotMap.containsKey(1.0)) {
                 indexingStateSnapshotMap[1.0] = indexingState.toSnapshot()
             }
         }
