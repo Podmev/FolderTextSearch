@@ -16,6 +16,8 @@ import kotlin.io.path.isDirectory
 class TrigramSearchApi : SearchApi, WithLogging() {
     //TODO fix structure class
     private val trigramMapByFolder: MutableMap<Path, TrigramMap> = mutableMapOf()
+    private val indexer = TrigramIndexer()
+    private val searcher = TrigramSearcher()
 
     /*Get index state. Using fo tests. It is not from interface*/
     fun getTrigramImmutableMap(folderPath: Path) =
@@ -29,11 +31,9 @@ class TrigramSearchApi : SearchApi, WithLogging() {
     override fun createIndexAtFolder(folderPath: Path): IndexingState {
         validatePath(folderPath) // TODO good question - should be thrown exception here or no?
         val completableFuture = CompletableFuture<List<Path>>()
-        val deferred: Deferred<Unit>
 
         val indexingState = TrigramIndexingState(completableFuture)
-        val indexer = TrigramIndexer()
-        deferred = GlobalScope.async {
+        val deferred = GlobalScope.async {
             indexer.asyncIndexing(folderPath, completableFuture, indexingState, trigramMapByFolder)
         }
         fun cancelIndexing() {
@@ -44,16 +44,23 @@ class TrigramSearchApi : SearchApi, WithLogging() {
     }
 
     /*Searches token in folder by using index in trigramMap, if there is no index, it performs it from the start.*/
+    @OptIn(DelicateCoroutinesApi::class)
     override fun searchString(folderPath: Path, token: String, settings: SearchSettings): SearchingState {
         LOG.finest("started")
         validateToken(token)
         validatePath(folderPath)
         val completableFuture = CompletableFuture<List<TokenMatch>>()
-        //TODO put in async code search
+        //FIXME - not asynchronous
         val trigramMap: TrigramMap = getTrigramMapOrCalculate(folderPath)
-        val searcher = TrigramSearcher()
-        val tokenMatches = searcher.searchForTokenMatches(folderPath, token, trigramMap)
-        completableFuture.complete(tokenMatches)
+
+        val searchingState = TrigramSearchingState(completableFuture)
+        val deferred = GlobalScope.async {
+            searcher.asyncSearching(folderPath, token, trigramMap, completableFuture, searchingState)
+        }
+        fun cancelIndexing() {
+            deferred.cancel(CancellationException())
+        }
+        searchingState.addCancelationAction(::cancelIndexing)
         return TrigramSearchingState(completableFuture)
     }
 

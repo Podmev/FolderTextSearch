@@ -4,6 +4,7 @@ import kotlinx.coroutines.channels.Channel
 import java.nio.file.Path
 import java.util.*
 
+/*context used in indexing with all necessary components*/
 class TrigramIndexingContext(
     val folderPath: Path,
     val indexingState: TrigramIndexingState,

@@ -79,7 +79,6 @@ internal class TrigramIndexer : WithLogging() {
     private suspend fun asyncWalkingFiles(
         indexingContext: TrigramIndexingContext
     ) = coroutineScope {
-
         LOG.finest("started for folder: ${indexingContext.folderPath}")
 
         withContext(Dispatchers.IO) {
