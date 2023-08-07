@@ -32,15 +32,15 @@ fun SearchApi.syncPerformIndexWithLoggingAndCancel(folderPathString: Path, cance
                 val curTime = LocalDateTime.now()
                 val millis = diffTime(startTime, curTime)
                 val millisFromLastLogging = diffTime(lastLogged, curTime)
-                val logStepMillis = getLogStepMillis(millis)
+                val logStepMillis = getIndexLogStepMillis(millis)
                 if (millisFromLastLogging > logStepMillis) {
-                    printStepLog(indexingState, millis)
+                    printIndexingStepLog(indexingState, millis)
                     lastLogged = curTime
                 }
             }
             val finishTime = LocalDateTime.now()
             val millis = diffTime(startTime, finishTime)
-            printStepLog(indexingState, millis)
+            printIndexingStepLog(indexingState, millis)
         }
     }
     val paths = indexingState.result.get()!!

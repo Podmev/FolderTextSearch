@@ -28,15 +28,15 @@ fun SearchApi.syncPerformIndexWithLogging(folderPath: Path) {
                 val curTime = LocalDateTime.now()
                 val millis = diffTime(startTime, curTime)
                 val millisFromLastLogging = diffTime(lastLogged, curTime)
-                val logStepMillis = getLogStepMillis(millis)
+                val logStepMillis = getIndexLogStepMillis(millis)
                 if (millisFromLastLogging > logStepMillis) {
-                    printStepLog(indexingState, millis)
+                    printIndexingStepLog(indexingState, millis)
                     lastLogged = curTime
                 }
             }
             val finishTime = LocalDateTime.now()
             val millis = diffTime(startTime, finishTime)
-            printStepLog(indexingState, millis)
+            printIndexingStepLog(indexingState, millis)
         }
     }
     val paths = indexingState.result.get()!!
@@ -45,7 +45,7 @@ fun SearchApi.syncPerformIndexWithLogging(folderPath: Path) {
     assert(indexingState.finished)
 }
 
-fun printStepLog(indexingState: IndexingState, millis: Long) {
+fun printIndexingStepLog(indexingState: IndexingState, millis: Long) {
     val visitedFilesNumber = indexingState.visitedFilesNumber
     val indexedFilesNumber = indexingState.indexedFilesNumber
     val totalFilesNumber = indexingState.totalFilesNumber
@@ -76,7 +76,7 @@ fun printStepLog(indexingState: IndexingState, millis: Long) {
     )
 }
 
-fun getLogStepMillis(millis: Long) = when (millis) {
+fun getIndexLogStepMillis(millis: Long) = when (millis) {
     in 0 until 1000 -> 50
     in 1000 until 10_000 -> 1000
     in 10_000 until 60_000 -> 5_000

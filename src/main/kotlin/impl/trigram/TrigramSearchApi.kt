@@ -39,7 +39,7 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         fun cancelIndexing() {
             deferred.cancel(CancellationException())
         }
-        indexingState.addCancelationAction(::cancelIndexing)
+        indexingState.addCancellationAction(::cancelIndexing)
         return indexingState
     }
 
@@ -60,8 +60,8 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         fun cancelIndexing() {
             deferred.cancel(CancellationException())
         }
-        searchingState.addCancelationAction(::cancelIndexing)
-        return TrigramSearchingState(completableFuture)
+        searchingState.addCancellationAction(::cancelIndexing)
+        return searchingState
     }
 
     /*Checks if there is index for folder in inner structure*/

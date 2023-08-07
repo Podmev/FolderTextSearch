@@ -1,8 +1,9 @@
 package impl.indexless
 
-import api.exception.SearchException
 import api.SearchingState
 import api.TokenMatch
+import api.exception.SearchException
+import java.nio.file.Path
 import java.util.concurrent.Future
 
 
@@ -21,7 +22,18 @@ class IndexlessSearchingState(override val result: Future<List<TokenMatch>>) : S
         throw SearchException("Not supported cancel for searching in indexless api")
     }
 
-    override fun getBufferPartResult(flush: Boolean): List<TokenMatch> {
+    override fun getTokenMatchesBuffer(flush: Boolean): List<TokenMatch> {
         TODO("Not yet implemented")
     }
+
+    override fun getVisitedPathsBuffer(flush: Boolean): List<Path> {
+        TODO("Not yet implemented")
+    }
+
+    override val visitedFilesNumber: Long = 0L
+    override val totalFilesNumber: Long? = null
+
+    override val visitedFilesByteSize: Long = 0L
+    override val parsedFilesByteSize: Long = 0L
+    override val totalFilesByteSize: Long? = null
 }

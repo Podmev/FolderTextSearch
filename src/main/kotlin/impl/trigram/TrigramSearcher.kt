@@ -69,11 +69,19 @@ class TrigramSearcher : WithLogging() {
         //TODO make async way getPathsByToken
         val narrowedPaths = getPathsByToken(searchingContext.trigramMap, searchingContext.token)
         LOG.finest("got ${narrowedPaths.size} narrowed paths from trigramMap by token \"$searchingContext.token\"")
+
         narrowedPaths.asSequence().asFlow()
             .onEach { path ->
                 searchingContext.narrowedPathChannel.send(path)
+                searchingContext.searchingState.addVisitedPath(path)
             }.collect {}
+
         searchingContext.narrowedPathChannel.close()
+        LOG.finest("closed channel narrowedPathChannel")
+
+        searchingContext.searchingState.setTotalFilesByteSize()
+        searchingContext.searchingState.setTotalFilesNumber()
+
         LOG.finest("finished for folder: ${searchingContext.folderPath} and token: \"$searchingContext.token\"")
     }
 
@@ -100,10 +108,11 @@ class TrigramSearcher : WithLogging() {
             searchStringInLine(lineInFile.path, lineInFile.line, searchingContext.token, lineInFile.lineIndex)
                 .asFlow()
                 .onEach { tokenMatch ->
-                    LOG.finest("found token match in line: $tokenMatch")
+                    LOG.finest("found token match in line: $tokenMatch, line: ${lineInFile.line}")
                     searchingContext.tokenMatchChannel.send(tokenMatch)
                 }
                 .collect {}
+            searchingContext.searchingState.addParsedLine(lineInFile.line)
         }
         searchingContext.tokenMatchChannel.close()
         LOG.finest("finished for folder: ${searchingContext.folderPath} and token: \"$searchingContext.token\"")

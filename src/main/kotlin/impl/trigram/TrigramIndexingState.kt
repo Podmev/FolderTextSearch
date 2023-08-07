@@ -23,7 +23,7 @@ class TrigramIndexingState(override val result: Future<List<Path>>) : IndexingSt
 
     private val visitedPathsBufferRef = AtomicReference(ArrayList<Path>())
     private val indexedPathsBufferRef = AtomicReference(ArrayList<Path>())
-    private val cancelationActionRef = AtomicReference<() -> Unit>(/* no-op */)
+    private val cancellationActionRef = AtomicReference<() -> Unit>(/* no-op */)
 
     override val visitedFilesNumber: Long
         get() = visitedFilesNumberRef.get()
@@ -62,7 +62,7 @@ class TrigramIndexingState(override val result: Future<List<Path>>) : IndexingSt
         }
 
     override fun cancel() {
-        cancelationActionRef.get()()
+        cancellationActionRef.get()()
     }
 
     /*Gets current buffer with part of visited files.
@@ -138,8 +138,8 @@ class TrigramIndexingState(override val result: Future<List<Path>>) : IndexingSt
         return changed
     }
 
-    fun addCancelationAction(action: () -> Unit) {
-        cancelationActionRef.set(action)
+    fun addCancellationAction(action: () -> Unit) {
+        cancellationActionRef.set(action)
     }
 
     companion object {

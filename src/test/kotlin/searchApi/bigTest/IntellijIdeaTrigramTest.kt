@@ -1,9 +1,7 @@
 package searchApi.bigTest
 
 import api.SearchApi
-import api.tools.syncPerformIndexWithLogging
-import api.tools.syncPerformIndexWithLoggingAndCancel
-import api.tools.syncSearchToken
+import api.tools.*
 import searchApi.common.commonSetup
 import impl.trigram.TrigramSearchApi
 import utils.prettyDiffTime
@@ -52,6 +50,19 @@ class IntellijIdeaTrigramTest {
             println("searching time for looking for token \"${token}\": ${prettyDiffTime(startTime, finishTime)}, #${actualTokenMatches.size}")
             println(actualTokenMatches.size)
         }
+    }
+
+    fun searchOneTokenAfterIndex() {
+        val token = "class"
+        val folder = commonPath
+        val startTime = LocalDateTime.now()
+        println(startTime)
+        searchApi.syncPerformIndexWithLogging(folder)
+        val actualTokenMatches = searchApi.syncPerformSearchWithLogging(folder, token)
+        val finishTime = LocalDateTime.now()
+        println("total time: ${prettyDiffTime(startTime, finishTime)}")
+        println(actualTokenMatches.size)
+//        actualTokenMatches.forEach { println(it) }
     }
 
 //    fun jarTest(){

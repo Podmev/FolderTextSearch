@@ -4,6 +4,9 @@ import java.nio.file.Path
 import java.util.concurrent.Future
 
 //TODO add millis from start
+/*State which api gives when you make index at folder.
+* It can help to control process of indexing, since it can be long process
+* */
 interface IndexingState {
     /*Shows if search finished*/
     val finished: Boolean
@@ -47,7 +50,7 @@ interface IndexingState {
     val totalFilesNumber: Long?
 }
 
-/*Take immutable snapshot of IndexingState*/
+/*Takes immutable snapshot of IndexingState*/
 fun IndexingState.toSnapshot(): IndexingStateSnapshot =
     IndexingStateSnapshot(
         finished = finished,
