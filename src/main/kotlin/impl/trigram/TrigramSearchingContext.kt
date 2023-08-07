@@ -14,7 +14,9 @@ class TrigramSearchingContext(
     val trigramMap: TrigramMap
 ) {
 
-    /*Unlimited capacity is used to achieve different independent speed of indexing parts: walking files, parsing files, saving triplets*/
+    /*Unlimited capacity is used to achieve different independent speed of searching parts:
+    * walking files, parsing file lines, saving token matches
+    * */
     private val channelCapacity = Channel.UNLIMITED
     val narrowedPathChannel = Channel<Path>(channelCapacity)
     val fileLineChannel = Channel<LineInFile>(channelCapacity)

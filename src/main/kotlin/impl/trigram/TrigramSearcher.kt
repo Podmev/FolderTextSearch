@@ -65,24 +65,33 @@ class TrigramSearcher : WithLogging() {
     * For each path it sends in channel narrowedPathChannel
     * */
     private suspend fun asyncWalkTokenAndNarrowPaths(searchingContext: TrigramSearchingContext) = coroutineScope {
-        LOG.finest("started for folder: ${searchingContext.folderPath} and token: \"$searchingContext.token\"")
+        LOG.finest("started for folder: ${searchingContext.folderPath} and token: \"${searchingContext.token}\"")
         //TODO make async way getPathsByToken
         val narrowedPaths = getPathsByToken(searchingContext.trigramMap, searchingContext.token)
-        LOG.finest("got ${narrowedPaths.size} narrowed paths from trigramMap by token \"$searchingContext.token\"")
+        LOG.finest("got ${narrowedPaths.size} narrowed paths from trigramMap by token \"${searchingContext.token}\"")
+
+        //TODO remove temporary block --start--
+        //commands should be in flow and set total after, so we can cancel easily
+        //can be extra flow for it
+        narrowedPaths.forEach { searchingContext.searchingState.addVisitedPath(it) }
+        searchingContext.searchingState.setTotalFilesByteSize()
+        searchingContext.searchingState.setTotalFilesNumber()
+        //TODO remove temporary block --end--
 
         narrowedPaths.asSequence().asFlow()
             .onEach { path ->
                 searchingContext.narrowedPathChannel.send(path)
-                searchingContext.searchingState.addVisitedPath(path)
+                LOG.finest("sent path to channel narrowedPathChannel: $path")
+                //searchingContext.searchingState.addVisitedPath(path)
             }.collect {}
 
         searchingContext.narrowedPathChannel.close()
         LOG.finest("closed channel narrowedPathChannel")
 
-        searchingContext.searchingState.setTotalFilesByteSize()
-        searchingContext.searchingState.setTotalFilesNumber()
+//        searchingContext.searchingState.setTotalFilesByteSize()
+//        searchingContext.searchingState.setTotalFilesNumber()
 
-        LOG.finest("finished for folder: ${searchingContext.folderPath} and token: \"$searchingContext.token\"")
+        LOG.finest("finished for folder: ${searchingContext.folderPath} and token: \"${searchingContext.token}\"")
     }
 
     /*For each path in narrowedPathChannel it sends all lines of file in channel fileLineChannel */
@@ -115,6 +124,8 @@ class TrigramSearcher : WithLogging() {
             searchingContext.searchingState.addParsedLine(lineInFile.line)
         }
         searchingContext.tokenMatchChannel.close()
+        LOG.finest("closed channel tokenMatchChannel")
+
         LOG.finest("finished for folder: ${searchingContext.folderPath} and token: \"$searchingContext.token\"")
     }
 
