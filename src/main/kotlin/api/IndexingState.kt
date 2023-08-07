@@ -46,3 +46,15 @@ interface IndexingState {
     * */
     val totalFilesNumber: Long?
 }
+
+/*Take immutable snapshot of IndexingState*/
+fun IndexingState.toSnapshot(): IndexingStateSnapshot =
+    IndexingStateSnapshot(
+        finished = finished,
+        progress = progress,
+        visitedPathsBuffer = getVisitedPathsBuffer(true),
+        indexedPathsBuffer = getIndexedPathsBuffer(true),
+        visitedFilesNumber = visitedFilesNumber,
+        indexedFilesNumber = indexedFilesNumber,
+        totalFilesNumber = totalFilesNumber
+    )
