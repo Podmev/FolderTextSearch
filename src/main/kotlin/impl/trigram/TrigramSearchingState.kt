@@ -4,12 +4,12 @@ import api.SearchingState
 import api.TokenMatch
 import utils.WithLogging
 import utils.prettyBytes
-import utils.sizeInBytes
 import java.nio.file.Path
 import java.util.concurrent.Future
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.atomic.AtomicReference
+import kotlin.io.path.fileSize
 
 class TrigramSearchingState(override val result: Future<List<TokenMatch>>) : SearchingState, WithLogging() {
     private val visitedFilesNumberRef = AtomicLong(ON_START_COUNTER)
@@ -110,7 +110,7 @@ class TrigramSearchingState(override val result: Future<List<TokenMatch>>) : Sea
     }
 
     fun addVisitedPath(path: Path) {
-        val fileByteSize = path.sizeInBytes()
+        val fileByteSize = path.fileSize()
         val currentTotalFileByteSize = visitedFilesByteSizeRef.addAndGet(fileByteSize)
         val visitedFileNumber = visitedFilesNumberRef.incrementAndGet()
         LOG.finest("add path $path, visitedFileNumber:$visitedFileNumber, " +
