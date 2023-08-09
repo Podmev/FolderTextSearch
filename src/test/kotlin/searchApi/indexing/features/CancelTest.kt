@@ -1,7 +1,7 @@
 package searchApi.indexing.features
 
 import api.IndexingState
-import api.emptyIndex
+import api.isIndexEmpty
 import api.tools.syncPerformIndex
 import impl.trigram.TrigramSearchApi
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -47,7 +47,7 @@ class CancelTest {
         )
         state.result.get()!!
         Assertions.assertAll(
-            { -> Assertions.assertTrue(searchApi.emptyIndex(), "SearchApi has no index") },
+            { -> Assertions.assertTrue(searchApi.isIndexEmpty(), "SearchApi has no index") },
             { -> Assertions.assertTrue(state.visitedFilesNumber < completedTotalFilesNumber, "visited < total(precalculated)") },
             { -> Assertions.assertEquals(0L, state.indexedFilesNumber, "indexedFilesNumber == 0") },
             { -> Assertions.assertEquals(null, state.totalFilesNumber, "totalFilesNumber == null") },
@@ -77,7 +77,7 @@ class CancelTest {
         )
         state.result.get()!!
         Assertions.assertAll(
-            { -> Assertions.assertTrue(searchApi.emptyIndex(), "SearchApi has no index") },
+            { -> Assertions.assertTrue(searchApi.isIndexEmpty(), "SearchApi has no index") },
             { -> Assertions.assertTrue(state.visitedFilesNumber <= completedTotalFilesNumber, "visited <= total(precalculated)") },
             { -> Assertions.assertTrue(state.indexedFilesNumber > 0L, "indexedFilesNumber > 0") },
             { -> Assertions.assertEquals(1.0, state.progress, "progress == 1.0") }, //FIXME this logic
