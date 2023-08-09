@@ -78,10 +78,10 @@ class IndexlessSearchApi : SearchApi, WithLogging() {
                 .toList()
         }
 
-    private fun searchStringInLine(filePath: Path, line: String, token: String, lineIndex: Int): List<TokenMatch> {
+    private fun searchStringInLine(filePath: Path, line: String, token: String, lineIndex: Int): Sequence<TokenMatch> {
         LOG.info("#$lineIndex, \"$line\", token: $token")
         val positionsInLine = line.indicesOf(token)
-        return positionsInLine.map { TokenMatch(filePath, lineIndex.toLong() + 1, it.toLong() + 1) }.toList()
+        return positionsInLine.map { TokenMatch(filePath, lineIndex.toLong() + 1, it.toLong() + 1) }
     }
 
     companion object {
