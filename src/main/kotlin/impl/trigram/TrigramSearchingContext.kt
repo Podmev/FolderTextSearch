@@ -6,11 +6,26 @@ import java.nio.file.Path
 import java.util.*
 
 /*context used in searching with all necessary components*/
-class TrigramSearchingContext(
+internal class TrigramSearchingContext(
+    /**
+     * Folder path for searching.
+     */
     val folderPath: Path,
+    /**
+     * Token to search.
+     */
     val token: String,
+    /**
+     * Searching state, contains mutable state.
+     */
     val searchingState: TrigramSearchingState,
+    /**
+     * Queue of found token matches, used for result.
+     */
     val resultTokenMatchQueue: Queue<TokenMatch>,
+    /**
+     * Internal structure for index.
+     */
     val trigramMap: TrigramMap
 ) {
 

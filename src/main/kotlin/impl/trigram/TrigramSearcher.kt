@@ -97,7 +97,9 @@ class TrigramSearcher : WithLogging() {
         LOG.finest("finished for folder: ${searchingContext.folderPath} and token: \"${searchingContext.token}\"")
     }
 
-    /*For each path in narrowedPathChannel it sends all lines of file in channel fileLineChannel */
+    /**
+     * For each path in narrowedPathChannel it sends all lines of file in channel fileLineChannel.
+     * */
     private suspend fun asyncSearchingInPaths(searchingContext: TrigramSearchingContext) = coroutineScope {
         LOG.finest("started for folder: ${searchingContext.folderPath} and token: \"$searchingContext.token\"")
         for (path in searchingContext.narrowedPathChannel) {
@@ -112,7 +114,9 @@ class TrigramSearcher : WithLogging() {
         LOG.finest("finished for folder: ${searchingContext.folderPath} and token: \"$searchingContext.token\"")
     }
 
-    /*For each line in fileLineChannel it sends all found token matches to tokenMatchChannel*/
+    /**
+     * For each line in fileLineChannel it sends all found token matches to tokenMatchChannel
+     * */
     private suspend fun asyncSearchingInFileLines(searchingContext: TrigramSearchingContext) = coroutineScope {
         LOG.finest("started for folder: ${searchingContext.folderPath} and token: \"$searchingContext.token\"")
         for (lineInFile in searchingContext.fileLineChannel) {
@@ -130,7 +134,9 @@ class TrigramSearcher : WithLogging() {
         LOG.finest("finished for folder: ${searchingContext.folderPath} and token: \"$searchingContext.token\"")
     }
 
-    /*For token match in tokenMatchChannel it puts this token in resultTokenMatchQueue and to token matches buffer*/
+    /**
+     * For token match in tokenMatchChannel it puts this token in resultTokenMatchQueue and to token matches buffer
+     * */
     private suspend fun asyncReadingTokenMatchesChannel(searchingContext: TrigramSearchingContext) = coroutineScope {
         LOG.finest("started for folder: ${searchingContext.folderPath} and token: \"$searchingContext.token\"")
         for (tokenMatch in searchingContext.tokenMatchChannel) {
@@ -143,7 +149,7 @@ class TrigramSearcher : WithLogging() {
     }
 
     //TODO rewrite in concurrent way, I cannot decide how to make reduce concurrently here
-    /*
+    /**
     * Find all file paths, which contains all sequence char triplets from token.
     * */
     private fun getPathsByToken(trigramMap: TrigramMap, token: String): Set<Path> {
@@ -154,7 +160,7 @@ class TrigramSearcher : WithLogging() {
     }
 
     //TODO rewrite in concurrent way, maybe divide by batches
-    /*
+    /**
     * Searches token by single line and creates list of tokenMatches.
     * */
     private fun searchStringInLine(filePath: Path, line: String, token: String, lineIndex: Int): Sequence<TokenMatch> {

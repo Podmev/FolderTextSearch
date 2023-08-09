@@ -10,11 +10,9 @@ import java.util.concurrent.atomic.AtomicReference
 
 //TODO cancel
 //TODO buffer
-/*State of trigram search api.
-* Has honest:
-*  - finished
-*  - progress
-* */
+/**
+ * State of trigram search api for indexing.
+ * */
 class TrigramIndexingState(override val result: Future<List<Path>>) : IndexingState, WithLogging() {
     private val visitedFilesNumberRef = AtomicLong(ON_START_VISITED_FILES_NUMBER)
     private val indexedFilesNumberRef = AtomicLong(ON_START_INDEXED_FILES_NUMBER)

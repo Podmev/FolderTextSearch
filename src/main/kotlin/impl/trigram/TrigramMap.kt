@@ -10,12 +10,17 @@ import java.nio.file.Path
 *  - think about many copies of same records by file
 * */
 
-/*use flow to put everything in one thread
-*
-* */
+/**
+ * Structure for saving index, based on saving set of file paths where it can be found 3 sequencial characters
+ * Here: charTriplet is 3 sequencial characters, like "abc", "d3d", "213"
+ * Used single flow to put everything in one thread
+ * */
 class TrigramMap : WithLogging() {
     private val map: MutableMap<String, MutableSet<Path>> = HashMap()
 
+    /**
+     * Add new char triplet to structure with file path containing it.
+     */
     fun addCharTripletByPath(charTriplet: String, path: Path) {
         validateCharTriplet(charTriplet)
 
@@ -34,6 +39,9 @@ class TrigramMap : WithLogging() {
 
     }
 
+    /**
+     * Get all file paths containing char triplet
+     * */
     fun getPathsByCharTriplet(charTriplet: String): Set<Path> {
         validateCharTriplet(charTriplet)
         return map[charTriplet] ?: emptySet()
@@ -46,7 +54,10 @@ class TrigramMap : WithLogging() {
     }
 
     //OPTIMIZE
-    fun cloneMap() = buildMap {
+    /**
+     * Deep cloning map with recreated sets
+     * */
+    fun cloneMap(): Map<String, Set<Path>> = buildMap {
         for ((triplet, paths) in map)
             put(
                 key = triplet,

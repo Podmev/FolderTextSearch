@@ -11,6 +11,9 @@ import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.io.path.fileSize
 
+/**
+ * State of trigram search api for searching.
+ */
 class TrigramSearchingState(override val result: Future<List<TokenMatch>>) : SearchingState, WithLogging() {
     private val visitedFilesNumberRef = AtomicLong(ON_START_COUNTER)
     private val totalFilesNumberRef = AtomicLong(NOT_SET_TOTAL)
@@ -96,6 +99,9 @@ class TrigramSearchingState(override val result: Future<List<TokenMatch>>) : Sea
         }
     }
 
+    /**
+     * Adds newfound token match
+     */
     fun addTokenMatchToBuffer(tokenMatch: TokenMatch): Long {
         val tokenMatchesNumber = tokenMatchesNumberRef.incrementAndGet()
         LOG.finest("add #$tokenMatchesNumber tokenMatch $tokenMatch")
@@ -105,10 +111,16 @@ class TrigramSearchingState(override val result: Future<List<TokenMatch>>) : Sea
         return tokenMatchesNumber
     }
 
+    /**
+     * Adds cancellation action.
+     */
     fun addCancellationAction(action: () -> Unit) {
         cancellationActionRef.set(action)
     }
 
+    /**
+     * Adds visited line to state
+     */
     fun addVisitedPath(path: Path) {
         val fileByteSize = path.fileSize()
         val currentTotalFileByteSize = visitedFilesByteSizeRef.addAndGet(fileByteSize)
@@ -121,13 +133,17 @@ class TrigramSearchingState(override val result: Future<List<TokenMatch>>) : Sea
         return
     }
 
+    /**
+     * Adds parsed line to state
+     */
     fun addParsedLine(line: String) {
         parsedFilesByteSizeRef.addAndGet(line.byteSize().toLong())
     }
 
-    /*Sets totalFilesByteSize maximum single time for live time of TrigramSearchingState.
-    * Single time is checked by totalFilesByteSizeUpdatedRef
-    * */
+    /**
+     * Sets totalFilesByteSize maximum single time for live time of TrigramSearchingState.
+     * Single time is checked by totalFilesByteSizeUpdatedRef
+     * */
     fun setTotalFilesByteSize(): Boolean {
         val totalFilesByteSize = visitedFilesByteSize
         LOG.finest("trying to set total files byte size:$totalFilesByteSize")
@@ -139,9 +155,10 @@ class TrigramSearchingState(override val result: Future<List<TokenMatch>>) : Sea
         return changed
     }
 
-    /*Sets totalFilesNumber maximum single time for live time of TrigramSearchingState.
-    * Single time is checked by totalFilesNumberUpdatedRef
-    * */
+    /**
+     * Sets totalFilesNumber maximum single time for live time of TrigramSearchingState.
+     * Single time is checked by totalFilesNumberUpdatedRef
+     * */
     fun setTotalFilesNumber(): Boolean {
         val totalFilesNumber = visitedFilesNumber
         LOG.finest("trying to set total files number:$totalFilesNumber")

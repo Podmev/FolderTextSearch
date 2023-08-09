@@ -4,11 +4,25 @@ import kotlinx.coroutines.channels.Channel
 import java.nio.file.Path
 import java.util.*
 
-/*context used in indexing with all necessary components*/
-class TrigramIndexingContext(
+/**
+ * Context used in indexing with all necessary components.
+ * */
+internal class TrigramIndexingContext(
+    /**
+     * Folder path for indexing.
+     */
     val folderPath: Path,
+    /**
+     * Indexing state, contains mutable state.
+     */
     val indexingState: TrigramIndexingState,
+    /**
+     * Queue of indexed file paths, used for result.
+     */
     val resultPathQueue: Queue<Path>,
+    /**
+     * Internal structure for index.
+     */
     val trigramMap: TrigramMap
 ) {
 

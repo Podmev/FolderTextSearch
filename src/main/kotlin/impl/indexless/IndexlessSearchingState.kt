@@ -7,6 +7,9 @@ import java.nio.file.Path
 import java.util.concurrent.Future
 
 
+/**
+ * Simplified SearchingState, with not everything implemented
+ */
 class IndexlessSearchingState(override val result: Future<List<TokenMatch>>) : SearchingState {
     override val finished: Boolean
         get() {

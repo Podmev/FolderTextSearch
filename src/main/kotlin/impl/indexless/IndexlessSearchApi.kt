@@ -13,17 +13,23 @@ import kotlin.io.path.isRegularFile
 import kotlin.io.path.useLines
 import kotlin.streams.asSequence
 
-/*Indexless implementation of Search Api without indexing and any optimizations
-  Can be used as etalon to check search results, but not for performance and flexibility
-* */
+/**
+ * Indexless implementation of Search Api without indexing and any optimizations
+ * Can be used as etalon to check search results, but not for performance and flexibility
+ * */
 class IndexlessSearchApi : SearchApi, WithLogging() {
-    /*in this implementation index is empty, so even no files are added*/
+    /**
+     * In this implementation index is empty, so even no files are added.
+     * */
     override fun createIndexAtFolder(folderPath: Path): IndexingState {
         val completableFuture = CompletableFuture<List<Path>>()
         completableFuture.complete(emptyList())
         return IndexlessIndexingState(completableFuture)
     }
 
+    /**
+     * Naive straight-forward implementation to search tokens without any index
+     * */
     override fun searchString(folderPath: Path, token: String, settings: SearchSettings): SearchingState {
         validateToken(token)
         validatePath(folderPath)
@@ -34,16 +40,24 @@ class IndexlessSearchApi : SearchApi, WithLogging() {
         return IndexlessSearchingState(completableFuture)
     }
 
-    /*This implementation never has index at any folder. So it is false.*/
+    /**
+     * This implementation never has index at any folder. So it is false.
+     * */
     override fun hasIndexAtFolder(folderPath: Path): Boolean = false
 
-    /*Cannot remove index at folder in this implementation.*/
+    /**
+     * Cannot remove index at folder in this implementation.
+     * */
     override fun removeIndexAtFolder(folderPath: Path): Boolean = false
 
-    /*Nothing to remove in this implementation.*/
+    /**
+     * Nothing to remove in this implementation.
+     * */
     override fun removeFullIndex() { /*nothing to do*/ }
 
-    /*This implementation never has index at any folder. So it is empty list.*/
+    /**
+     * This implementation never has index at any folder. So it is empty list.
+     * */
     override fun getAllIndexedFolders(): List<Path> = emptyList()
 
     private fun validateToken(token: String) {
