@@ -3,6 +3,7 @@ package impl.trigram
 import api.*
 import api.exception.IllegalArgumentSearchException
 import api.exception.NotDirSearchException
+import api.exception.SearchException
 import api.tools.syncPerformIndex
 import kotlinx.coroutines.*
 import utils.WithLogging
@@ -83,7 +84,7 @@ class TrigramSearchApi : SearchApi, WithLogging() {
             return previouslyCalculatedTrigramMap
         }
         syncPerformIndex(folderPath)
-        return trigramMapByFolder[folderPath]!! //now it should exist
+        return trigramMapByFolder[folderPath] ?: throw SearchException("Now it should exist trigramMap")
     }
 
     /*Validates token:

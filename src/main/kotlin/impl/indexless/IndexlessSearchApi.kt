@@ -41,7 +41,7 @@ class IndexlessSearchApi : SearchApi, WithLogging() {
     override fun removeIndexAtFolder(folderPath: Path): Boolean = false
 
     /*Nothing to remove in this implementation.*/
-    override fun removeFullIndex() { }
+    override fun removeFullIndex() { /*nothing to do*/ }
 
     /*This implementation never has index at any folder. So it is empty list.*/
     override fun getAllIndexedFolders(): List<Path> = emptyList()

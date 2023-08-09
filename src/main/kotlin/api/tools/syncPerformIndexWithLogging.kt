@@ -64,10 +64,13 @@ fun printIndexingStepLog(indexingState: IndexingState, millis: Long) {
     val lastIndexedFileMessage: String = if (lastIndexedPath != null) " last indexed file: $lastIndexedPath" else ""
 
     val messageEnding =
-        if (lastVisitedFileMessage.isNotEmpty() && lastIndexedFileMessage.isNotEmpty()) ",$lastVisitedFileMessage,$lastIndexedFileMessage"
-        else if (lastVisitedFileMessage.isNotEmpty()) ",$lastVisitedFileMessage"
-        else if (lastIndexedFileMessage.isNotEmpty()) ",$lastIndexedFileMessage"
-        else ""
+        when {
+            lastVisitedFileMessage.isNotEmpty()
+                    && lastIndexedFileMessage.isNotEmpty() -> ",$lastVisitedFileMessage,$lastIndexedFileMessage"
+            lastVisitedFileMessage.isNotEmpty() -> ",$lastVisitedFileMessage"
+            lastIndexedFileMessage.isNotEmpty() -> ",$lastIndexedFileMessage"
+            else -> ""
+        }
 
     println(
         "indexing folder (visited ${visitedFilesNumber}, indexed ${indexedFilesNumber}, total: $totalMessage) " +

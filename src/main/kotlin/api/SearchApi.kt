@@ -7,7 +7,6 @@ import java.nio.file.Path
  Also it has api for checking index and remove it partly of full
 * */
 interface SearchApi {
-    //TODO maybe we need sync and async api
     /*Creates and saves index for folder. It will be used for searching*/
     fun createIndexAtFolder(folderPath: Path): IndexingState
 

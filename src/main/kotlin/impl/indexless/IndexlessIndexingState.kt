@@ -9,7 +9,9 @@ import java.util.concurrent.Future
 class IndexlessIndexingState(override val result: Future<List<Path>>) : IndexingState {
     override val finished: Boolean = true
     override val progress: Double = 1.0
-    override fun cancel() {}
+    override fun cancel() {
+        TODO("Not yet implemented")
+    }
     override fun getVisitedPathsBuffer(flush: Boolean): List<Path> {
         TODO("Not yet implemented")
     }

@@ -24,7 +24,7 @@ fun SearchApi.syncPerformSearchWithLogging(folderPath: Path, token: String, dela
             val curTime = LocalDateTime.now()
             val millis = diffTime(startTime, curTime)
             val millisFromLastLogging = diffTime(lastLogged, curTime)
-            val logStepMillis = getIndexLogStepMillis(millis)
+            val logStepMillis = getSearchLogStepMillis(millis)
             if (millisFromLastLogging > logStepMillis) {
                 printSearchStepLog(searchingState, millis)
                 lastLogged = curTime
@@ -64,11 +64,13 @@ fun printSearchStepLog(searchingState: SearchingState, millis: Long) {
     val lastVisitedFileMessage: String = if (lastVisitedPath != null) " last visited file: $lastVisitedPath" else ""
 
     val messageEnding =
-        if (lastTokenMatchesMessage.isNotEmpty() && lastVisitedFileMessage.isNotEmpty())
-            ",$lastVisitedFileMessage,$lastTokenMatchesMessage"
-        else if (lastTokenMatchesMessage.isNotEmpty()) ",$lastTokenMatchesMessage"
-        else if (lastVisitedFileMessage.isNotEmpty()) ",$lastVisitedFileMessage"
-        else ""
+        when {
+            lastTokenMatchesMessage.isNotEmpty()
+                    && lastVisitedFileMessage.isNotEmpty() -> ",$lastVisitedFileMessage,$lastTokenMatchesMessage"
+            lastTokenMatchesMessage.isNotEmpty() -> ",$lastTokenMatchesMessage"
+            lastVisitedFileMessage.isNotEmpty() -> ",$lastVisitedFileMessage"
+            else -> ""
+        }
 
     println(
         "searching folder: " +
