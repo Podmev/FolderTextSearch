@@ -9,9 +9,9 @@ import java.nio.file.Path
 import java.time.LocalDateTime
 
 //TODO refactor to class with using logging
-/*Util function to calculate index for folder with detailed logging, then after it is done returns
-* Used in tests
-* */
+/**Util function to calculate index for folder with detailed logging, then after it is done returns
+ * Used in tests
+ * */
 fun SearchApi.syncPerformIndexWithLoggingAndCancel(folderPathString: Path, cancelAtProgress: Double) {
     val startTime = LocalDateTime.now()
     val indexingState = createIndexAtFolder(folderPathString)

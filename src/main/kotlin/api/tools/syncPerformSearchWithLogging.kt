@@ -10,9 +10,10 @@ import java.nio.file.Path
 import java.time.LocalDateTime
 
 //TODO refactor to class with using logging
-/*Util function to search token in folder with detailed logging, then after it is done returns tokens
-* Used in tests
-* */
+/**
+ * Util function to search token in folder with detailed logging, then after it is done returns tokens
+ * Used in tests
+ * */
 fun SearchApi.syncPerformSearchWithLogging(folderPath: Path, token: String, delayMillis: Long = 2L): List<TokenMatch> {
     val startTime = LocalDateTime.now()
     val searchingState = searchString(folderPath, token)
@@ -43,6 +44,9 @@ fun SearchApi.syncPerformSearchWithLogging(folderPath: Path, token: String, dela
     return tokenMatches
 }
 
+/**
+ * Prints step of searching with full details.
+ */
 fun printSearchStepLog(searchingState: SearchingState, millis: Long) {
     val visitedFilesNumber = searchingState.visitedFilesNumber
     val totalFilesNumber = searchingState.totalFilesNumber
@@ -85,6 +89,9 @@ fun printSearchStepLog(searchingState: SearchingState, millis: Long) {
     )
 }
 
+/**
+ * Progressive scale of steps for searching
+ */
 fun getSearchLogStepMillis(millis: Long) = when (millis) {
     in 0 until 10 -> 2
     in 10 until 20 -> 3

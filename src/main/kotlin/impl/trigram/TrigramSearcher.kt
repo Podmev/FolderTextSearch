@@ -14,10 +14,14 @@ import java.util.concurrent.LinkedBlockingQueue
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.io.path.useLines
 
-/*Only logic of searching token using constructed index for TrigramSearApi*/
+/**
+ * Only logic of searching token using constructed index for TrigramSearApi
+ */
 class TrigramSearcher : WithLogging() {
 
-    /*Searches asynchronously for token in folder with using constructed index trigramMap*/
+    /**
+     * Searches asynchronously for token in folder with using constructed index trigramMap
+     */
     suspend fun asyncSearching(
         folderPath: Path,
         token: String,
@@ -27,7 +31,6 @@ class TrigramSearcher : WithLogging() {
     ) = coroutineScope {
         try {
             LOG.finest("started for folder: $folderPath and token: \"$token\"")
-            //TODO think about which structure is better choice for resultPathQueue: LinkedBlockingQueue or others
             val resultTokenMatchQueue: Queue<TokenMatch> = LinkedBlockingQueue()
             coroutineScope {
                 val searchingContext = TrigramSearchingContext(
@@ -61,7 +64,8 @@ class TrigramSearcher : WithLogging() {
         }
     }
 
-    /*Takes narrowed paths for token - only those files which has ALL together triplets of sequencial character from token
+    /*
+    * Takes narrowed paths for token - only those files which has ALL together triplets of sequencial character from token
     * For each path it sends in channel narrowedPathChannel
     * */
     private suspend fun asyncWalkTokenAndNarrowPaths(searchingContext: TrigramSearchingContext) = coroutineScope {
@@ -78,8 +82,7 @@ class TrigramSearcher : WithLogging() {
         searchingContext.searchingState.setTotalFilesNumber()
         //TODO remove temporary block --end--
 
-        narrowedPaths.asSequence().asFlow()
-            .onEach { path ->
+        narrowedPaths.asSequence().asFlow().onEach { path ->
                 searchingContext.narrowedPathChannel.send(path)
                 LOG.finest("sent path to channel narrowedPathChannel: $path")
                 //searchingContext.searchingState.addVisitedPath(path)
@@ -114,13 +117,11 @@ class TrigramSearcher : WithLogging() {
         LOG.finest("started for folder: ${searchingContext.folderPath} and token: \"$searchingContext.token\"")
         for (lineInFile in searchingContext.fileLineChannel) {
             LOG.finest("received lineInFile: $lineInFile")
-            searchStringInLine(lineInFile.path, lineInFile.line, searchingContext.token, lineInFile.lineIndex)
-                .asFlow()
+            searchStringInLine(lineInFile.path, lineInFile.line, searchingContext.token, lineInFile.lineIndex).asFlow()
                 .onEach { tokenMatch ->
                     LOG.finest("found token match in line: $tokenMatch, line: ${lineInFile.line}")
                     searchingContext.tokenMatchChannel.send(tokenMatch)
-                }
-                .collect {}
+                }.collect {}
             searchingContext.searchingState.addParsedLine(lineInFile.line)
         }
         searchingContext.tokenMatchChannel.close()
@@ -142,18 +143,19 @@ class TrigramSearcher : WithLogging() {
     }
 
     //TODO rewrite in concurrent way, I cannot decide how to make reduce concurrently here
-    /*Find all file paths, which contains all sequence char triplets from token.
+    /*
+    * Find all file paths, which contains all sequence char triplets from token.
     * */
     private fun getPathsByToken(trigramMap: TrigramMap, token: String): Set<Path> {
         if (token.length < 3) return emptySet()
-        return (0 until token.length - 2)
-            .map { column -> token.substring(column, column + 3) }
+        return (0 until token.length - 2).map { column -> token.substring(column, column + 3) }
             .map { triplet -> trigramMap.getPathsByCharTriplet(triplet) }
             .reduce { pathSet1: Set<Path>, pathSet2: Set<Path> -> pathSet1.intersect(pathSet2) }
     }
 
     //TODO rewrite in concurrent way, maybe divide by batches
-    /*Searches token by single line and creates list of tokenMatches.
+    /*
+    * Searches token by single line and creates list of tokenMatches.
     * */
     private fun searchStringInLine(filePath: Path, line: String, token: String, lineIndex: Int): Sequence<TokenMatch> {
         LOG.finest("#$lineIndex, \"$line\", token: $token")

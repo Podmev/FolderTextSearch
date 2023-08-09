@@ -12,9 +12,10 @@ import java.nio.file.Path
 import java.time.LocalDateTime
 
 //TODO refactor to class with using logging
-/*Util function to calculate index for folder with detailed logging, then after it is done returns
-* Used in tests
-* */
+/**
+ * Util function to calculate index for folder with detailed logging, then after it is done returns
+ * Used in tests
+ * */
 fun SearchApi.syncPerformIndexWithLogging(folderPath: Path) {
     val startTime = LocalDateTime.now()
     val indexingState = createIndexAtFolder(folderPath)
@@ -47,6 +48,9 @@ fun SearchApi.syncPerformIndexWithLogging(folderPath: Path) {
     assert(indexingState.finished)
 }
 
+/**
+ * Prints step of indexing with full details.
+ */
 fun printIndexingStepLog(indexingState: IndexingState, millis: Long) {
     val visitedFilesNumber = indexingState.visitedFilesNumber
     val indexedFilesNumber = indexingState.indexedFilesNumber
@@ -81,6 +85,9 @@ fun printIndexingStepLog(indexingState: IndexingState, millis: Long) {
     )
 }
 
+/**
+ * Progressive scale of steps for indexing
+ */
 fun getIndexLogStepMillis(millis: Long) = when (millis) {
     in 0 until 1000 -> 50
     in 1000 until 10_000 -> 1000
