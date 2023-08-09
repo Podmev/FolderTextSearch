@@ -17,8 +17,8 @@ interface IndexingState {
     /*result - all file paths in directory recursively, which were indexed*/
     val result: Future<List<Path>>
 
-    /*method to cancel the search process.
-     It can be useful, if it takes long time*/
+    /*method to cancel the indexing process.
+     It can be useful, if the indexing takes long time*/
     fun cancel()
 
     /*Get the newfound portion of file paths visited after previous call.
