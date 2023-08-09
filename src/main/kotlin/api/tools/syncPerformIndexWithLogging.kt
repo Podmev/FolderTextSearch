@@ -2,7 +2,6 @@ package api.tools
 
 import api.IndexingState
 import api.SearchApi
-import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import utils.diffTime
@@ -19,29 +18,32 @@ import java.time.LocalDateTime
 fun SearchApi.syncPerformIndexWithLogging(folderPath: Path) {
     val startTime = LocalDateTime.now()
     val indexingState = createIndexAtFolder(folderPath)
+
+    //todo this call starts a corutine only on the current thread, so no real parallel execution
     runBlocking {
-        async {
-            var lastLogged = startTime
-            println("started indexing folder $folderPath at $startTime")
-            while (!indexingState.finished) {
-                delay(50)
-                val curTime = LocalDateTime.now()
-                val millis = diffTime(startTime, curTime)
-                val millisFromLastLogging = diffTime(lastLogged, curTime)
-                val logStepMillis = getIndexLogStepMillis(millis)
-                if (millisFromLastLogging > logStepMillis) {
-                    printIndexingStepLog(indexingState, millis)
-                    lastLogged = curTime
-                }
+
+        var lastLogged = startTime
+        println("started indexing folder $folderPath at $startTime")
+        while (!indexingState.finished) {
+            delay(50)
+            val curTime = LocalDateTime.now()
+            val millis = diffTime(startTime, curTime)
+            val millisFromLastLogging = diffTime(lastLogged, curTime)
+            val logStepMillis = getIndexLogStepMillis(millis)
+            if (millisFromLastLogging > logStepMillis) {
+                printIndexingStepLog(indexingState, millis)
+                lastLogged = curTime
             }
-            val finishTime = LocalDateTime.now()
-            val millis = diffTime(startTime, finishTime)
-            printIndexingStepLog(indexingState, millis)
         }
+        val finishTime = LocalDateTime.now()
+        val millis = diffTime(startTime, finishTime)
+        printIndexingStepLog(indexingState, millis)
     }
     val paths = indexingState.result.get()!!
-    println("indexing folder \"$folderPath\" is finished with ${paths.size} paths " +
-            "with total time: ${prettyDiffTimeFrom(startTime)}")
+    println(
+        "indexing folder \"$folderPath\" is finished with ${paths.size} paths " +
+                "with total time: ${prettyDiffTimeFrom(startTime)}"
+    )
     assert(indexingState.finished)
 }
 
@@ -62,9 +64,9 @@ fun printIndexingStepLog(indexingState: IndexingState, millis: Long) {
     val lastIndexedFileMessage: String = if (lastIndexedPath != null) " last indexed file: $lastIndexedPath" else ""
 
     val messageEnding =
-        if(lastVisitedFileMessage.isNotEmpty() && lastIndexedFileMessage.isNotEmpty()) ",$lastVisitedFileMessage,$lastIndexedFileMessage"
-        else if(lastVisitedFileMessage.isNotEmpty()) ",$lastVisitedFileMessage"
-        else if(lastIndexedFileMessage.isNotEmpty()) ",$lastIndexedFileMessage"
+        if (lastVisitedFileMessage.isNotEmpty() && lastIndexedFileMessage.isNotEmpty()) ",$lastVisitedFileMessage,$lastIndexedFileMessage"
+        else if (lastVisitedFileMessage.isNotEmpty()) ",$lastVisitedFileMessage"
+        else if (lastIndexedFileMessage.isNotEmpty()) ",$lastIndexedFileMessage"
         else ""
 
     println(

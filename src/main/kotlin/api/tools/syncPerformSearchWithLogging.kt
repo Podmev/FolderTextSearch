@@ -3,7 +3,6 @@ package api.tools
 import api.SearchApi
 import api.SearchingState
 import api.TokenMatch
-import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import utils.*
@@ -18,24 +17,22 @@ fun SearchApi.syncPerformSearchWithLogging(folderPath: Path, token: String, dela
     val startTime = LocalDateTime.now()
     val searchingState = searchString(folderPath, token)
     runBlocking {
-        async {
-            var lastLogged = startTime
-            println("started searching folder $folderPath at $startTime")
-            while (!searchingState.finished) {
-                delay(delayMillis)
-                val curTime = LocalDateTime.now()
-                val millis = diffTime(startTime, curTime)
-                val millisFromLastLogging = diffTime(lastLogged, curTime)
-                val logStepMillis = getIndexLogStepMillis(millis)
-                if (millisFromLastLogging > logStepMillis) {
-                    printSearchStepLog(searchingState, millis)
-                    lastLogged = curTime
-                }
+        var lastLogged = startTime
+        println("started searching folder $folderPath at $startTime")
+        while (!searchingState.finished) {
+            delay(delayMillis)
+            val curTime = LocalDateTime.now()
+            val millis = diffTime(startTime, curTime)
+            val millisFromLastLogging = diffTime(lastLogged, curTime)
+            val logStepMillis = getIndexLogStepMillis(millis)
+            if (millisFromLastLogging > logStepMillis) {
+                printSearchStepLog(searchingState, millis)
+                lastLogged = curTime
             }
-            val finishTime = LocalDateTime.now()
-            val millis = diffTime(startTime, finishTime)
-            printSearchStepLog(searchingState, millis)
         }
+        val finishTime = LocalDateTime.now()
+        val millis = diffTime(startTime, finishTime)
+        printSearchStepLog(searchingState, millis)
     }
     val tokenMatches = searchingState.result.get()!!
     println(
