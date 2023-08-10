@@ -1,5 +1,3 @@
-import java.io.*
-
 job("Build and run tests") {
     startOn {
         gitPush { enabled = true }
@@ -12,20 +10,19 @@ job("Build and run tests") {
         outOfMemory { enabled = true }
     }
 
-    //TODO maybe join steps
-    //FIXME writing messages in chat
     container("openjdk:11") {
         resources {
             memory = 2048
         }
         kotlinScript { api ->
-            println("Running in branch: " + api.gitBranch())
-
-            api.gradlew("build")
-
-//            val recipient = MessageRecipient.Channel(ChatChannel.FromName("CI-Channel"))
-//            val content = ChatMessage.Text("Build has completed - build number: " + api.executionNumber())
-//            api.space().chats.messages.sendMessage(recipient, content)
+            try {
+                println("Running in branch: " + api.gitBranch())
+                api.gradlew("build")
+            } catch (ex: Exception) {
+                val channel = ChannelIdentifier.Channel(ChatChannel.FromName("CI-Channel"))
+                val content = ChatMessage.Text("Build failed")
+                api.space().chats.messages.sendMessage(channel = channel, content = content)
+            }
         }
     }
 
@@ -34,11 +31,14 @@ job("Build and run tests") {
             memory = 2048
         }
         kotlinScript { api ->
-            println("Running in branch: " + api.gitBranch())
-            api.gradlew("test")
-//            val recipient = MessageRecipient.Channel(ChatChannel.FromName("CI-Channel"))
-//            val content = ChatMessage.Text("Test has completed - build number: " + api.executionNumber())
-//            api.space().chats.messages.sendMessage(recipient, content)
+            try {
+                println("Running tests in branch: " + api.gitBranch())
+                api.gradlew("test")
+            } catch (ex: Exception) {
+                val channel = ChannelIdentifier.Channel(ChatChannel.FromName("CI-Channel"))
+                val content = ChatMessage.Text("Tests failed")
+                api.space().chats.messages.sendMessage(channel = channel, content = content)
+            }
         }
     }
 
