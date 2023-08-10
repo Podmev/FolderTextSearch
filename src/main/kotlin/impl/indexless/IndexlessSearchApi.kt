@@ -53,7 +53,8 @@ class IndexlessSearchApi : SearchApi, WithLogging() {
     /**
      * Nothing to remove in this implementation.
      * */
-    override fun removeFullIndex() { /*nothing to do* */ }
+    override fun removeFullIndex() { /*nothing to do* */
+    }
 
     /**
      * This implementation never has index at any folder. So it is empty list.

@@ -69,7 +69,12 @@ class ProgressTest {
     private fun getChecksByMap(indexingStateSnapshotMap: Map<Double, IndexingStateSnapshot>): List<() -> Unit> =
         buildList<() -> Unit> {
             add { -> Assertions.assertTrue(indexingStateSnapshotMap.isNotEmpty(), "received at least 1 snapshots") }
-            add { -> Assertions.assertTrue(indexingStateSnapshotMap.containsKey(1.0), "map should have snapshot at 1.0 progress") }
+            add { ->
+                Assertions.assertTrue(
+                    indexingStateSnapshotMap.containsKey(1.0),
+                    "map should have snapshot at 1.0 progress"
+                )
+            }
         }
 
     /*Creates checks for all snapshots together.

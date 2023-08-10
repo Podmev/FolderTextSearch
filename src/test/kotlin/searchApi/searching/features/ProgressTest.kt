@@ -4,5 +4,4 @@ package searchApi.searching.features
 /**
  * Checks correctness of progress of searching in SearchApi
  * */
-class ProgressTest {
-}
+class ProgressTest

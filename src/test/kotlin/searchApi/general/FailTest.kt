@@ -3,13 +3,13 @@ package searchApi.general
 import api.SearchApi
 import api.exception.IllegalArgumentSearchException
 import api.exception.NotDirSearchException
-import searchApi.common.commonSetup
 import api.tools.searchapi.syncSearchTokenAfterIndex
 import impl.indexless.IndexlessSearchApi
+import impl.trigram.TrigramSearchApi
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import impl.trigram.TrigramSearchApi
+import searchApi.common.commonSetup
 import java.nio.file.Path
 import java.util.stream.Stream
 import kotlin.test.assertFailsWith

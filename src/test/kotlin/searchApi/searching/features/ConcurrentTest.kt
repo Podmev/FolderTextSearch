@@ -9,5 +9,4 @@ package searchApi.searching.features
 /**
  * Checks correctness of concurrent situations of searching in SearchApi
  * */
-class ConcurrentTest {
-}
+class ConcurrentTest

@@ -83,10 +83,10 @@ class TrigramSearcher : WithLogging() {
         //TODO remove temporary block --end--
 
         narrowedPaths.asSequence().asFlow().onEach { path ->
-                searchingContext.narrowedPathChannel.send(path)
-                LOG.finest("sent path to channel narrowedPathChannel: $path")
-                //searchingContext.searchingState.addVisitedPath(path)
-            }.collect {}
+            searchingContext.narrowedPathChannel.send(path)
+            LOG.finest("sent path to channel narrowedPathChannel: $path")
+            //searchingContext.searchingState.addVisitedPath(path)
+        }.collect {}
 
         searchingContext.narrowedPathChannel.close()
         LOG.finest("closed channel narrowedPathChannel")
@@ -150,8 +150,8 @@ class TrigramSearcher : WithLogging() {
 
     //TODO rewrite in concurrent way, I cannot decide how to make reduce concurrently here
     /**
-    * Find all file paths, which contains all sequence char triplets from token.
-    * */
+     * Find all file paths, which contains all sequence char triplets from token.
+     * */
     private fun getPathsByToken(trigramMap: TrigramMap, token: String): Set<Path> {
         if (token.length < 3) return emptySet()
         return (0 until token.length - 2).map { column -> token.substring(column, column + 3) }
@@ -161,8 +161,8 @@ class TrigramSearcher : WithLogging() {
 
     //TODO rewrite in concurrent way, maybe divide by batches
     /**
-    * Searches token by single line and creates list of tokenMatches.
-    * */
+     * Searches token by single line and creates list of tokenMatches.
+     * */
     private fun searchStringInLine(filePath: Path, line: String, token: String, lineIndex: Int): Sequence<TokenMatch> {
         LOG.finest("#$lineIndex, \"$line\", token: $token")
         val positionsInLine = line.indicesOf(token)

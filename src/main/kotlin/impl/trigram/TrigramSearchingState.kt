@@ -18,16 +18,20 @@ class TrigramSearchingState(override val result: Future<List<TokenMatch>>) : Sea
     private val visitedFilesNumberRef = AtomicLong(ON_START_COUNTER)
     private val totalFilesNumberRef = AtomicLong(NOT_SET_TOTAL)
     private val totalFilesNumberUpdatedRef = AtomicBoolean(false)
+
     //file sizes in bytes
     private val visitedFilesByteSizeRef = AtomicLong(ON_START_COUNTER)
     private val parsedFilesByteSizeRef = AtomicLong(ON_START_COUNTER)
     private val totalFilesByteSizeRef = AtomicLong(NOT_SET_TOTAL)
     private val totalFilesByteSizeUpdatedRef = AtomicBoolean(false)
+
     //token matches
     private val tokenMatchesNumberRef = AtomicLong(ON_START_COUNTER)
+
     //buffers
     private val visitedPathsBuffer: MutableList<Path> = ArrayList()
     private val tokenMatchesBuffer: MutableList<TokenMatch> = ArrayList()
+
     //cancel
     private var cancellationAction: () -> Unit = {}
 

@@ -8,7 +8,7 @@ import java.util.concurrent.Future
  * State which api gives when you make index at folder.
  * It can help to control process of indexing, since it can be long process.
  * */
-interface IndexingState: ProgressableState{
+interface IndexingState : ProgressableState {
     /**
      * Shows if search finished.
      * */

@@ -71,6 +71,7 @@ fun printIndexingStepLog(indexingState: IndexingState, millis: Long) {
         when {
             lastVisitedFileMessage.isNotEmpty()
                     && lastIndexedFileMessage.isNotEmpty() -> ",$lastVisitedFileMessage,$lastIndexedFileMessage"
+
             lastVisitedFileMessage.isNotEmpty() -> ",$lastVisitedFileMessage"
             lastIndexedFileMessage.isNotEmpty() -> ",$lastIndexedFileMessage"
             else -> ""

@@ -5,8 +5,7 @@ package api
 /**
  * Settings for search
  * */
-class SearchSettings {
-}
+class SearchSettings
 
 /**
  * Default search setting without anything specific

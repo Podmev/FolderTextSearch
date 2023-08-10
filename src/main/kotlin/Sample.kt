@@ -1,7 +1,7 @@
 /**
  * Sample, used for checking CI/CD working
  * */
-class Sample() {
+class Sample {
 
     /**
      * Sum of two ints

@@ -16,9 +16,11 @@ class TrigramIndexingState(override val result: Future<List<Path>>) : IndexingSt
     private val indexedFilesNumberRef = AtomicLong(ON_START_COUNTER)
     private val totalFilesNumberRef = AtomicLong(NOT_SET_TOTAL)
     private val totalFilesNumberUpdatedRef = AtomicBoolean(false)
+
     //buffers
     private val visitedPathsBuffer: MutableList<Path> = ArrayList()
     private val indexedPathsBuffer: MutableList<Path> = ArrayList()
+
     //cancel
     private var cancellationAction: () -> Unit = {}
 

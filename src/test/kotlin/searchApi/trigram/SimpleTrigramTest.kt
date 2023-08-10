@@ -18,7 +18,7 @@ class SimpleTrigramTest {
     private val commonPath: Path = commonSetup.commonPath
 
     /*using not by interface, because we use methods exactly from TrigramSearchApi* */
-    private val searchApiGenerator: ()->TrigramSearchApi ={TrigramSearchApi()}
+    private val searchApiGenerator: () -> TrigramSearchApi = { TrigramSearchApi() }
 
     //TODO separate test in two
     /*Folder with 10 files, only 3 of them have match* */

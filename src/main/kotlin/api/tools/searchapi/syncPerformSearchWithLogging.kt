@@ -71,6 +71,7 @@ fun printSearchStepLog(searchingState: SearchingState, millis: Long) {
         when {
             lastTokenMatchesMessage.isNotEmpty()
                     && lastVisitedFileMessage.isNotEmpty() -> ",$lastVisitedFileMessage,$lastTokenMatchesMessage"
+
             lastTokenMatchesMessage.isNotEmpty() -> ",$lastTokenMatchesMessage"
             lastVisitedFileMessage.isNotEmpty() -> ",$lastVisitedFileMessage"
             else -> ""

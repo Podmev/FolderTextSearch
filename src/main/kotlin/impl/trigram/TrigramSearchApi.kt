@@ -5,7 +5,10 @@ import api.exception.IllegalArgumentSearchException
 import api.exception.NotDirSearchException
 import api.exception.SearchException
 import api.tools.searchapi.syncPerformIndex
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import utils.WithLogging
 import java.nio.file.Path
 import java.util.concurrent.CompletableFuture
@@ -40,6 +43,7 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         val deferred = GlobalScope.async {
             indexer.asyncIndexing(folderPath, completableFuture, indexingState, trigramMapByFolder)
         }
+
         fun cancelIndexing() {
             deferred.cancel(CancellationException())
         }
@@ -63,6 +67,7 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         val deferred = GlobalScope.async {
             searcher.asyncSearching(folderPath, token, trigramMap, completableFuture, searchingState)
         }
+
         fun cancelIndexing() {
             deferred.cancel(CancellationException())
         }
