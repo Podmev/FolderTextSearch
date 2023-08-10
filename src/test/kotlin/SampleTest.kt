@@ -10,7 +10,7 @@ internal class SampleTest {
 
     @Test
     fun testSum() {
-        val expected = 43 //Wrong for testing CI/CD
+        val expected = 42
         assertEquals(expected, testSample.sum(40, 2))
     }
 }
