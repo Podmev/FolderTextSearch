@@ -8,7 +8,8 @@ import utils.prettyDiffTimeFrom
 import java.nio.file.Path
 import java.time.LocalDateTime
 
-/**Util function to calculate index for folder with detailed logging, then after it is done returns
+/**
+ * Util function to calculate index for folder with detailed logging, then after it is done returns
  * Used in tests
  * */
 fun SearchApi.syncPerformIndexWithLoggingAndCancel(folderPathString: Path, cancelAtProgress: Double) {

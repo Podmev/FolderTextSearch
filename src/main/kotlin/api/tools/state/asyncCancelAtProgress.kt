@@ -13,11 +13,12 @@ fun ProgressableState.asyncCancelAtProgress(
     cancelAtProgress: Double,
     checkProgressEveryMillis: Long
 ): Deferred<Unit> {
+    val state = this
     return GlobalScope.async {
-        while (!finished) {
-            val progress = progress
+        while (!state.finished) {
+            val progress = state.progress
             if (progress >= cancelAtProgress) {
-                cancel()
+                state.cancel()
                 break
             }
             delay(checkProgressEveryMillis)

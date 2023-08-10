@@ -48,7 +48,7 @@ class CancelTest {
             cancelAtProgress = 0.0,
             checkProgressEveryMillis = 1
         )
-        state.result.get()!!
+        state.result.get()
         Assertions.assertAll(
             { Assertions.assertTrue(searchApi.isIndexEmpty(), "SearchApi has no index") },
             {
@@ -83,7 +83,7 @@ class CancelTest {
             cancelAtProgress = cancelAtProgress,
             checkProgressEveryMillis = 5
         )
-        state.result.get()!!
+        state.result.get()
         Assertions.assertAll(
             { Assertions.assertTrue(searchApi.isIndexEmpty(), "SearchApi has no index") },
             {
