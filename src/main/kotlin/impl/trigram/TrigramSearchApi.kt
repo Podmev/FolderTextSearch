@@ -19,7 +19,6 @@ import kotlin.io.path.isDirectory
  * Can be used as etalon to check results, but not for performance and flexibility.
  * */
 class TrigramSearchApi : SearchApi, WithLogging() {
-    //TODO fix structure class
     private val trigramMapByFolder: MutableMap<Path, TrigramMap> = mutableMapOf()
     private val indexer = TrigramIndexer()
     private val searcher = TrigramSearcher()
@@ -30,13 +29,12 @@ class TrigramSearchApi : SearchApi, WithLogging() {
     fun getTrigramImmutableMap(folderPath: Path) =
         trigramMapByFolder[folderPath]?.cloneMap() ?: emptyMap()
 
-    //FIXME GlobalScope
     /*Creates index at folder and saves in inner structure.
     * Works asynchronously.
     * */
     @OptIn(DelicateCoroutinesApi::class)
     override fun createIndexAtFolder(folderPath: Path): IndexingState {
-        validatePath(folderPath) // TODO good question - should be thrown exception here or no?
+        validatePath(folderPath)
         val completableFuture = CompletableFuture<List<Path>>()
 
         val indexingState = TrigramIndexingState(completableFuture)

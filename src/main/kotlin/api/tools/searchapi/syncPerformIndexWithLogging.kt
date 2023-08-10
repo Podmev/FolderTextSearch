@@ -11,7 +11,6 @@ import utils.prettyMillis
 import java.nio.file.Path
 import java.time.LocalDateTime
 
-//TODO refactor to class with using logging
 /**
  * Util function to calculate index for folder with detailed logging, then after it is done returns
  * Used in tests
@@ -20,7 +19,6 @@ fun SearchApi.syncPerformIndexWithLogging(folderPath: Path) {
     val startTime = LocalDateTime.now()
     val indexingState = createIndexAtFolder(folderPath)
 
-    //todo this call starts a coroutine only on the current thread, so no real parallel execution
     runBlocking {
 
         var lastLogged = startTime

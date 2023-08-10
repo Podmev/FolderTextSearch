@@ -3,13 +3,11 @@ package api
 import java.nio.file.Path
 import java.util.concurrent.Future
 
-//TODO add inner index state for cases when we don't have index
 /**
  * State which api gives when you make search of token at folder.
  * It can help to control process of searching, since it can be long process.
  * */
 interface SearchingState : ProgressableState {
-    //TODO make state more complex - check index, indexing, searching, finish, failed
     /**
      * Shows if search finished.
      * */

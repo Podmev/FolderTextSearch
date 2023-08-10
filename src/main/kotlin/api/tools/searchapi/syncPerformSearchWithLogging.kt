@@ -9,7 +9,6 @@ import utils.*
 import java.nio.file.Path
 import java.time.LocalDateTime
 
-//TODO refactor to class with using logging
 /**
  * Util function to search token in folder with detailed logging, then after it is done returns tokens
  * Used in tests

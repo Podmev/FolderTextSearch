@@ -45,7 +45,6 @@ class TrigramSearcher : WithLogging() {
                     launch { asyncSearchingInPaths(searchingContext) }
                     launch { asyncSearchingInFileLines(searchingContext) }
                     launch { asyncReadingTokenMatchesChannel(searchingContext) }
-                    //TODO add for counting progress something similar
                 }
             }
             //here we wait all coroutines to finish
@@ -53,11 +52,9 @@ class TrigramSearcher : WithLogging() {
             future.complete(resultPathList)
             LOG.finest("finished for folder: $folderPath and token: \"$token\", ${resultPathList.size} token matches")
         } catch (ex: CancellationException) {
-            //TODO check if it is correct behaviour
             future.complete(emptyList())
             throw ex // Must let the CancellationException propagate
         } catch (th: Throwable) {
-            //TODO check if it is correct behaviour
             future.complete(emptyList())
             LOG.severe("exception during making index: ${th.message}")
             th.printStackTrace()
@@ -159,7 +156,6 @@ class TrigramSearcher : WithLogging() {
             .reduce { pathSet1: Set<Path>, pathSet2: Set<Path> -> pathSet1.intersect(pathSet2) }
     }
 
-    //TODO rewrite in concurrent way, maybe divide by batches
     /**
      * Searches token by single line and creates list of tokenMatches.
      * */

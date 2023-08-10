@@ -8,7 +8,6 @@ import utils.prettyDiffTimeFrom
 import java.nio.file.Path
 import java.time.LocalDateTime
 
-//TODO refactor to class with using logging
 /**Util function to calculate index for folder with detailed logging, then after it is done returns
  * Used in tests
  * */

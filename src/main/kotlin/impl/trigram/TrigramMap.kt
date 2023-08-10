@@ -6,8 +6,6 @@ import java.nio.file.Path
 
 /*TODO add support:
 *  - timestamp
-*  - reuse parts of trees for different folders
-*  - think about many copies of same records by file
 * */
 
 /**

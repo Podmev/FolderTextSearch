@@ -26,11 +26,11 @@ class IndexlessSearchingState(override val result: Future<List<TokenMatch>>) : S
     }
 
     override fun getTokenMatchesBuffer(flush: Boolean): List<TokenMatch> {
-        TODO("Not yet implemented")
+        throw SearchException("Not supported getTokenMatchesBuffer for searching in indexless api")
     }
 
     override fun getVisitedPathsBuffer(flush: Boolean): List<Path> {
-        TODO("Not yet implemented")
+        throw SearchException("Not supported getVisitedPathsBuffer for searching in indexless api")
     }
 
     override val visitedFilesNumber: Long = 0L
