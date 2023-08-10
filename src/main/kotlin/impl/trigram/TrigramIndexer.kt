@@ -21,17 +21,20 @@ import kotlin.io.path.isRegularFile
 import kotlin.io.path.useLines
 import kotlin.streams.asSequence
 
-/*Only logic of constructing index for TrigramSearApi*/
+/**
+ * Only logic of constructing index for TrigramSearApi
+ * */
 internal class TrigramIndexer : WithLogging() {
-    /*Main logic of indexing, checks if index is created already.
-   * If there is no index, it starts indexing.
-   * Has 4 processes:
-   *  - walking files,
-   *  - indexing files,
-   *  - reading paths of already indexed files to save progress,
-   *  - reading found triplets in each file to save in trigramMap,
-   * In the end it fills result list of indexed files in CompletableFuture object
-   * */
+    /**
+     * Main logic of indexing, checks if index is created already.
+     * If there is no index, it starts indexing.
+     * Has 4 processes:
+     *  - walking files,
+     *  - indexing files,
+     *  - reading paths of already indexed files to save progress,
+     *  - reading found triplets in each file to save in trigramMap,
+     * In the end it fills result list of indexed files in CompletableFuture object
+     * */
     suspend fun asyncIndexing(
         folderPath: Path,
         future: CompletableFuture<List<Path>>,
@@ -40,7 +43,6 @@ internal class TrigramIndexer : WithLogging() {
     ) = coroutineScope {
         try {
             LOG.finest("started for folder: $folderPath")
-            //TODO think about which structure is better choice for resultPathQueue: LinkedBlockingQueue or others
             val resultPathQueue: Queue<Path> = LinkedBlockingQueue()
             val foundTrigramMap: TrigramMap? = trigramMapByFolder[folderPath]
             coroutineScope {
@@ -62,20 +64,19 @@ internal class TrigramIndexer : WithLogging() {
             future.complete(resultPathList)
             LOG.finest("finished for folder: $folderPath, indexed ${resultPathList.size} files")
         } catch (ex: CancellationException) {
-            //TODO check if it is correct behaviour
             future.complete(emptyList())
             throw ex // Must let the CancellationException propagate
         } catch (th: Throwable) {
-            //TODO check if it is correct behaviour
             future.complete(emptyList())
             LOG.severe("exception during making index: ${th.message}")
             th.printStackTrace()
         }
     }
 
-    /*Walks files: on each file - increment counter and send path in visited path channel.
-    * In the end it closes visited path channel.
-    * */
+    /**
+     * Walks files: on each file - increment counter and send path in visited path channel.
+     * In the end it closes visited path channel.
+     * */
     private suspend fun asyncWalkingFiles(
         indexingContext: TrigramIndexingContext
     ) = coroutineScope {
@@ -104,10 +105,11 @@ internal class TrigramIndexer : WithLogging() {
         LOG.finest("finished for folder: ${indexingContext.folderPath}")
     }
 
-    /*On each visited path from visited path channel.
-    * It constructs index for file (only if it is possible) and sends file path to indexed path channel.
-    * In the end it closes 2 channels: indexed path channel and triplet in path channel.
-    * */
+    /**
+     * On each visited path from visited path channel.
+     * It constructs index for file (only if it is possible) and sends file path to indexed path channel.
+     * In the end it closes 2 channels: indexed path channel and triplet in path channel.
+     * */
     private suspend fun asyncIndexingFiles(
         indexingContext: TrigramIndexingContext
     ) = coroutineScope {
@@ -128,10 +130,10 @@ internal class TrigramIndexer : WithLogging() {
         LOG.finest("finished for folder: ${indexingContext.folderPath}")
     }
 
-    /*Lazy for each line separately constructs index.
-    * */
+    /**
+     * Lazy for each line separately constructs index.
+     * */
     private suspend fun constructIndexForFile(path: Path, indexingContext: TrigramIndexingContext) {
-        //TODO maybe add flow too
         try {
             path.useLines { lines ->
                 lines
@@ -155,7 +157,9 @@ internal class TrigramIndexer : WithLogging() {
         }
     }
 
-    /*Runs with sliding window of 3 characters and sends to triplet in path channel.*/
+    /**
+     * Runs with sliding window of 3 characters and sends to triplet in path channel.
+     * */
     private suspend fun constructIndexForLine(
         path: Path,
         line: String,
@@ -172,7 +176,9 @@ internal class TrigramIndexer : WithLogging() {
         LOG.finest("finished line $lineIndex for path: $path")
     }
 
-    /*Reads indexed files, updates state and resultList.*/
+    /**
+     * Reads indexed files, updates state and resultList.
+     * */
     private suspend fun asyncReadingIndexedPathChannel(
         indexingContext: TrigramIndexingContext
     ) = coroutineScope {
@@ -186,7 +192,9 @@ internal class TrigramIndexer : WithLogging() {
         LOG.finest("finished")
     }
 
-    /*Reads triplets of chars by path in channel, saves in trigramMap and updates state.*/
+    /**
+     * Reads triplets of chars by path in channel, saves in trigramMap and updates state.
+     * */
     private suspend fun asyncReadingTripletInPathChannel(
         indexingContext: TrigramIndexingContext
     ) = coroutineScope {
@@ -200,9 +208,9 @@ internal class TrigramIndexer : WithLogging() {
 
     //TODO fix without using direct list of exceptions
     //https://stackoverflow.com/questions/620993/determining-binary-text-file-type-in-java
-    /*Predicate for file if it is possible and reasonable to index.
-    *
-    * */
+    /**
+     * Predicate for file if it is possible and reasonable to index.
+     * */
     private fun isPossibleToIndexFile(path: Path): Boolean {
         val fileName: String = path.fileName.toString()
         for (forbiddenIndexExtension in forbiddenIndexExtensions) {
@@ -214,8 +222,9 @@ internal class TrigramIndexer : WithLogging() {
     }
 
     companion object {
-        /*extensions of files which are not supposed to be indexed
-        * */
+        /**
+         * Extensions of files which are not supposed to be indexed
+         * */
         private val forbiddenIndexExtensions: List<String> = listOf(
             ".jar",
             ".png",
@@ -227,7 +236,6 @@ internal class TrigramIndexer : WithLogging() {
             "image1",
             "image2",
             "Test_ISO_8859_15.java",
-            //TODO add more
         )
     }
 }

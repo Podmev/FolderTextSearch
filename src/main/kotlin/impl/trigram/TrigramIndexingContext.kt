@@ -26,9 +26,10 @@ internal class TrigramIndexingContext(
     val trigramMap: TrigramMap
 ) {
 
-    /*Unlimited capacity is used to achieve different independent speed of indexing parts:
-    * walking files, parsing files, saving triplets
-    * */
+    /**
+     * Unlimited capacity is used to achieve different independent speed of indexing parts:
+     * walking files, parsing files, saving triplets
+     * */
     private val channelCapacity = Channel.UNLIMITED
     val visitedPathChannel = Channel<Path>(channelCapacity)
     val indexedPathChannel = Channel<Path>(channelCapacity)

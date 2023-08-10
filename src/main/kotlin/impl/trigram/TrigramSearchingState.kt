@@ -8,27 +8,28 @@ import java.nio.file.Path
 import java.util.concurrent.Future
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
-import java.util.concurrent.atomic.AtomicReference
 import kotlin.io.path.fileSize
 
 /**
  * State of trigram search api for searching.
  */
 class TrigramSearchingState(override val result: Future<List<TokenMatch>>) : SearchingState, WithLogging() {
+    //file numbers
     private val visitedFilesNumberRef = AtomicLong(ON_START_COUNTER)
     private val totalFilesNumberRef = AtomicLong(NOT_SET_TOTAL)
     private val totalFilesNumberUpdatedRef = AtomicBoolean(false)
-
+    //file sizes in bytes
     private val visitedFilesByteSizeRef = AtomicLong(ON_START_COUNTER)
     private val parsedFilesByteSizeRef = AtomicLong(ON_START_COUNTER)
     private val totalFilesByteSizeRef = AtomicLong(NOT_SET_TOTAL)
     private val totalFilesByteSizeUpdatedRef = AtomicBoolean(false)
-
+    //token matches
     private val tokenMatchesNumberRef = AtomicLong(ON_START_COUNTER)
-
-    private val visitedPathsBufferRef = AtomicReference(ArrayList<Path>())
-    private val tokenMatchesBufferRef = AtomicReference(ArrayList<TokenMatch>())
-    private val cancellationActionRef = AtomicReference<() -> Unit>(/* no-op */)
+    //buffers
+    private val visitedPathsBuffer: MutableList<Path> = ArrayList()
+    private val tokenMatchesBuffer: MutableList<TokenMatch> = ArrayList()
+    //cancel
+    private var cancellationAction: () -> Unit = {}
 
     override val visitedFilesNumber: Long
         get() = visitedFilesNumberRef.get()
@@ -47,7 +48,7 @@ class TrigramSearchingState(override val result: Future<List<TokenMatch>>) : Sea
 
     override val progress: Double
         get() {
-            if(finished){
+            if (finished) {
                 return COMPLETELY_FINISHED_PROGRESS
             }
             val calculatedProgress = when (val total = totalFilesByteSizeRef.get()) {
@@ -63,78 +64,81 @@ class TrigramSearchingState(override val result: Future<List<TokenMatch>>) : Sea
                 }
             }
             //cannot return 1.0 (100%), if it is not completely finished, so we put artificial value of almost finished
-            return if (calculatedProgress == COMPLETELY_FINISHED_PROGRESS) ALMOST_FINISHED_PROGRESS
+            //We can receive here more than 100%, because of not exact calculation of parsed lines byte sizes
+            return if (calculatedProgress >= COMPLETELY_FINISHED_PROGRESS) ALMOST_FINISHED_PROGRESS
             else calculatedProgress
         }
 
     override fun cancel() {
-        cancellationActionRef.get()()
+        cancellationAction()
     }
 
     override fun getTokenMatchesBuffer(flush: Boolean): List<TokenMatch> {
-        synchronized(tokenMatchesBufferRef) {
+        synchronized(tokenMatchesBuffer) {
+            //making copy of list
+            val bufferCopy = ArrayList(tokenMatchesBuffer)
             if (!flush) {
                 //Old values we don't erase
-                //making copy of list
-                return ArrayList(tokenMatchesBufferRef.get())
+                return bufferCopy
             }
             //Need to erase old values
-            val currentBuffer = tokenMatchesBufferRef.getAndSet(ArrayList())
-            //TODO better to make copy, but it can work probably without copying
-            return ArrayList(currentBuffer)
+            tokenMatchesBuffer.clear()
+            return bufferCopy
         }
     }
 
     override fun getVisitedPathsBuffer(flush: Boolean): List<Path> {
-        synchronized(visitedPathsBufferRef) {
+        synchronized(visitedPathsBuffer) {
+            //making copy of list
+            val bufferCopy = ArrayList(visitedPathsBuffer)
             if (!flush) {
                 //Old values we don't erase
-                //making copy of list
-                return ArrayList(visitedPathsBufferRef.get())
+                return bufferCopy
             }
             //Need to erase old values
-            val currentBuffer = visitedPathsBufferRef.getAndSet(ArrayList())
-            //TODO better to make copy, but it can work probably without copying
-            return ArrayList(currentBuffer)
+            visitedPathsBuffer.clear()
+            return bufferCopy
         }
     }
 
     /**
-     * Adds newfound token match
+     * Adds newfound token match.
      */
     fun addTokenMatchToBuffer(tokenMatch: TokenMatch): Long {
         val tokenMatchesNumber = tokenMatchesNumberRef.incrementAndGet()
         LOG.finest("add #$tokenMatchesNumber tokenMatch $tokenMatch")
-        synchronized(tokenMatchesBufferRef) {
-            tokenMatchesBufferRef.get().add(tokenMatch)
+        synchronized(tokenMatchesBuffer) {
+            tokenMatchesBuffer.add(tokenMatch)
         }
         return tokenMatchesNumber
     }
 
     /**
-     * Adds cancellation action.
+     * Setting action for cancel.
      */
     fun addCancellationAction(action: () -> Unit) {
-        cancellationActionRef.set(action)
+        cancellationAction = action
     }
 
     /**
-     * Adds visited line to state
+     * Adds visited line to state.
      */
     fun addVisitedPath(path: Path) {
         val fileByteSize = path.fileSize()
         val currentTotalFileByteSize = visitedFilesByteSizeRef.addAndGet(fileByteSize)
         val visitedFileNumber = visitedFilesNumberRef.incrementAndGet()
-        LOG.finest("add path $path, visitedFileNumber:$visitedFileNumber, " +
-                "file size: ${prettyBytes(fileByteSize)}, already ${prettyBytes(currentTotalFileByteSize)} files visited")
-        synchronized(visitedPathsBufferRef) {
-            visitedPathsBufferRef.get().add(path)
+        LOG.finest(
+            "add path $path, visitedFileNumber:$visitedFileNumber, " +
+                    "file size: ${prettyBytes(fileByteSize)}, already ${prettyBytes(currentTotalFileByteSize)} files visited"
+        )
+        synchronized(visitedPathsBuffer) {
+            visitedPathsBuffer.add(path)
         }
         return
     }
 
     /**
-     * Adds parsed line to state
+     * Adds parsed line to state.
      */
     fun addParsedLine(line: String) {
         parsedFilesByteSizeRef.addAndGet(line.byteSize().toLong())
@@ -157,7 +161,7 @@ class TrigramSearchingState(override val result: Future<List<TokenMatch>>) : Sea
 
     /**
      * Sets totalFilesNumber maximum single time for live time of TrigramSearchingState.
-     * Single time is checked by totalFilesNumberUpdatedRef
+     * Single time is checked by totalFilesNumberUpdatedRef.
      * */
     fun setTotalFilesNumber(): Boolean {
         val totalFilesNumber = visitedFilesNumber
@@ -170,7 +174,9 @@ class TrigramSearchingState(override val result: Future<List<TokenMatch>>) : Sea
         return changed
     }
 
-    /*approximate string size in bytes as we read them in files*/
+    /**
+     * Approximate string size in bytes as we read them in files
+     * */
     private fun String.byteSize(): Int = length * 2
 
     companion object {

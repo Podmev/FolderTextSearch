@@ -64,10 +64,10 @@ class TrigramSearcher : WithLogging() {
         }
     }
 
-    /*
-    * Takes narrowed paths for token - only those files which has ALL together triplets of sequencial character from token
-    * For each path it sends in channel narrowedPathChannel
-    * */
+    /**
+     * Takes narrowed paths for token - only those files which has ALL together triplets of sequencial character from token
+     * For each path it sends in channel narrowedPathChannel
+     * */
     private suspend fun asyncWalkTokenAndNarrowPaths(searchingContext: TrigramSearchingContext) = coroutineScope {
         LOG.finest("started for folder: ${searchingContext.folderPath} and token: \"${searchingContext.token}\"")
         //TODO make async way getPathsByToken
@@ -115,7 +115,7 @@ class TrigramSearcher : WithLogging() {
     }
 
     /**
-     * For each line in fileLineChannel it sends all found token matches to tokenMatchChannel
+     * For each line in fileLineChannel it sends all found token matches to tokenMatchChannel.
      * */
     private suspend fun asyncSearchingInFileLines(searchingContext: TrigramSearchingContext) = coroutineScope {
         LOG.finest("started for folder: ${searchingContext.folderPath} and token: \"$searchingContext.token\"")
@@ -135,7 +135,7 @@ class TrigramSearcher : WithLogging() {
     }
 
     /**
-     * For token match in tokenMatchChannel it puts this token in resultTokenMatchQueue and to token matches buffer
+     * For token match in tokenMatchChannel it puts this token in resultTokenMatchQueue and to token matches buffer.
      * */
     private suspend fun asyncReadingTokenMatchesChannel(searchingContext: TrigramSearchingContext) = coroutineScope {
         LOG.finest("started for folder: ${searchingContext.folderPath} and token: \"$searchingContext.token\"")

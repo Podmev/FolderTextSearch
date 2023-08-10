@@ -5,7 +5,9 @@ import kotlinx.coroutines.channels.Channel
 import java.nio.file.Path
 import java.util.*
 
-/*context used in searching with all necessary components*/
+/**
+ * Context used in searching with all necessary components.
+ * */
 internal class TrigramSearchingContext(
     /**
      * Folder path for searching.
@@ -29,13 +31,13 @@ internal class TrigramSearchingContext(
     val trigramMap: TrigramMap
 ) {
 
-    /*Unlimited capacity is used to achieve different independent speed of searching parts:
-    * walking files, parsing file lines, saving token matches
-    * */
+    /**
+     * Unlimited capacity is used to achieve different independent speed of searching parts:
+     * walking files, parsing file lines, saving token matches
+     * */
     private val channelCapacity = Channel.UNLIMITED
     val narrowedPathChannel = Channel<Path>(channelCapacity)
     val fileLineChannel = Channel<LineInFile>(channelCapacity)
-    //TODO add lineBatchChannel
     val tokenMatchChannel = Channel<TokenMatch>(channelCapacity)
 
 }
