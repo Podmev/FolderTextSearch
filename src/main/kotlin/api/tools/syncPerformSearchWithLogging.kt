@@ -46,7 +46,7 @@ fun SearchApi.syncPerformSearchWithLogging(folderPath: Path, token: String, dela
 
 /**
  * Prints step of searching with full details.
- */
+ * */
 fun printSearchStepLog(searchingState: SearchingState, millis: Long) {
     val visitedFilesNumber = searchingState.visitedFilesNumber
     val totalFilesNumber = searchingState.totalFilesNumber
@@ -91,7 +91,7 @@ fun printSearchStepLog(searchingState: SearchingState, millis: Long) {
 
 /**
  * Progressive scale of steps for searching
- */
+ * */
 fun getSearchLogStepMillis(millis: Long) = when (millis) {
     in 0 until 10 -> 2
     in 10 until 20 -> 3

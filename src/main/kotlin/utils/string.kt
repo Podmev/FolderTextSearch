@@ -3,7 +3,7 @@ package utils
 /**
  * Finds all indices of starts of token in line.
  * Works lazily.
- * For empty token returns empty sequence
+ * For empty token returns empty sequence.
  * */
 fun String.indicesOf(token: String, ignoreCase: Boolean = false): Sequence<Int> {
     if (token.isEmpty()) {

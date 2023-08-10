@@ -10,5 +10,5 @@ class SearchSettings {
 
 /**
  * Default search setting without anything specific
- */
+ * */
 val defaultSearchSettings = SearchSettings()

@@ -1,4 +1,6 @@
 package utils
 
-/*Returns List of pairs of neighbours items*/
-fun <T> List<T>.paired() = zip(drop(1))
+/**
+ * Returns List of pairs of neighbours items
+ * */
+fun <T> List<T>.paired(): List<Pair<T, T>> = zip(drop(1))

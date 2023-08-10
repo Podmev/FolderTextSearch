@@ -20,7 +20,7 @@ class TrigramMap : WithLogging() {
 
     /**
      * Add new char triplet to structure with file path containing it.
-     */
+     * */
     fun addCharTripletByPath(charTriplet: String, path: Path) {
         validateCharTriplet(charTriplet)
 

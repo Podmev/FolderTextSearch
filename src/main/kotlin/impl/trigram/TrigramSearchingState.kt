@@ -12,7 +12,7 @@ import kotlin.io.path.fileSize
 
 /**
  * State of trigram search api for searching.
- */
+ * */
 class TrigramSearchingState(override val result: Future<List<TokenMatch>>) : SearchingState, WithLogging() {
     //file numbers
     private val visitedFilesNumberRef = AtomicLong(ON_START_COUNTER)
@@ -103,7 +103,7 @@ class TrigramSearchingState(override val result: Future<List<TokenMatch>>) : Sea
 
     /**
      * Adds newfound token match.
-     */
+     * */
     fun addTokenMatchToBuffer(tokenMatch: TokenMatch): Long {
         val tokenMatchesNumber = tokenMatchesNumberRef.incrementAndGet()
         LOG.finest("add #$tokenMatchesNumber tokenMatch $tokenMatch")
@@ -115,14 +115,14 @@ class TrigramSearchingState(override val result: Future<List<TokenMatch>>) : Sea
 
     /**
      * Setting action for cancel.
-     */
+     * */
     fun addCancellationAction(action: () -> Unit) {
         cancellationAction = action
     }
 
     /**
      * Adds visited line to state.
-     */
+     * */
     fun addVisitedPath(path: Path) {
         val fileByteSize = path.fileSize()
         val currentTotalFileByteSize = visitedFilesByteSizeRef.addAndGet(fileByteSize)
@@ -139,7 +139,7 @@ class TrigramSearchingState(override val result: Future<List<TokenMatch>>) : Sea
 
     /**
      * Adds parsed line to state.
-     */
+     * */
     fun addParsedLine(line: String) {
         parsedFilesByteSizeRef.addAndGet(line.byteSize().toLong())
     }

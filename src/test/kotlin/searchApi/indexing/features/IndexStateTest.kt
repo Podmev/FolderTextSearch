@@ -20,7 +20,7 @@ class IndexStateTest {
     private val folderName2 = "fileAndFolderWithFile"
     private val deepFileFolderName = "deepFile"
 
-    /*before calculating index at folder, search api doesn't have index for it.*/
+    /*before calculating index at folder, search api doesn't have index for it.* */
     @Test
     fun hasIndexAtFolderFalseBeforeIndexTest() {
         val searchApi: SearchApi = TrigramSearchApi()
@@ -30,7 +30,7 @@ class IndexStateTest {
         Assertions.assertFalse(hasIndexAtFolderBeforeIndexing)
     }
 
-    /*After calculating index at folder, search api saves it.*/
+    /*After calculating index at folder, search api saves it.* */
     @Test
     fun hasIndexAtFolderTrueAfterIndexTest() {
         val searchApi: SearchApi = TrigramSearchApi()
@@ -39,7 +39,7 @@ class IndexStateTest {
         Assertions.assertTrue(searchApi.hasIndexAtFolder(folder))
     }
 
-    /*After calculating index at folder and removing it, search api doesn't have it anymore.*/
+    /*After calculating index at folder and removing it, search api doesn't have it anymore.* */
     @Test
     fun hasIndexAtFolderFalseAfterRemovingIndexAtFolderTest() {
         val searchApi: SearchApi = TrigramSearchApi()
@@ -49,7 +49,7 @@ class IndexStateTest {
         Assertions.assertFalse(searchApi.hasIndexAtFolder(folder))
     }
 
-    /*After calculating index at folder and removing it, search api doesn't have it anymore.*/
+    /*After calculating index at folder and removing it, search api doesn't have it anymore.* */
     @Test
     fun hasIndexAtFolderFalseAfterRemovingFullIndexTest() {
         val searchApi: SearchApi = TrigramSearchApi()
@@ -59,7 +59,7 @@ class IndexStateTest {
         Assertions.assertFalse(searchApi.hasIndexAtFolder(folder))
     }
 
-    /*After calculating 2 index at 2 folders and removing both, search api doesn't have index at any folder.*/
+    /*After calculating 2 index at 2 folders and removing both, search api doesn't have index at any folder.* */
     @Test
     fun hasIndexAtFolderFalseFor2FoldersAfterRemovingFullIndexTest() {
         val searchApi: SearchApi = TrigramSearchApi()
@@ -74,7 +74,7 @@ class IndexStateTest {
         )
     }
 
-    /*After calculating 2 index at 2 folders, search api has index at both folders.*/
+    /*After calculating 2 index at 2 folders, search api has index at both folders.* */
     @Test
     fun hasIndexAtFolderTrueFor2FoldersAfterIndexBothTest() {
         val searchApi: SearchApi = TrigramSearchApi()
@@ -88,7 +88,7 @@ class IndexStateTest {
         )
     }
 
-    /*After calculating 2 index at 2 folders, search api has index at both folders.*/
+    /*After calculating 2 index at 2 folders, search api has index at both folders.* */
     @Test
     fun hasIndexAtFolderTrueAfterRepeatingIndexTest() {
         val searchApi: SearchApi = TrigramSearchApi()
@@ -98,7 +98,7 @@ class IndexStateTest {
         Assertions.assertTrue(searchApi.hasIndexAtFolder(folder))
     }
 
-    /*before calculating 1 index at folder, search api has empty list of indexed folders.*/
+    /*before calculating 1 index at folder, search api has empty list of indexed folders.* */
     @Test
     fun getAllIndexedFoldersEmptyBeforeIndexFolderTest() {
         val searchApi: SearchApi = TrigramSearchApi()
@@ -108,7 +108,7 @@ class IndexStateTest {
         Assertions.assertEquals(emptyList<Path>(), allIndexedFoldersBeforeIndex)
     }
 
-    /*After calculating 1 index at folder, search api has list of single indexed folder.*/
+    /*After calculating 1 index at folder, search api has list of single indexed folder.* */
     @Test
     fun getAllIndexedFoldersAfterIndexFolderTest() {
         val searchApi: SearchApi = TrigramSearchApi()
@@ -131,7 +131,7 @@ class IndexStateTest {
     }
 
     /*After calculating 1 index at folder with many subfolders, search api has list of only single indexed folder, 
-     but not subfolders.*/
+     but not subfolders.* */
     @Test
     fun getAllIndexedFoldersAfterIndexFolderWithManySubfoldersTest() {
         val searchApi: SearchApi = TrigramSearchApi()
@@ -140,7 +140,7 @@ class IndexStateTest {
         Assertions.assertEquals(listOf(folder), searchApi.getAllIndexedFolders())
     }
 
-    /*After calculating 2 index at 2 folders and removing both, search api has empty list of indexed folders.*/
+    /*After calculating 2 index at 2 folders and removing both, search api has empty list of indexed folders.* */
     @Test
     fun getAllIndexedFoldersEmptyFor2FoldersAfterRemovingFullIndexTest() {
         val searchApi: SearchApi = TrigramSearchApi()
@@ -152,7 +152,7 @@ class IndexStateTest {
         Assertions.assertEquals(emptyList<Path>(), searchApi.getAllIndexedFolders())
     }
 
-    /*After calculating index at folder, when we remove it, we receive true - successfully removed.*/
+    /*After calculating index at folder, when we remove it, we receive true - successfully removed.* */
     @Test
     fun removeIndexAtFolderTrueAfterIndexingFolderTest() {
         val searchApi: SearchApi = TrigramSearchApi()
@@ -161,7 +161,7 @@ class IndexStateTest {
         Assertions.assertTrue(searchApi.removeIndexAtFolder(folder))
     }
 
-    /*Before calculating index at folder, when we remove it, we receive false - failed to remove it.*/
+    /*Before calculating index at folder, when we remove it, we receive false - failed to remove it.* */
     @Test
     fun removeIndexAtFolderTrueBeforeIndexingFolderTest() {
         val searchApi: SearchApi = TrigramSearchApi()
@@ -170,7 +170,7 @@ class IndexStateTest {
         searchApi.syncPerformIndex(folder)
     }
 
-    /*After calculating index at folder and removing it, when we remove it again, we receive false - failed to remove it*/
+    /*After calculating index at folder and removing it, when we remove it again, we receive false - failed to remove it* */
     @Test
     fun removeIndexAtFolderFalseAfterOtherRemoveTest() {
         val searchApi: SearchApi = TrigramSearchApi()

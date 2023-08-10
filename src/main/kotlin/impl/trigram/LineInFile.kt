@@ -8,14 +8,14 @@ import java.nio.file.Path
 data class LineInFile(
     /**
      * File path, where located the line
-     */
+     * */
     val path: Path,
     /**
      * 0-based index of line from file
-     */
+     * */
     val lineIndex: Int,
     /**
      * Content of line from file
-     */
+     * */
     val line: String
 )

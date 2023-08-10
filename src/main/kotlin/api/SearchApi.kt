@@ -10,7 +10,7 @@ import java.nio.file.Path
 interface SearchApi {
     /**
      * Creates and saves index for folder. It will be used for searching
-     */
+     * */
     fun createIndexAtFolder(folderPath: Path): IndexingState
 
     /**
@@ -44,7 +44,7 @@ interface SearchApi {
 
     /**
      * Returns all folders, where index is calculated
-     */
+     * */
     fun getAllIndexedFolders(): List<Path>
 }
 

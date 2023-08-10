@@ -18,11 +18,11 @@ import kotlin.test.assertFailsWith
 * Set of unit test for checking search for invalid situations for all implementations
 * Some tests use ready folders with files from test resources
 * Using generator for SearchApi to have fresh state in SearchApi
-*/
+* */
 internal class FailTest {
     private val commonPath: Path = commonSetup.commonPath
 
-    /*searching token with length 0, should be thrown IllegalArgumentSearchException*/
+    /*searching token with length 0, should be thrown IllegalArgumentSearchException* */
     @ParameterizedTest(name = "{0}")
     @MethodSource("searchApiProvider")
     fun token0LengthTest(searchApiGenerator: ()->SearchApi) {
@@ -33,7 +33,7 @@ internal class FailTest {
         assertFailsWith(IllegalArgumentSearchException::class) { searchApi.syncSearchTokenAfterIndex(folderPath, token) }
     }
 
-    /*searching token with length 1, should be thrown IllegalArgumentSearchException*/
+    /*searching token with length 1, should be thrown IllegalArgumentSearchException* */
     @ParameterizedTest(name = "{0}")
     @MethodSource("searchApiProvider")
     fun token1LengthTest(searchApiGenerator: ()->SearchApi) {
@@ -44,7 +44,7 @@ internal class FailTest {
         assertFailsWith(IllegalArgumentSearchException::class) { searchApi.syncSearchTokenAfterIndex(folderPath, token) }
     }
 
-    /*searching token with length 2, should be thrown IllegalArgumentSearchException*/
+    /*searching token with length 2, should be thrown IllegalArgumentSearchException* */
     @ParameterizedTest(name = "{0}")
     @MethodSource("searchApiProvider")
     fun token2LengthTest(searchApiGenerator: ()->SearchApi) {
@@ -55,7 +55,7 @@ internal class FailTest {
         assertFailsWith(IllegalArgumentSearchException::class) { searchApi.syncSearchTokenAfterIndex(folderPath, token) }
     }
 
-    /*searching token has symbol \n, should be thrown IllegalArgumentSearchException*/
+    /*searching token has symbol \n, should be thrown IllegalArgumentSearchException* */
     @ParameterizedTest(name = "{0}")
     @MethodSource("searchApiProvider")
     fun tokenWithEscapeNTest(searchApiGenerator: ()->SearchApi) {
@@ -66,7 +66,7 @@ internal class FailTest {
         assertFailsWith(IllegalArgumentSearchException::class) { searchApi.syncSearchTokenAfterIndex(folderPath, token) }
     }
 
-    /*searching token has symbol \r, should be thrown IllegalArgumentSearchException*/
+    /*searching token has symbol \r, should be thrown IllegalArgumentSearchException* */
     @ParameterizedTest(name = "{0}")
     @MethodSource("searchApiProvider")
     fun tokenWithEscapeRTest(searchApiGenerator: ()->SearchApi) {
@@ -77,7 +77,7 @@ internal class FailTest {
         assertFailsWith(IllegalArgumentSearchException::class) { searchApi.syncSearchTokenAfterIndex(folderPath, token) }
     }
 
-    /*searching token has 2 symbols \n\r, should be thrown IllegalArgumentSearchException*/
+    /*searching token has 2 symbols \n\r, should be thrown IllegalArgumentSearchException* */
     @ParameterizedTest(name = "{0}")
     @MethodSource("searchApiProvider")
     fun tokenWithEscapeNEscapeRTest(searchApiGenerator: ()->SearchApi) {
@@ -88,7 +88,7 @@ internal class FailTest {
         assertFailsWith(IllegalArgumentSearchException::class) { searchApi.syncSearchTokenAfterIndex(folderPath, token) }
     }
 
-    /*folder path is actually file, should be thrown NotDirSearchException*/
+    /*folder path is actually file, should be thrown NotDirSearchException* */
     @ParameterizedTest(name = "{0}")
     @MethodSource("searchApiProvider")
     fun folderPathIsFileTest(searchApiGenerator: ()->SearchApi) {
@@ -99,7 +99,7 @@ internal class FailTest {
         assertFailsWith(NotDirSearchException::class) { searchApi.syncSearchTokenAfterIndex(folderPath, token) }
     }
 
-    /*folder path is wrong - there is nothing on this way, should be thrown NotDirSearchException*/
+    /*folder path is wrong - there is nothing on this way, should be thrown NotDirSearchException* */
     @ParameterizedTest(name = "{0}")
     @MethodSource("searchApiProvider")
     fun notExistingFolderTest(searchApiGenerator: ()->SearchApi) {
@@ -114,7 +114,7 @@ internal class FailTest {
         private val indexlessSearchApiGenerator: ()->SearchApi = { IndexlessSearchApi()}
         private val trigramSearchApiGenerator: ()->SearchApi = { TrigramSearchApi()}
 
-        /*list of implementations of SearchApi*/
+        /*list of implementations of SearchApi* */
         @JvmStatic
         fun searchApiProvider(): Stream<Arguments> {
             return Stream.of(

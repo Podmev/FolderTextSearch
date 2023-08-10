@@ -12,14 +12,14 @@ import java.nio.file.Path
 data class TokenMatch(
     /**
      * File path, where token was found
-     */
+     * */
     val filePath: Path,
     /**
      * 1-based number of line, which contains token
-     */
+     * */
     val line: Long,
     /**
      * 1-based position in line, where starts token in line
-     */
+     * */
     val column: Long
 )

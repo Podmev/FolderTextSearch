@@ -8,24 +8,38 @@ import kotlin.reflect.full.companionObject
 * https://stackoverflow.com/questions/34416869/idiomatic-way-of-logging-in-kotlin
 * */
 
-// Return logger for Java class, if companion object fix the name
-fun <T : Any> logger(forClass: Class<T>): Logger {
-    return Logger.getLogger(unwrapCompanionClass(forClass).name)
-}
+/**
+ * Returns logger for Java class, if companion object fix the name
+ * */
+fun <T : Any> logger(forClass: Class<T>): Logger =
+    Logger.getLogger(unwrapCompanionClass(forClass).name)
 
-// unwrap companion class to enclosing class given a Java Class
-fun <T : Any> unwrapCompanionClass(ofClass: Class<T>): Class<*> {
-    return ofClass.enclosingClass?.takeIf {
+/**
+ *
+ * Unwraps companion class to enclosing class given a Java Class
+ * */
+fun <T : Any> unwrapCompanionClass(ofClass: Class<T>): Class<*> =
+    ofClass.enclosingClass?.takeIf {
         ofClass.enclosingClass.kotlin.companionObject?.java == ofClass
     } ?: ofClass
-}
 
-// marker interface and related extension (remove extension for Any.logger() in favour of this)
+/**
+ * Marker interface and related extension (remove extension for Any.logger() in favour of this)
+ * */
 interface Loggable
 
+/**
+ * Extension function for Logger interface to get instance of logger for this class
+ * */
 fun Loggable.logger(): Logger = logger(this.javaClass)
 
-// abstract base class to provide logging, intended for companion objects more than classes but works for either
+/**
+ * Abstract base class to provide logging, intended for companion objects more than classes but works for either
+ * */
 abstract class WithLogging : Loggable {
+    /**
+     * field of logger, which automatic appears in class, which inherits this abstract class
+     * */
+    @Suppress("PropertyName")
     val LOG = logger()
 }

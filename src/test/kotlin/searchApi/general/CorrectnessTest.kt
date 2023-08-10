@@ -27,11 +27,11 @@ import java.util.stream.Stream
 * Some tests use ready folders with files from test resources
 *
 * Using generator for SearchApi to have fresh state in SearchApi
-*/
+* */
 internal class CorrectnessTest {
     private val commonPath: Path = commonSetup.commonPath
 
-    /*Folder with single file with single line, which contains token 1 time*/
+    /*Folder with single file with single line, which contains token 1 time* */
     @ParameterizedTest(name = "{0}")
     @MethodSource("searchApiProvider")
     fun singleFileTest(searchApiGenerator: ()->SearchApi) {
@@ -45,7 +45,7 @@ internal class CorrectnessTest {
         )
     }
 
-    /*Folder with file and inner folder with file. Both files have single line, which contains token 1 time*/
+    /*Folder with file and inner folder with file. Both files have single line, which contains token 1 time* */
     @ParameterizedTest(name = "{0}")
     @MethodSource("searchApiProvider")
     fun fileAndFolderWithFileTest(searchApiGenerator: ()->SearchApi) {
@@ -62,7 +62,7 @@ internal class CorrectnessTest {
         )
     }
 
-    /*Folder with single file with single line "aaaaaa", and we search "aaa", so it will be found there 4 times*/
+    /*Folder with single file with single line "aaaaaa", and we search "aaa", so it will be found there 4 times* */
     @ParameterizedTest(name = "{0}")
     @MethodSource("searchApiProvider")
     fun fileWith6LetterA_searchAAATest(searchApiGenerator: ()->SearchApi) {
@@ -81,7 +81,7 @@ internal class CorrectnessTest {
         )
     }
 
-    /*Folder with single file with 3 lines, and each one of them has token on different position*/
+    /*Folder with single file with 3 lines, and each one of them has token on different position* */
     @ParameterizedTest(name = "{0}")
     @MethodSource("searchApiProvider")
     fun fileWithMatchesOnDifferentLinesTest(searchApiGenerator: ()->SearchApi) {
@@ -99,7 +99,7 @@ internal class CorrectnessTest {
         )
     }
 
-    /*Folder with 2 files, only 1 has token*/
+    /*Folder with 2 files, only 1 has token* */
     @ParameterizedTest(name = "{0}")
     @MethodSource("searchApiProvider")
     fun twoFilesOneMatchTest(searchApiGenerator: ()->SearchApi) {
@@ -115,7 +115,7 @@ internal class CorrectnessTest {
         )
     }
 
-    /*Folder with sequence of 10 inner folder with single file, which has 1 match*/
+    /*Folder with sequence of 10 inner folder with single file, which has 1 match* */
     @ParameterizedTest(name = "{0}")
     @MethodSource("searchApiProvider")
     fun deepFileTest(searchApiGenerator: ()->SearchApi) {
@@ -145,7 +145,7 @@ internal class CorrectnessTest {
         )
     }
 
-    /*Folder with 10 files, only 3 of them have match*/
+    /*Folder with 10 files, only 3 of them have match* */
     @ParameterizedTest(name = "{0}")
     @MethodSource("searchApiProvider")
     fun tenFilesAndHasMatchTest(searchApiGenerator: ()->SearchApi) {
@@ -163,7 +163,7 @@ internal class CorrectnessTest {
         )
     }
 
-    /*Folder with file which has one time with 3 spaces ("   "), it will be 1 match*/
+    /*Folder with file which has one time with 3 spaces ("   "), it will be 1 match* */
     @ParameterizedTest(name = "{0}")
     @MethodSource("searchApiProvider")
     fun fileWith3SpacesTest(searchApiGenerator: ()->SearchApi) {
@@ -179,7 +179,7 @@ internal class CorrectnessTest {
         )
     }
 
-    /*Folder with file which has one time with 3 doubleQuotes ("""), it will be 1 match*/
+    /*Folder with file which has one time with 3 doubleQuotes ("""), it will be 1 match* */
     @ParameterizedTest(name = "{0}")
     @MethodSource("searchApiProvider")
     fun fileWith3DoubleQuotesTest(searchApiGenerator: ()->SearchApi) {
@@ -195,7 +195,7 @@ internal class CorrectnessTest {
         )
     }
 
-    /*Folder with file which has 1 space between words "aaa", if we look for "a a" it will be 1 match*/
+    /*Folder with file which has 1 space between words "aaa", if we look for "a a" it will be 1 match* */
     @ParameterizedTest(name = "{0}")
     @MethodSource("searchApiProvider")
     fun fileWith1SpaceBetweenWordsTest(searchApiGenerator: ()->SearchApi) {
@@ -233,7 +233,7 @@ internal class CorrectnessTest {
         private val indexlessSearchApiGenerator: ()->SearchApi = { IndexlessSearchApi()}
         private val trigramSearchApiGenerator: ()->SearchApi = { TrigramSearchApi()}
 
-        /*list of implementations of SearchApi*/
+        /*list of implementations of SearchApi* */
         @JvmStatic
         fun searchApiProvider(): Stream<Arguments> {
             return Stream.of(

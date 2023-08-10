@@ -4,7 +4,7 @@ package searchApi.searching.features
 /  - two searches same folder
 /  - two searches different folder
 /  - same request after finishing first works same time
-*/
+* */
 
 /* Checks correctness of concurrent situations of searching in SearchApi
 * */

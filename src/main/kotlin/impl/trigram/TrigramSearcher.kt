@@ -16,12 +16,12 @@ import kotlin.io.path.useLines
 
 /**
  * Only logic of searching token using constructed index for TrigramSearApi
- */
+ * */
 class TrigramSearcher : WithLogging() {
 
     /**
      * Searches asynchronously for token in folder with using constructed index trigramMap
-     */
+     * */
     suspend fun asyncSearching(
         folderPath: Path,
         token: String,

@@ -26,10 +26,10 @@ import java.util.concurrent.ConcurrentHashMap
 * */
 class ProgressTest {
 
-    /*source code of intellij idea*/
+    /*source code of intellij idea* */
     private val commonPath: Path = commonSetup.srcFolder
 
-    /*using not by interface, because we use methods exactly from TrigramSearchApi*/
+    /*using not by interface, because we use methods exactly from TrigramSearchApi* */
     private val searchApiGenerator: () -> TrigramSearchApi = { TrigramSearchApi() }
 
     /*Comparing snapshots for indexing state at different progresses

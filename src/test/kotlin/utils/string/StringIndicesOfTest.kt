@@ -7,15 +7,15 @@ import org.junit.jupiter.params.provider.MethodSource
 import utils.indicesOf
 import java.util.stream.Stream
 
-/*Checking String extension indicesOf*/
+/*Checking String extension indicesOf* */
 class StringIndicesOfTest {
 
     @ParameterizedTest(name = "string:\"{0}\", token:\"{1}\", expected positions:{2}")
     @MethodSource("notIgnoreCaseProvider")
     fun notIgnoreCaseTest(string: String, token: String, expectedPositions: List<Int>) {
         Assertions.assertEquals(
-            /* expected = */ expectedPositions,
-            /* actual = */ string.indicesOf(token = token, ignoreCase = false).toList()
+            /* expected = * */ expectedPositions,
+            /* actual = * */ string.indicesOf(token = token, ignoreCase = false).toList()
         )
     }
 
@@ -23,8 +23,8 @@ class StringIndicesOfTest {
     @MethodSource("ignoreCaseProvider")
     fun ignoreCaseTest(string: String, token: String, expectedPositions: List<Int>) {
         Assertions.assertEquals(
-            /* expected = */ expectedPositions,
-            /* actual = */ string.indicesOf(token = token, ignoreCase = true).toList()
+            /* expected = * */ expectedPositions,
+            /* actual = * */ string.indicesOf(token = token, ignoreCase = true).toList()
         )
     }
 
@@ -32,7 +32,7 @@ class StringIndicesOfTest {
 
         /*list input and expected output for case when not ignoring case of symbols
         * [string, token, expected positions]
-        *  */
+        *  * */
         @JvmStatic
         fun notIgnoreCaseProvider(): Stream<Arguments> {
             return Stream.of(
@@ -51,7 +51,7 @@ class StringIndicesOfTest {
 
         /*list input and expected output for case when not ignoring case of symbols
         * [string, token, expected positions]
-        *  */
+        *  * */
         @JvmStatic
         fun ignoreCaseProvider(): Stream<Arguments> {
             return Stream.of(

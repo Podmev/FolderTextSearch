@@ -8,9 +8,9 @@ import utils.prettyDiffTime
 import java.nio.file.Path
 import java.time.LocalDateTime
 
-/*Searching in intellij idea project*/
+/*Searching in intellij idea project* */
 class IntellijIdeaTrigramTest {
-    /*source code of intellij idea*/
+    /*source code of intellij idea* */
     private val commonPath: Path = commonSetup.intellijIdeaProjectPath.resolve("java")
 
     private val searchApi: SearchApi = TrigramSearchApi()

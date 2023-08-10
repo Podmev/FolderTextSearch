@@ -20,10 +20,10 @@ import java.util.stream.Stream
 /* Checks correctness of cancel of indexing in SearchApi
 * */
 class CancelTest {
-    /*source code of intellij idea*/
+    /*source code of intellij idea* */
     private val commonPath: Path = commonSetup.srcFolder
 
-    /*using not by interface, because we use methods exactly from TrigramSearchApi*/
+    /*using not by interface, because we use methods exactly from TrigramSearchApi* */
     private val searchApiGenerator: () -> TrigramSearchApi = { TrigramSearchApi() }
 
     /*Cancel at the start indexing.
@@ -36,7 +36,7 @@ class CancelTest {
 
         val previouslyFinishedIndexingState = searchApi.syncPerformIndex(folder)
         searchApi.removeFullIndex()
-        /*total should exist*/
+        /*total should exist* */
         val completedTotalFilesNumber = previouslyFinishedIndexingState.totalFilesNumber!!
 
         val state: IndexingState = searchApi.createIndexAtFolder(folder)
@@ -66,7 +66,7 @@ class CancelTest {
 
         val previouslyFinishedIndexingState = searchApi.syncPerformIndex(folder)
         searchApi.removeFullIndex()
-        /*total should exist*/
+        /*total should exist* */
         val completedTotalFilesNumber = previouslyFinishedIndexingState.totalFilesNumber!!
 
         val state: IndexingState = searchApi.createIndexAtFolder(folder)
@@ -95,7 +95,7 @@ class CancelTest {
         val folder = commonPath
         val state: IndexingState = searchApi.syncPerformIndex(folder)
         state.cancel()
-        /*total should exist*/
+        /*total should exist* */
         val totalFilesNumber = state.totalFilesNumber!!
         Assertions.assertAll(
             { -> Assertions.assertTrue(searchApi.hasIndexAtFolder(folder), "SearchApi has index at folder") },

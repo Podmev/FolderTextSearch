@@ -50,7 +50,7 @@ fun SearchApi.syncPerformIndexWithLogging(folderPath: Path) {
 
 /**
  * Prints step of indexing with full details.
- */
+ * */
 fun printIndexingStepLog(indexingState: IndexingState, millis: Long) {
     val visitedFilesNumber = indexingState.visitedFilesNumber
     val indexedFilesNumber = indexingState.indexedFilesNumber
@@ -87,7 +87,7 @@ fun printIndexingStepLog(indexingState: IndexingState, millis: Long) {
 
 /**
  * Progressive scale of steps for indexing
- */
+ * */
 fun getIndexLogStepMillis(millis: Long) = when (millis) {
     in 0 until 1000 -> 50
     in 1000 until 10_000 -> 1000
