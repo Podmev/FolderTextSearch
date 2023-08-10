@@ -6,7 +6,7 @@ import api.tools.searchapi.syncPerformIndexWithLogging
 import api.tools.searchapi.syncPerformSearchWithLogging
 import api.tools.searchapi.syncSearchToken
 import impl.trigram.TrigramSearchApi
-import searchApi.common.CommonSetup
+import searchApi.common.commonSetup
 import utils.prettyDiffTime
 import java.nio.file.Path
 import java.time.LocalDateTime
@@ -18,7 +18,7 @@ class CurProjectTrigramTest {
     /**
      * Source code of current project.
      * */
-    private val commonPath: Path = CommonSetup.srcFolder
+    private val commonPath: Path = commonSetup.srcFolder
 
     private val searchApi: SearchApi = TrigramSearchApi()
 

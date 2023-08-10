@@ -4,7 +4,7 @@ import api.tools.searchapi.syncPerformIndex
 import impl.trigram.TrigramSearchApi
 import org.junit.jupiter.api.Test
 import searchApi.common.assertEqualsTrigramMap
-import searchApi.common.CommonSetup
+import searchApi.common.commonSetup
 import java.nio.file.Path
 
 /**
@@ -12,7 +12,7 @@ import java.nio.file.Path
  * Using generator for SearchApi to have fresh state in SearchApi
  * */
 class IndexTrigramTest {
-    private val commonPath: Path = CommonSetup.commonPath
+    private val commonPath: Path = commonSetup.commonPath
 
     /*using not by interface, because we use methods exactly from TrigramSearchApi* */
     private val searchApiGenerator: () -> TrigramSearchApi = { TrigramSearchApi() }

@@ -5,7 +5,7 @@ import api.tools.searchapi.syncPerformIndex
 import impl.trigram.TrigramSearchApi
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import searchApi.common.CommonSetup
+import searchApi.common.commonSetup
 import java.nio.file.Path
 
 /**
@@ -16,7 +16,7 @@ import java.nio.file.Path
  *   fun getAllIndexedFolders(): List<Path>
  * */
 class IndexStateTest {
-    private val commonPath: Path = CommonSetup.commonPath
+    private val commonPath: Path = commonSetup.commonPath
     private val folderName1 = "singleFile"
     private val folderName2 = "fileAndFolderWithFile"
     private val deepFileFolderName = "deepFile"

@@ -6,7 +6,7 @@ import api.tools.searchapi.syncPerformIndexWithLoggingAndCancel
 import api.tools.searchapi.syncPerformSearchWithLogging
 import api.tools.searchapi.syncSearchToken
 import impl.trigram.TrigramSearchApi
-import searchApi.common.CommonSetup
+import searchApi.common.commonSetup
 import utils.prettyDiffTime
 import java.nio.file.Path
 import java.time.LocalDateTime
@@ -18,7 +18,7 @@ class IntellijIdeaTrigramTest {
     /**
      * Source code of Intellij Idea
      * */
-    private val commonPath: Path = CommonSetup.intellijIdeaProjectPath.resolve("java")
+    private val commonPath: Path = commonSetup.intellijIdeaProjectPath.resolve("java")
 
     private val searchApi: SearchApi = TrigramSearchApi()
 

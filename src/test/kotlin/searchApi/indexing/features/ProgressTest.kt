@@ -11,7 +11,7 @@ import kotlinx.coroutines.delay
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
-import searchApi.common.CommonSetup
+import searchApi.common.commonSetup
 import searchApi.common.compareSets
 import utils.paired
 import java.nio.file.Path
@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap
 class ProgressTest {
 
     /*source code of intellij idea* */
-    private val commonPath: Path = CommonSetup.srcFolder
+    private val commonPath: Path = commonSetup.srcFolder
 
     /*using not by interface, because we use methods exactly from TrigramSearchApi* */
     private val searchApiGenerator: () -> TrigramSearchApi = { TrigramSearchApi() }

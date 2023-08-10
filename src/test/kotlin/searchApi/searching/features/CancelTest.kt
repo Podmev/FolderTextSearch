@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import searchApi.common.CommonSetup
+import searchApi.common.commonSetup
 import java.nio.file.Path
 import java.util.stream.Stream
 
@@ -23,7 +23,7 @@ class CancelTest {
     /**
      * Source code of current project
      * */
-    private val commonPath: Path = CommonSetup.srcFolder
+    private val commonPath: Path = commonSetup.srcFolder
 
     /**
      * Using not by interface, because we use methods exactly from TrigramSearchApi
