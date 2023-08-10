@@ -7,7 +7,8 @@ package searchApi.indexing.features
 /  - after two sequencial indexing different folders, it has index for both
 * */
 
-/* Checks correctness of concurrent situations of indexing in SearchApi
-* */
+/**
+ * Checks correctness of concurrent situations of indexing in SearchApi
+ * */
 class ConcurrentTest {
 }

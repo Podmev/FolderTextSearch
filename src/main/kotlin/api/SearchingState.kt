@@ -8,17 +8,17 @@ import java.util.concurrent.Future
  * State which api gives when you make search of token at folder.
  * It can help to control process of searching, since it can be long process.
  * */
-interface SearchingState {
+interface SearchingState: ProgressableState {
     //TODO make state more complex - check index, indexing, searching, finish, failed
     /**
      * Shows if search finished.
      * */
-    val finished: Boolean
+    override val finished: Boolean
 
     /**
      * Can be from 0 till 1 inclusive borders, where 0 means not started, and 1  - finished.
      * */
-    val progress: Double
+    override val progress: Double
 
     /**
      * Result, which will be fill in the end of search.
@@ -29,7 +29,7 @@ interface SearchingState {
      * Method to cancel the search process.
      * It can be useful, if it takes long time.
      * */
-    fun cancel()
+    override fun cancel()
 
     /**
      * Get the newfound portion of tokenMatches after previous call.

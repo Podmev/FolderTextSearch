@@ -8,16 +8,16 @@ import java.util.concurrent.Future
  * State which api gives when you make index at folder.
  * It can help to control process of indexing, since it can be long process.
  * */
-interface IndexingState {
+interface IndexingState: ProgressableState{
     /**
      * Shows if search finished.
      * */
-    val finished: Boolean
+    override val finished: Boolean
 
     /**
      * Can be from 0 till 1 inclusive borders, where 0 means not started, and 1  - finished.
      * */
-    val progress: Double
+    override val progress: Double
 
     /**
      * Result - all file paths in directory recursively, which were indexed
@@ -28,7 +28,7 @@ interface IndexingState {
      * Method to cancel the indexing process.
      * It can be useful, if the indexing takes long time.
      * */
-    fun cancel()
+    override fun cancel()
 
     /**
      * Get the newfound portion of file paths visited after previous call.

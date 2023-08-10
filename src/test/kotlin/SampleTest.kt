@@ -1,7 +1,10 @@
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-import org.junit.jupiter.api.Assertions.*
-
+/**
+ * Test, that should always work.
+ * It can be used for checking CI/CD
+ * */
 internal class SampleTest {
     private val testSample: Sample = Sample()
 

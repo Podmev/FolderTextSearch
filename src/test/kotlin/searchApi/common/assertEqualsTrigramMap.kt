@@ -4,8 +4,9 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.assertAll
 import java.nio.file.Path
 
-/*Compare trigramMaps with detailed exceptions if structures are not the same
-* */
+/**
+ * Compare trigramMaps with detailed exceptions if structures are not the same.
+ * */
 fun assertEqualsTrigramMap(expectedTrigramMap: Map<String, Set<Path>>, actualTrigramMap: Map<String, Set<Path>>) {
     val expectedTokens = expectedTrigramMap.keys
     val actualTokens = actualTrigramMap.keys
@@ -39,8 +40,9 @@ fun assertEqualsTrigramMap(expectedTrigramMap: Map<String, Set<Path>>, actualTri
     assertAll("compare search results", totalChecks)
 }
 
-/*Compare sets of paths for token with detailed exceptions if structures are not the same
-* */
+/**
+ * Compare sets of paths for token with detailed exceptions if structures are not the same.
+ * */
 fun getAssertsForPathSets(token: String, expectedPathSet: Set<Path>, actualPathSet: Set<Path>): List<() -> Unit> {
     val sizeChecks = listOf { ->
         Assertions.assertEquals(

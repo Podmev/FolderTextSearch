@@ -1,19 +1,23 @@
 package searchApi.bigTest
 
 import api.SearchApi
-import api.tools.syncPerformIndex
-import api.tools.syncPerformIndexWithLogging
-import api.tools.syncPerformSearchWithLogging
-import api.tools.syncSearchToken
-import searchApi.common.commonSetup
+import api.tools.searchapi.syncPerformIndex
+import api.tools.searchapi.syncPerformIndexWithLogging
+import api.tools.searchapi.syncPerformSearchWithLogging
+import api.tools.searchapi.syncSearchToken
 import impl.trigram.TrigramSearchApi
+import searchApi.common.commonSetup
 import utils.prettyDiffTime
 import java.nio.file.Path
 import java.time.LocalDateTime
 
-/*Searching in current project in source files* */
+/**
+ * Searching in current project in source files
+ * */
 class CurProjectTrigramTest {
-    /*source code of current project* */
+    /**
+     * Source code of current project.
+     * */
     private val commonPath: Path = commonSetup.srcFolder
 
     private val searchApi: SearchApi = TrigramSearchApi()
@@ -48,17 +52,6 @@ class CurProjectTrigramTest {
         val finishTime = LocalDateTime.now()
         println("total time: ${prettyDiffTime(startTime, finishTime)}")
         println(actualTokenMatches.size)
-//        actualTokenMatches.forEach { println(it) }
     }
-
-//    companion object {
-//        val popularTokens = listOf(
-//            "TODO",
-//            "class",
-//            "deprecated",
-//            "getName",
-//            "volatile"
-//        )
-//    }
 
 }

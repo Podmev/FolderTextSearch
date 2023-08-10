@@ -1,4 +1,4 @@
-package api.tools
+package api.tools.searchapi
 
 import api.IndexingState
 import api.SearchApi

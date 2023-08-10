@@ -1,17 +1,19 @@
 package searchApi.trigram
 
 import api.TokenMatch
+import api.tools.searchapi.syncSearchTokenAfterIndex
+import impl.trigram.TrigramSearchApi
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertAll
 import searchApi.common.assertEqualsTokenMatches
 import searchApi.common.assertEqualsTrigramMap
 import searchApi.common.commonSetup
-import api.tools.syncSearchTokenAfterIndex
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertAll
-import impl.trigram.TrigramSearchApi
 import java.nio.file.Path
-/*Smoke test for TrigramSearchApi
-* Using generator for SearchApi to have fresh state in SearchApi
-* */
+
+/**
+ * Smoke test for TrigramSearchApi.
+ * Using generator for SearchApi to have fresh state in SearchApi.
+ * */
 class SimpleTrigramTest {
     private val commonPath: Path = commonSetup.commonPath
 

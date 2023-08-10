@@ -1,4 +1,4 @@
-package api.tools
+package api.tools.searchapi
 
 import api.SearchApi
 import api.TokenMatch

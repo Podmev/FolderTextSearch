@@ -4,7 +4,9 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.absolute
 
-/*Global consts for tests* */
+/**
+ * Global consts for tests
+ * */
 object commonSetup {
     private val projectPath: Path = Paths.get("")
     val commonPath: Path =
@@ -12,6 +14,6 @@ object commonSetup {
 
     val srcFolder: Path = projectPath.resolve("src")
 
-    val intellijIdeaProjectPath = projectPath.absolute().parent.resolve("intellij-community")
+    val intellijIdeaProjectPath: Path = projectPath.absolute().parent.resolve("intellij-community")
 
 }

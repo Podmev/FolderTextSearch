@@ -4,7 +4,7 @@ import api.*
 import api.exception.IllegalArgumentSearchException
 import api.exception.NotDirSearchException
 import api.exception.SearchException
-import api.tools.syncPerformIndex
+import api.tools.searchapi.syncPerformIndex
 import kotlinx.coroutines.*
 import utils.WithLogging
 import java.nio.file.Path

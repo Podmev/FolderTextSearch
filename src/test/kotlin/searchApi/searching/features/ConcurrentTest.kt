@@ -6,7 +6,8 @@ package searchApi.searching.features
 /  - same request after finishing first works same time
 * */
 
-/* Checks correctness of concurrent situations of searching in SearchApi
-* */
+/**
+ * Checks correctness of concurrent situations of searching in SearchApi
+ * */
 class ConcurrentTest {
 }

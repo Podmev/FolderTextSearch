@@ -7,7 +7,9 @@ import org.junit.jupiter.params.provider.MethodSource
 import utils.indicesOf
 import java.util.stream.Stream
 
-/*Checking String extension indicesOf* */
+/**
+ * Checking String extension indicesOf
+ * */
 class StringIndicesOfTest {
 
     @ParameterizedTest(name = "string:\"{0}\", token:\"{1}\", expected positions:{2}")

@@ -1,4 +1,4 @@
-package api.tools
+package api.tools.searchapi
 
 import api.IndexingState
 import api.SearchApi
@@ -20,7 +20,7 @@ fun SearchApi.syncPerformIndexWithLogging(folderPath: Path) {
     val startTime = LocalDateTime.now()
     val indexingState = createIndexAtFolder(folderPath)
 
-    //todo this call starts a corutine only on the current thread, so no real parallel execution
+    //todo this call starts a coroutine only on the current thread, so no real parallel execution
     runBlocking {
 
         var lastLogged = startTime

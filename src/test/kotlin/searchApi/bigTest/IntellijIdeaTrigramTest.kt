@@ -1,16 +1,23 @@
 package searchApi.bigTest
 
 import api.SearchApi
-import api.tools.*
-import searchApi.common.commonSetup
+import api.tools.searchapi.syncPerformIndexWithLogging
+import api.tools.searchapi.syncPerformIndexWithLoggingAndCancel
+import api.tools.searchapi.syncPerformSearchWithLogging
+import api.tools.searchapi.syncSearchToken
 import impl.trigram.TrigramSearchApi
+import searchApi.common.commonSetup
 import utils.prettyDiffTime
 import java.nio.file.Path
 import java.time.LocalDateTime
 
-/*Searching in intellij idea project* */
+/**
+ * Searching in Intellij Idea project
+ * */
 class IntellijIdeaTrigramTest {
-    /*source code of intellij idea* */
+    /**
+     * Source code of Intellij Idea
+     * */
     private val commonPath: Path = commonSetup.intellijIdeaProjectPath.resolve("java")
 
     private val searchApi: SearchApi = TrigramSearchApi()
@@ -37,17 +44,31 @@ class IntellijIdeaTrigramTest {
         val startTime = LocalDateTime.now()
         val actualTokenMatches = searchApi.syncSearchToken(folder, token)
         val finishTime = LocalDateTime.now()
-        println("searching time for looking for token \"${token}\": ${prettyDiffTime(startTime, finishTime)}, #${actualTokenMatches.size}")
+        println(
+            "searching time for looking for token \"${token}\": ${
+                prettyDiffTime(
+                    startTime,
+                    finishTime
+                )
+            }, #${actualTokenMatches.size}"
+        )
     }
 
     fun indexWithSearchManyTokens() {
         val folder = commonPath
         searchApi.syncPerformIndexWithLogging(folder)
-        for(token in popularTokens) {
+        for (token in popularTokens) {
             val startTime = LocalDateTime.now()
             val actualTokenMatches = searchApi.syncSearchToken(folder, token)
             val finishTime = LocalDateTime.now()
-            println("searching time for looking for token \"${token}\": ${prettyDiffTime(startTime, finishTime)}, #${actualTokenMatches.size}")
+            println(
+                "searching time for looking for token \"${token}\": ${
+                    prettyDiffTime(
+                        startTime,
+                        finishTime
+                    )
+                }, #${actualTokenMatches.size}"
+            )
             println(actualTokenMatches.size)
         }
     }
@@ -62,17 +83,8 @@ class IntellijIdeaTrigramTest {
         val finishTime = LocalDateTime.now()
         println("total time: ${prettyDiffTime(startTime, finishTime)}")
         println(actualTokenMatches.size)
-//        actualTokenMatches.forEach { println(it) }
     }
 
-//    fun jarTest(){
-//        val jarPath = commonPath
-//            .resolve("execution")
-//            .resolve("impl")
-//            .resolve("jshell-frontend.jar")
-//
-//        println(TrigramSearchApi().isPossibleToIndexFile(jarPath))
-//    }
 
     companion object {
         val popularTokens = listOf(
