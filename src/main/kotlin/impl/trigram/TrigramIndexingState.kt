@@ -108,7 +108,7 @@ class TrigramIndexingState(override val result: Future<List<Path>>) : IndexingSt
 
     /**
      * Adds path to current visited files buffer
-     * Slight inconsistance of visitedFilesNumberRef and visitedPathsBuffer, but it not critical
+     * Slight inconsistency of visitedFilesNumberRef and visitedPathsBuffer, but it not critical
      * */
     fun addVisitedPathToBuffer(path: Path): Long {
         val visitedFileNumber = visitedFilesNumberRef.incrementAndGet()
@@ -121,7 +121,7 @@ class TrigramIndexingState(override val result: Future<List<Path>>) : IndexingSt
 
     /**
      * Adds path to current result buffer: indexed files
-     * Slight inconsistance of indexedFilesNumberRef and indexedPathsBuffer, but it not critical
+     * Slight inconsistency of indexedFilesNumberRef and indexedPathsBuffer, but it not critical
      * */
     fun addIndexedPathToBuffer(path: Path): Long {
         val indexedFileNumber = indexedFilesNumberRef.incrementAndGet()

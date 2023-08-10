@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 import searchApi.common.assertEqualsTokenMatches
 import searchApi.common.assertEqualsTrigramMap
-import searchApi.common.commonSetup
+import searchApi.common.CommonSetup
 import java.nio.file.Path
 
 /**
@@ -15,7 +15,7 @@ import java.nio.file.Path
  * Using generator for SearchApi to have fresh state in SearchApi.
  * */
 class SimpleTrigramTest {
-    private val commonPath: Path = commonSetup.commonPath
+    private val commonPath: Path = CommonSetup.commonPath
 
     /*using not by interface, because we use methods exactly from TrigramSearchApi* */
     private val searchApiGenerator: () -> TrigramSearchApi = { TrigramSearchApi() }
@@ -30,7 +30,7 @@ class SimpleTrigramTest {
         val folder = commonPath.resolve(folderName)
         val actualTokenMatches = searchApi.syncSearchTokenAfterIndex(folder, token)
         assertAll(
-            { ->
+            {
                 assertEqualsTokenMatches(
                     expectedTokenMatches = listOf(
                         TokenMatch(folder.resolve("4.txt"), 1L, 3L),
@@ -40,7 +40,7 @@ class SimpleTrigramTest {
                     actualTokenMatches = actualTokenMatches
                 )
             },
-            { ->
+            {
                 assertEqualsTrigramMap(
                     mapOf(
                         Pair("abc", setOf(folder.resolve("1.txt"))),

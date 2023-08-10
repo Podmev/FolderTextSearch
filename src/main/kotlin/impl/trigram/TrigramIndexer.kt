@@ -230,7 +230,7 @@ internal class TrigramIndexer : WithLogging() {
             ".png",
             ".bin",
             ".zip",
-            "Win1251.txt", //problem with encoding. It is incorrect to put .txt to extenstions
+            "Win1251.txt", //problem with encoding. It is incorrect to put .txt to extensions
             ".class",
             "TipoMensagem.java", // problem with encoding in some symbols
             "image1",

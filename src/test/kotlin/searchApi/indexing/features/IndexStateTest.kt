@@ -5,7 +5,7 @@ import api.tools.searchapi.syncPerformIndex
 import impl.trigram.TrigramSearchApi
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import searchApi.common.commonSetup
+import searchApi.common.CommonSetup
 import java.nio.file.Path
 
 /**
@@ -16,7 +16,7 @@ import java.nio.file.Path
  *   fun getAllIndexedFolders(): List<Path>
  * */
 class IndexStateTest {
-    private val commonPath: Path = commonSetup.commonPath
+    private val commonPath: Path = CommonSetup.commonPath
     private val folderName1 = "singleFile"
     private val folderName2 = "fileAndFolderWithFile"
     private val deepFileFolderName = "deepFile"
@@ -80,8 +80,8 @@ class IndexStateTest {
         searchApi.syncPerformIndex(folder2)
         searchApi.removeFullIndex()
         Assertions.assertAll(
-            { -> Assertions.assertFalse(searchApi.hasIndexAtFolder(folder1)) },
-            { -> Assertions.assertFalse(searchApi.hasIndexAtFolder(folder2)) }
+            { Assertions.assertFalse(searchApi.hasIndexAtFolder(folder1)) },
+            { Assertions.assertFalse(searchApi.hasIndexAtFolder(folder2)) }
         )
     }
 
@@ -96,8 +96,8 @@ class IndexStateTest {
         searchApi.syncPerformIndex(folder1)
         searchApi.syncPerformIndex(folder2)
         Assertions.assertAll(
-            { -> Assertions.assertTrue(searchApi.hasIndexAtFolder(folder1)) },
-            { -> Assertions.assertTrue(searchApi.hasIndexAtFolder(folder2)) }
+            { Assertions.assertTrue(searchApi.hasIndexAtFolder(folder1)) },
+            { Assertions.assertTrue(searchApi.hasIndexAtFolder(folder2)) }
         )
     }
 
@@ -234,10 +234,10 @@ class IndexStateTest {
         searchApi.removeFullIndex()
         val indexedFoldersAfterIndexAndRemoveFull = searchApi.getAllIndexedFolders()
         Assertions.assertAll(
-            { -> Assertions.assertEquals(emptyList<Path>(), indexedFoldersBeforeRemoveFull) },
-            { -> Assertions.assertEquals(emptyList<Path>(), indexedFoldersBeforeIndex) },
-            { -> Assertions.assertEquals(listOf(folder), indexedFoldersAfterIndex) },
-            { -> Assertions.assertEquals(emptyList<Path>(), indexedFoldersAfterIndexAndRemoveFull) },
+            { Assertions.assertEquals(emptyList<Path>(), indexedFoldersBeforeRemoveFull) },
+            { Assertions.assertEquals(emptyList<Path>(), indexedFoldersBeforeIndex) },
+            { Assertions.assertEquals(listOf(folder), indexedFoldersAfterIndex) },
+            { Assertions.assertEquals(emptyList<Path>(), indexedFoldersAfterIndexAndRemoveFull) },
         )
     }
 }

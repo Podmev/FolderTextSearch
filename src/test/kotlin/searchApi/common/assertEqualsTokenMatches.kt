@@ -14,17 +14,17 @@ fun assertEqualsTokenMatches(expectedTokenMatches: List<TokenMatch>, actualToken
 
     val notFoundChecks = buildList<() -> Unit> {
         for (notFoundExpectedTokenMatch in expectedTokenMatchesSet.minus(actualTokenMatchesSet)) {
-            add { -> Assertions.fail("Not found some expected TokenMatch in actual: $notFoundExpectedTokenMatch") }
+            add { Assertions.fail("Not found some expected TokenMatch in actual: $notFoundExpectedTokenMatch") }
         }
     }
     val extraFoundChecks = buildList<() -> Unit> {
         for (extraTokenMatchInActual in actualTokenMatchesSet.minus(expectedTokenMatchesSet)) {
-            add { -> Assertions.fail("Found extra TokenMatch in actual: $extraTokenMatchInActual") }
+            add { Assertions.fail("Found extra TokenMatch in actual: $extraTokenMatchInActual") }
         }
     }
     assertAll(
         "Compare search results",
-        { ->
+        {
             Assertions.assertEquals(
                 expectedTokenMatchesSet.size,
                 actualTokenMatchesSet.size,

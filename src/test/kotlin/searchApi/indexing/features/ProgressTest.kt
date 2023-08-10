@@ -11,7 +11,7 @@ import kotlinx.coroutines.delay
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
-import searchApi.common.commonSetup
+import searchApi.common.CommonSetup
 import searchApi.common.compareSets
 import utils.paired
 import java.nio.file.Path
@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap
 class ProgressTest {
 
     /*source code of intellij idea* */
-    private val commonPath: Path = commonSetup.srcFolder
+    private val commonPath: Path = CommonSetup.srcFolder
 
     /*using not by interface, because we use methods exactly from TrigramSearchApi* */
     private val searchApiGenerator: () -> TrigramSearchApi = { TrigramSearchApi() }
@@ -67,9 +67,9 @@ class ProgressTest {
     /*General checks by map of snapshots by progress
     * */
     private fun getChecksByMap(indexingStateSnapshotMap: Map<Double, IndexingStateSnapshot>): List<() -> Unit> =
-        buildList<() -> Unit> {
-            add { -> Assertions.assertTrue(indexingStateSnapshotMap.isNotEmpty(), "received at least 1 snapshots") }
-            add { ->
+        buildList {
+            add { Assertions.assertTrue(indexingStateSnapshotMap.isNotEmpty(), "received at least 1 snapshots") }
+            add {
                 Assertions.assertTrue(
                     indexingStateSnapshotMap.containsKey(1.0),
                     "map should have snapshot at 1.0 progress"
@@ -99,7 +99,7 @@ class ProgressTest {
     /*Creates independent checks for snapshots for different components
      * */
     private fun getSingleChecks(snapshotList: List<IndexingStateSnapshot>): List<() -> Unit> =
-        buildList<() -> Unit> {
+        buildList {
             for (snapshot in snapshotList) {
                 val total = snapshot.totalFilesNumber
                 val finished = snapshot.finished
@@ -107,16 +107,16 @@ class ProgressTest {
                 val indexedFilesNumber = snapshot.indexedFilesNumber
                 val visitedFilesNumber = snapshot.visitedFilesNumber
 
-                add { -> Assertions.assertTrue(progress >= 0.0, "progress >= 0.0") }
-                add { -> Assertions.assertTrue(progress <= 1.0, "progress <= 1.0") }
-                add { ->
+                add { Assertions.assertTrue(progress >= 0.0, "progress >= 0.0") }
+                add { Assertions.assertTrue(progress <= 1.0, "progress <= 1.0") }
+                add {
                     Assertions.assertTrue(
                         visitedFilesNumber >= indexedFilesNumber,
                         "visitedFilesNumber >= indexedFilesNumber"
                     )
                 }
                 if (total != null) {
-                    add { ->
+                    add {
                         Assertions.assertEquals(
                             total,
                             visitedFilesNumber,
@@ -125,17 +125,17 @@ class ProgressTest {
                     }
                 }
                 if (finished) {
-                    add { ->
+                    add {
                         Assertions.assertEquals(
                             total,
                             indexedFilesNumber,
                             " total == indexedFilesNumber, if finished"
                         )
                     }
-                    add { -> Assertions.assertEquals(1.0, progress, " progress == 1.0, if finished") }
+                    add { Assertions.assertEquals(1.0, progress, " progress == 1.0, if finished") }
                 }
                 if (visitedFilesNumber == 0L) {
-                    add { ->
+                    add {
                         Assertions.assertEquals(
                             0.0,
                             progress,
@@ -144,7 +144,7 @@ class ProgressTest {
                     }
                 }
                 if (total == null) {
-                    add { ->
+                    add {
                         Assertions.assertEquals(
                             0.0,
                             progress,
@@ -153,8 +153,8 @@ class ProgressTest {
                     }
                 }
                 if (progress > 0.0) {
-                    add { -> Assertions.assertNotNull(total, "total != null, if progress > 0.0") }
-                    add { ->
+                    add { Assertions.assertNotNull(total, "total != null, if progress > 0.0") }
+                    add {
                         Assertions.assertEquals(
                             total,
                             visitedFilesNumber,
@@ -168,21 +168,21 @@ class ProgressTest {
     /*Creates checks for pairs of snapshots, which were created one after another
     * */
     private fun getPairChecks(snapshotPairs: List<Pair<IndexingStateSnapshot, IndexingStateSnapshot>>): List<() -> Unit> =
-        buildList<() -> Unit> {
+        buildList {
             for ((snapshot1, snapshot2) in snapshotPairs) {
-                add { ->
+                add {
                     Assertions.assertTrue(
                         snapshot1.progress < snapshot2.progress,
                         "snapshot1.progress < snapshot2.progress"
                     )
                 }
-                add { ->
+                add {
                     Assertions.assertTrue(
                         snapshot1.visitedFilesNumber <= snapshot2.visitedFilesNumber,
                         "snapshot1.visitedFilesNumber < snapshot2.visitedFilesNumber"
                     )
                 }
-                add { ->
+                add {
                     Assertions.assertTrue(
                         snapshot1.indexedFilesNumber <= snapshot2.indexedFilesNumber,
                         "snapshot1.indexedFilesNumber < snapshot2.indexedFilesNumber"
@@ -198,6 +198,7 @@ class ProgressTest {
     * It returns map of snapshots taken at progress save as a key
     * Additionally in the end it saves snapshot at 1.0, it wasn't saved before.
     * */
+    @Suppress("DeferredResultUnused")
     @OptIn(DelicateCoroutinesApi::class)
     fun getSnapshotsAtProgresses(
         indexingState: IndexingState,

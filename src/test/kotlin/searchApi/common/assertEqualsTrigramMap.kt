@@ -12,7 +12,7 @@ fun assertEqualsTrigramMap(expectedTrigramMap: Map<String, Set<Path>>, actualTri
     val actualTokens = actualTrigramMap.keys
     val commonTokens = expectedTokens.intersect(actualTokens)
 
-    val sizeChecks = listOf { ->
+    val sizeChecks = listOf {
         Assertions.assertEquals(
             expectedTokens.size,
             actualTokens.size,
@@ -21,12 +21,12 @@ fun assertEqualsTrigramMap(expectedTrigramMap: Map<String, Set<Path>>, actualTri
     }
     val notFoundChecks = buildList<() -> Unit> {
         for (notFoundExpectedToken in expectedTokens.minus(actualTokens)) {
-            add { -> Assertions.fail("Not found some expected token in actual: $notFoundExpectedToken") }
+            add { Assertions.fail("Not found some expected token in actual: $notFoundExpectedToken") }
         }
     }
     val extraFoundChecks = buildList<() -> Unit> {
         for (extraTokenInActual in actualTokens.minus(expectedTokens)) {
-            add { -> Assertions.fail("Found extra token in actual: $extraTokenInActual") }
+            add { Assertions.fail("Found extra token in actual: $extraTokenInActual") }
         }
     }
     val commonMismatchChecks = commonTokens.flatMap {
@@ -44,7 +44,7 @@ fun assertEqualsTrigramMap(expectedTrigramMap: Map<String, Set<Path>>, actualTri
  * Compare sets of paths for token with detailed exceptions if structures are not the same.
  * */
 fun getAssertsForPathSets(token: String, expectedPathSet: Set<Path>, actualPathSet: Set<Path>): List<() -> Unit> {
-    val sizeChecks = listOf { ->
+    val sizeChecks = listOf {
         Assertions.assertEquals(
             expectedPathSet.size,
             actualPathSet.size,
@@ -53,12 +53,12 @@ fun getAssertsForPathSets(token: String, expectedPathSet: Set<Path>, actualPathS
     }
     val notFoundChecks = buildList<() -> Unit> {
         for (notFoundExpectedPath in expectedPathSet.minus(actualPathSet)) {
-            add { -> Assertions.fail("Not found for token: \"${token}\" expected path in actual: $notFoundExpectedPath") }
+            add { Assertions.fail("Not found for token: \"${token}\" expected path in actual: $notFoundExpectedPath") }
         }
     }
     val extraFoundChecks = buildList<() -> Unit> {
         for (extraPathInActual in actualPathSet.minus(expectedPathSet)) {
-            add { -> Assertions.fail("Found for token: \"${token}\" extra path in actual: $extraPathInActual") }
+            add { Assertions.fail("Found for token: \"${token}\" extra path in actual: $extraPathInActual") }
         }
     }
 

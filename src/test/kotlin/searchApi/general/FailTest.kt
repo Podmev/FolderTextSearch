@@ -9,7 +9,7 @@ import impl.trigram.TrigramSearchApi
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import searchApi.common.commonSetup
+import searchApi.common.CommonSetup
 import java.nio.file.Path
 import java.util.stream.Stream
 import kotlin.test.assertFailsWith
@@ -20,7 +20,7 @@ import kotlin.test.assertFailsWith
  * Using generator for SearchApi to have fresh state in SearchApi
  * */
 internal class FailTest {
-    private val commonPath: Path = commonSetup.commonPath
+    private val commonPath: Path = CommonSetup.commonPath
 
     /**
      * Searching token with length 0, should be thrown IllegalArgumentSearchException.

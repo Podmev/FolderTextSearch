@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import searchApi.common.commonSetup
+import searchApi.common.CommonSetup
 import java.nio.file.Path
 import java.util.stream.Stream
 
@@ -22,7 +22,7 @@ class CancelTest {
     /**
      * Source code of current project.
      * */
-    private val commonPath: Path = commonSetup.srcFolder
+    private val commonPath: Path = CommonSetup.srcFolder
 
     /**
      * Using not by interface, because we use methods exactly from TrigramSearchApi.
@@ -50,16 +50,16 @@ class CancelTest {
         )
         state.result.get()!!
         Assertions.assertAll(
-            { -> Assertions.assertTrue(searchApi.isIndexEmpty(), "SearchApi has no index") },
-            { ->
+            { Assertions.assertTrue(searchApi.isIndexEmpty(), "SearchApi has no index") },
+            {
                 Assertions.assertTrue(
                     state.visitedFilesNumber < completedTotalFilesNumber,
                     "visited < total(precalculated)"
                 )
             },
-            { -> Assertions.assertEquals(0L, state.indexedFilesNumber, "indexedFilesNumber == 0") },
-            { -> Assertions.assertEquals(null, state.totalFilesNumber, "totalFilesNumber == null") },
-            { -> Assertions.assertEquals(1.0, state.progress, "progress == 1.0") },
+            { Assertions.assertEquals(0L, state.indexedFilesNumber, "indexedFilesNumber == 0") },
+            { Assertions.assertEquals(null, state.totalFilesNumber, "totalFilesNumber == null") },
+            { Assertions.assertEquals(1.0, state.progress, "progress == 1.0") },
         )
     }
 
@@ -85,15 +85,15 @@ class CancelTest {
         )
         state.result.get()!!
         Assertions.assertAll(
-            { -> Assertions.assertTrue(searchApi.isIndexEmpty(), "SearchApi has no index") },
-            { ->
+            { Assertions.assertTrue(searchApi.isIndexEmpty(), "SearchApi has no index") },
+            {
                 Assertions.assertTrue(
                     state.visitedFilesNumber <= completedTotalFilesNumber,
                     "visited <= total(precalculated)"
                 )
             },
-            { -> Assertions.assertTrue(state.indexedFilesNumber > 0L, "indexedFilesNumber > 0") },
-            { -> Assertions.assertEquals(1.0, state.progress, "progress == 1.0") }, //FIXME this logic
+            { Assertions.assertTrue(state.indexedFilesNumber > 0L, "indexedFilesNumber > 0") },
+            { Assertions.assertEquals(1.0, state.progress, "progress == 1.0") }, //FIXME this logic
         )
         //totalFilesNumber can be null or defined. Cannot know by progress
     }
@@ -112,10 +112,10 @@ class CancelTest {
         /*total should exist* */
         val totalFilesNumber = state.totalFilesNumber!!
         Assertions.assertAll(
-            { -> Assertions.assertTrue(searchApi.hasIndexAtFolder(folder), "SearchApi has index at folder") },
-            { -> Assertions.assertEquals(totalFilesNumber, state.visitedFilesNumber, "visited == total") },
-            { -> Assertions.assertEquals(totalFilesNumber, state.indexedFilesNumber, "indexed == total") },
-            { -> Assertions.assertEquals(1.0, state.progress, "progress == 1.0") },
+            { Assertions.assertTrue(searchApi.hasIndexAtFolder(folder), "SearchApi has index at folder") },
+            { Assertions.assertEquals(totalFilesNumber, state.visitedFilesNumber, "visited == total") },
+            { Assertions.assertEquals(totalFilesNumber, state.indexedFilesNumber, "indexed == total") },
+            { Assertions.assertEquals(1.0, state.progress, "progress == 1.0") },
         )
     }
 

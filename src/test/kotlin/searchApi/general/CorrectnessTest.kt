@@ -9,7 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import searchApi.common.assertEqualsTokenMatches
-import searchApi.common.commonSetup
+import searchApi.common.CommonSetup
 import java.nio.file.Path
 import java.util.stream.Stream
 
@@ -29,7 +29,7 @@ import java.util.stream.Stream
  * Using generator for SearchApi to have fresh state in SearchApi
  * */
 internal class CorrectnessTest {
-    private val commonPath: Path = commonSetup.commonPath
+    private val commonPath: Path = CommonSetup.commonPath
 
     /**
      * Folder with single file with single line, which contains token 1 time.
