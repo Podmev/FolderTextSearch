@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import utils.WithLogging
+import utils.coroutines.makeCancelablePoint
 import utils.indicesOf
 import java.nio.file.Path
 import java.util.*
@@ -76,11 +77,14 @@ class TrigramSearcher : WithLogging() {
         //TODO make async way getPathsByToken
         val narrowedPaths = getPathsByToken(searchingContext.trigramMap, searchingContext.token)
         LOG.finest("got ${narrowedPaths.size} narrowed paths from trigramMap by token \"${searchingContext.token}\"")
-
+        makeCancelablePoint()
         //TODO remove temporary block --start--
         //commands should be in flow and set total after, so we can cancel easily
         //can be extra flow for it
-        narrowedPaths.forEach { searchingContext.searchingState.addVisitedPath(it) }
+        narrowedPaths.forEach {
+            makeCancelablePoint()
+            searchingContext.searchingState.addVisitedPath(it)
+        }
         searchingContext.searchingState.setTotalFilesByteSize()
         searchingContext.searchingState.setTotalFilesNumber()
         //TODO remove temporary block --end--

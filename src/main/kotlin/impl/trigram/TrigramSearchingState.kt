@@ -49,7 +49,8 @@ class TrigramSearchingState(override val result: Future<List<TokenMatch>>) : Sea
     fun changeStatus(status: ProgressableStatus) {
         synchronized(innerStatus) {
             val newStatus = trigramChangeStatus(innerStatus, status)
-            if (newStatus != status) {
+            if (newStatus != innerStatus) {
+                LOG.finest("changing status from $innerStatus to $status")
                 innerStatus = newStatus
                 if (newStatus.isTerminatingStatus) {
                     finishedTime = LocalDateTime.now()

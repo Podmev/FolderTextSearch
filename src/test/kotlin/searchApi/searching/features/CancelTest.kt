@@ -1,6 +1,8 @@
 package searchApi.searching.features
 
+import api.ProgressableStatus
 import api.SearchingState
+import api.toSnapshot
 import api.tools.searchapi.syncPerformIndex
 import api.tools.state.asyncCancelAtProgress
 import impl.trigram.TrigramSearchApi
@@ -12,14 +14,12 @@ import org.junit.jupiter.params.provider.MethodSource
 import searchApi.common.commonSetup
 import java.nio.file.Path
 import java.util.stream.Stream
-import kotlin.test.Ignore
 
 //TODO make tests
 /**
  * Checks correctness of cancel of searching in SearchApi
  * */
 @Suppress("DeferredResultUnused")
-@Ignore
 class CancelTest {
     /**
      * Source code of current project
@@ -70,7 +70,8 @@ class CancelTest {
             },
             { Assertions.assertEquals(0L, state.parsedFilesByteSize, "parsedFilesByteSize == 0") },
             { Assertions.assertEquals(null, state.totalFilesNumber, "totalFilesNumber == null") },
-            { Assertions.assertEquals(1.0, state.progress, "progress == 1.0") },
+            { Assertions.assertEquals(0.0, state.progress, "progress == 0.0") },
+            { Assertions.assertEquals(ProgressableStatus.CANCELLED, state.status, "status == CANCELLED") },
         )
     }
 
@@ -114,7 +115,9 @@ class CancelTest {
                 )
             },
             { Assertions.assertTrue(state.parsedFilesByteSize > 0L, "parsedFilesByteSize > 0") },
-            { Assertions.assertEquals(1.0, state.progress, "progress == 1.0") }, //FIXME this logic
+            { Assertions.assertTrue(state.progress >= cancelAtProgress, "progress >= cancelAtProgress") },
+            { Assertions.assertTrue(state.progress < 1.0, "progress < 1.0") },
+            { Assertions.assertEquals(ProgressableStatus.CANCELLED, state.status, "status == CANCELLED") },
         )
         //totalFilesNumber can be null or defined. Cannot know by progress
     }
@@ -144,6 +147,7 @@ class CancelTest {
             { Assertions.assertEquals(totalFilesByteSize, state.visitedFilesByteSize, "visited == total in bytes") },
             { Assertions.assertEquals(totalFilesByteSize, state.parsedFilesByteSize, "parsed == total in bytes") },
             { Assertions.assertEquals(1.0, state.progress, "progress == 1.0") },
+            { Assertions.assertEquals(ProgressableStatus.FINISHED, state.status, "status == FINISHED") },
         )
     }
 
