@@ -2,6 +2,7 @@ package searchApi.indexing.features
 
 import api.IndexingState
 import api.IndexingStateSnapshot
+import api.ProgressableStatus
 import api.toSnapshot
 import impl.trigram.TrigramSearchApi
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -102,7 +103,7 @@ class ProgressTest {
         buildList {
             for (snapshot in snapshotList) {
                 val total = snapshot.totalFilesNumber
-                val finished = snapshot.finished
+                val finished = snapshot.status == ProgressableStatus.FINISHED
                 val progress = snapshot.progress
                 val indexedFilesNumber = snapshot.indexedFilesNumber
                 val visitedFilesNumber = snapshot.visitedFilesNumber

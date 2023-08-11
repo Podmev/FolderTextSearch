@@ -1,15 +1,16 @@
 package api
 
 import java.nio.file.Path
+import java.time.LocalDateTime
 
 /**
  * Immutable state of searching.
  * */
 data class SearchingStateSnapshot(
     /**
-     * Flag - searching is finished or no.
+     * Status of searching.
      * */
-    val finished: Boolean,
+    val status: ProgressableStatus,
     /**
      * Progress of searching: can be from 0.0 till 1.0, including both.
      * */
@@ -41,6 +42,21 @@ data class SearchingStateSnapshot(
     /**
      * Size of total files in bytes in folder, can be null, if it is not calculated yet.
      * */
-    val totalFilesByteSize: Long?
-
+    val totalFilesByteSize: Long?,
+    /**
+     * Moment of starting task
+     * */
+    val startTime: LocalDateTime,
+    /**
+     * Moment of finish or cancel task, otherwise it is now
+     * */
+    val lastWorkingTime: LocalDateTime,
+    /**
+     * How long task is going already, if it is in progress, it counts till now
+     * */
+    val totalTime: Long,
+    /**
+     * Reason why task failed
+     * */
+    val failReason: Throwable?
 )

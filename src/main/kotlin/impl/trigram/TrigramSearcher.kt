@@ -1,5 +1,6 @@
 package impl.trigram
 
+import api.ProgressableStatus
 import api.TokenMatch
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.asFlow
@@ -30,6 +31,7 @@ class TrigramSearcher : WithLogging() {
         searchingState: TrigramSearchingState,
     ) = coroutineScope {
         try {
+            searchingState.changeStatus(ProgressableStatus.IN_PROGRESS)
             LOG.finest("started for folder: $folderPath and token: \"$token\"")
             val resultTokenMatchQueue: Queue<TokenMatch> = LinkedBlockingQueue()
             coroutineScope {
@@ -49,12 +51,16 @@ class TrigramSearcher : WithLogging() {
             }
             //here we wait all coroutines to finish
             val resultPathList = resultTokenMatchQueue.toList()
+            searchingState.changeStatus(ProgressableStatus.FINISHED)
             future.complete(resultPathList)
             LOG.finest("finished for folder: $folderPath and token: \"$token\", ${resultPathList.size} token matches")
         } catch (ex: CancellationException) {
+            searchingState.changeStatus(ProgressableStatus.CANCELLED)
             future.complete(emptyList())
             throw ex // Must let the CancellationException propagate
         } catch (th: Throwable) {
+            searchingState.changeStatus(ProgressableStatus.FAILED)
+            searchingState.setFailReason(th)
             future.complete(emptyList())
             LOG.severe("exception during making index: ${th.message}")
             th.printStackTrace()

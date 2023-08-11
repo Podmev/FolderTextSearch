@@ -1,5 +1,6 @@
 package impl.trigram
 
+import api.ProgressableStatus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.onFailure
 import kotlinx.coroutines.channels.onSuccess
@@ -42,6 +43,7 @@ internal class TrigramIndexer : WithLogging() {
         trigramMapByFolder: MutableMap<Path, TrigramMap>
     ) = coroutineScope {
         try {
+            indexingState.changeStatus(ProgressableStatus.IN_PROGRESS)
             LOG.finest("started for folder: $folderPath")
             val resultPathQueue: Queue<Path> = LinkedBlockingQueue()
             val foundTrigramMap: TrigramMap? = trigramMapByFolder[folderPath]
@@ -61,12 +63,16 @@ internal class TrigramIndexer : WithLogging() {
             }
             //here we wait all coroutines to finish
             val resultPathList = resultPathQueue.toList()
+            indexingState.changeStatus(ProgressableStatus.FINISHED)
             future.complete(resultPathList)
             LOG.finest("finished for folder: $folderPath, indexed ${resultPathList.size} files")
         } catch (ex: CancellationException) {
+            indexingState.changeStatus(ProgressableStatus.CANCELLED)
             future.complete(emptyList())
             throw ex // Must let the CancellationException propagate
         } catch (th: Throwable) {
+            indexingState.changeStatus(ProgressableStatus.FAILED)
+            indexingState.setFailReason(th)
             future.complete(emptyList())
             LOG.severe("exception during making index: ${th.message}")
             th.printStackTrace()

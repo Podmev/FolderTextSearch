@@ -4,8 +4,8 @@ import java.nio.file.Path
 
 /**
  * Main Api to search string (token) in all files of the folder
- *It has 2 steps: indexing and exactly searching token
- *Also it has api for checking index and remove it partly of full
+ * It has 2 steps: indexing and exactly searching token
+ * Also it has api for checking index and remove it partly of full
  * */
 interface SearchApi {
     /**

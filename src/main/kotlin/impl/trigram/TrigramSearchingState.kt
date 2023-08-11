@@ -1,10 +1,12 @@
 package impl.trigram
 
+import api.ProgressableStatus
 import api.SearchingState
 import api.TokenMatch
 import utils.WithLogging
 import utils.prettyBytes
 import java.nio.file.Path
+import java.time.LocalDateTime
 import java.util.concurrent.Future
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
@@ -15,6 +17,45 @@ import kotlin.math.min
  * State of trigram search api for searching.
  * */
 class TrigramSearchingState(override val result: Future<List<TokenMatch>>) : SearchingState, WithLogging() {
+    override val startTime: LocalDateTime = LocalDateTime.now()
+
+    /**
+     * Finished time, it should be set on moment of finish, from outside
+     */
+    private var finishedTime: LocalDateTime? = null
+    override val lastWorkingTime: LocalDateTime
+        get() = finishedTime ?: LocalDateTime.now()
+
+    private var innerStatus: ProgressableStatus = ProgressableStatus.NOT_STARTED
+
+    override val status: ProgressableStatus
+        get() = innerStatus
+
+    private var innerFailReason: Throwable? = null
+
+    /**
+     * Set fail reason
+     */
+    fun setFailReason(throwable: Throwable){
+        innerFailReason = throwable
+    }
+
+    override val failReason: Throwable?
+        get() = innerFailReason
+
+    /**
+     * Function to change status of search
+     */
+    fun changeStatus(status: ProgressableStatus) {
+        val newStatus = trigramChangeStatus(innerStatus, status)
+        if (newStatus != status) {
+            innerStatus = newStatus
+            if(newStatus.isTerminatingStatus){
+                finishedTime = LocalDateTime.now()
+            }
+        }
+    }
+
     //file numbers
     private val visitedFilesNumberRef = AtomicLong(ON_START_COUNTER)
     private val totalFilesNumberRef = AtomicLong(NOT_SET_TOTAL)
@@ -54,9 +95,6 @@ class TrigramSearchingState(override val result: Future<List<TokenMatch>>) : Sea
 
     override val totalFilesByteSize: Long?
         get() = if (totalFilesByteSizeUpdatedRef.get()) totalFilesByteSizeRef.get() else null
-
-    override val finished: Boolean
-        get() = result.isDone
 
     override val progress: Double
         get() {

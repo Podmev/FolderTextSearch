@@ -1,15 +1,16 @@
 package api
 
 import java.nio.file.Path
+import java.time.LocalDateTime
 
 /**
  * Immutable state of indexing
  * */
 data class IndexingStateSnapshot(
     /**
-     * Flag - indexing is finished or no.
+     * Status of indexing.
      * */
-    val finished: Boolean,
+    val status: ProgressableStatus,
     /**
      * Progress of index: can be from 0.0 till 1.0, including both.
      * */
@@ -33,5 +34,21 @@ data class IndexingStateSnapshot(
     /**
      * Number of total files in folder, can be null, if it is not calculated yet.
      * */
-    val totalFilesNumber: Long?
+    val totalFilesNumber: Long?,
+    /**
+     * Moment of starting task
+     * */
+    val startTime: LocalDateTime,
+    /**
+     * Moment of finish or cancel task, otherwise it is now
+     * */
+    val lastWorkingTime: LocalDateTime,
+    /**
+     * How long task is going already, if it is in progress, it counts till now
+     * */
+    val totalTime: Long,
+    /**
+     * Reason why task failed
+     * */
+    val failReason: Throwable?
 )

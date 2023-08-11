@@ -43,6 +43,7 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         }
 
         fun cancelIndexing() {
+            indexingState.changeStatus(ProgressableStatus.CANCELLING)
             deferred.cancel(CancellationException())
         }
         indexingState.addCancellationAction(::cancelIndexing)
@@ -67,6 +68,7 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         }
 
         fun cancelIndexing() {
+            searchingState.changeStatus(ProgressableStatus.CANCELLING)
             deferred.cancel(CancellationException())
         }
         searchingState.addCancellationAction(::cancelIndexing)

@@ -33,11 +33,16 @@ class IndexlessSearchApi : SearchApi, WithLogging() {
     override fun searchString(folderPath: Path, token: String, settings: SearchSettings): SearchingState {
         validateToken(token)
         validatePath(folderPath)
+
         val completableFuture = CompletableFuture<List<TokenMatch>>()
+        val indexlessSearchingState = IndexlessSearchingState(completableFuture)
+        indexlessSearchingState.changeStatus(ProgressableStatus.IN_PROGRESS)
         //TODO put in async code search
         val tokenMatches = searchStringInFolder(folderPath, token)
+        indexlessSearchingState.changeStatus(ProgressableStatus.FINISHED)
         completableFuture.complete(tokenMatches)
-        return IndexlessSearchingState(completableFuture)
+
+        return indexlessSearchingState
     }
 
     /**

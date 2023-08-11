@@ -9,25 +9,9 @@ import java.util.concurrent.Future
  * */
 interface SearchingState : ProgressableState {
     /**
-     * Shows if search finished.
-     * */
-    override val finished: Boolean
-
-    /**
-     * Can be from 0 till 1 inclusive borders, where 0 means not started, and 1  - finished.
-     * */
-    override val progress: Double
-
-    /**
      * Result, which will be fill in the end of search.
      * */
     val result: Future<List<TokenMatch>>
-
-    /**
-     * Method to cancel the search process.
-     * It can be useful, if it takes long time.
-     * */
-    override fun cancel()
 
     /**
      * Get the newfound portion of tokenMatches after previous call.
@@ -80,7 +64,7 @@ interface SearchingState : ProgressableState {
  * */
 fun SearchingState.toSnapshot(): SearchingStateSnapshot =
     SearchingStateSnapshot(
-        finished = finished,
+        status = status,
         progress = progress,
         visitedPathsBuffer = getVisitedPathsBuffer(true),
         tokenMatchesBuffer = getTokenMatchesBuffer(true),
@@ -88,5 +72,9 @@ fun SearchingState.toSnapshot(): SearchingStateSnapshot =
         totalFilesNumber = totalFilesNumber,
         visitedFilesByteSize = visitedFilesByteSize,
         parsedFilesByteSize = parsedFilesByteSize,
-        totalFilesByteSize = totalFilesByteSize
+        totalFilesByteSize = totalFilesByteSize,
+        startTime = startTime,
+        lastWorkingTime = lastWorkingTime,
+        totalTime = totalTime,
+        failReason = failReason
     )

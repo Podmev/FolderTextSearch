@@ -1,8 +1,10 @@
 package impl.trigram
 
 import api.IndexingState
+import api.ProgressableStatus
 import utils.WithLogging
 import java.nio.file.Path
+import java.time.LocalDateTime
 import java.util.concurrent.Future
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
@@ -11,6 +13,45 @@ import java.util.concurrent.atomic.AtomicLong
  * State of trigram search api for indexing.
  * */
 class TrigramIndexingState(override val result: Future<List<Path>>) : IndexingState, WithLogging() {
+    override val startTime: LocalDateTime = LocalDateTime.now()
+
+    /**
+     * Finished time, it should be set on moment of finish, from outside
+     */
+    private var finishedTime: LocalDateTime? = null
+    override val lastWorkingTime: LocalDateTime
+        get() = finishedTime ?: LocalDateTime.now()
+
+    private var innerStatus: ProgressableStatus = ProgressableStatus.NOT_STARTED
+
+    override val status: ProgressableStatus
+        get() = innerStatus
+
+    private var innerFailReason: Throwable? = null
+
+    /**
+     * Set fail reason
+     */
+    fun setFailReason(throwable: Throwable){
+        innerFailReason = throwable
+    }
+
+    override val failReason: Throwable?
+        get() = innerFailReason
+
+    /**
+     * Function to change status of search
+     */
+    fun changeStatus(status: ProgressableStatus) {
+        val newStatus = trigramChangeStatus(innerStatus, status)
+        if (newStatus != status) {
+            innerStatus = newStatus
+            if(newStatus.isTerminatingStatus){
+                finishedTime = LocalDateTime.now()
+            }
+        }
+    }
+
     //file numbers
     private val visitedFilesNumberRef = AtomicLong(ON_START_COUNTER)
     private val indexedFilesNumberRef = AtomicLong(ON_START_COUNTER)
@@ -30,12 +71,6 @@ class TrigramIndexingState(override val result: Future<List<Path>>) : IndexingSt
         get() = indexedFilesNumberRef.get()
     override val totalFilesNumber: Long?
         get() = if (totalFilesNumberUpdatedRef.get()) totalFilesNumberRef.get() else null
-
-    /**
-     * Shows indexing is finished of now, takes value from result future.
-     * */
-    override val finished: Boolean
-        get() = result.isDone
 
     /**
      * Progress of indexing. It can have values from 0.0 till 1.0, including both ends.

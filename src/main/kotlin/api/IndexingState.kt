@@ -3,32 +3,15 @@ package api
 import java.nio.file.Path
 import java.util.concurrent.Future
 
-//TODO add millis from start
 /**
  * State which api gives when you make index at folder.
  * It can help to control process of indexing, since it can be long process.
  * */
 interface IndexingState : ProgressableState {
     /**
-     * Shows if search finished.
-     * */
-    override val finished: Boolean
-
-    /**
-     * Can be from 0 till 1 inclusive borders, where 0 means not started, and 1  - finished.
-     * */
-    override val progress: Double
-
-    /**
      * Result - all file paths in directory recursively, which were indexed
      * */
     val result: Future<List<Path>>
-
-    /**
-     * Method to cancel the indexing process.
-     * It can be useful, if the indexing takes long time.
-     * */
-    override fun cancel()
 
     /**
      * Get the newfound portion of file paths visited after previous call.
@@ -69,11 +52,15 @@ interface IndexingState : ProgressableState {
  * */
 fun IndexingState.toSnapshot(): IndexingStateSnapshot =
     IndexingStateSnapshot(
-        finished = finished,
+        status = status,
         progress = progress,
         visitedPathsBuffer = getVisitedPathsBuffer(true),
         indexedPathsBuffer = getIndexedPathsBuffer(true),
         visitedFilesNumber = visitedFilesNumber,
         indexedFilesNumber = indexedFilesNumber,
-        totalFilesNumber = totalFilesNumber
+        totalFilesNumber = totalFilesNumber,
+        startTime = startTime,
+        lastWorkingTime = lastWorkingTime,
+        totalTime = totalTime,
+        failReason = failReason
     )
