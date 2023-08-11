@@ -1,6 +1,7 @@
 package searchApi.indexing.features
 
 import api.IndexingState
+import api.ProgressableStatus
 import api.isIndexEmpty
 import api.tools.searchapi.syncPerformIndex
 import api.tools.state.asyncCancelAtProgress
@@ -59,7 +60,8 @@ class CancelTest {
             },
             { Assertions.assertEquals(0L, state.indexedFilesNumber, "indexedFilesNumber == 0") },
             { Assertions.assertEquals(null, state.totalFilesNumber, "totalFilesNumber == null") },
-            { Assertions.assertEquals(1.0, state.progress, "progress == 1.0") },
+            { Assertions.assertEquals(0.0, state.progress, "progress == 0.0") },
+            { Assertions.assertEquals(ProgressableStatus.CANCELLED, state.status, "status == CANCELLED") },
         )
     }
 
@@ -93,7 +95,9 @@ class CancelTest {
                 )
             },
             { Assertions.assertTrue(state.indexedFilesNumber > 0L, "indexedFilesNumber > 0") },
-            { Assertions.assertEquals(1.0, state.progress, "progress == 1.0") }, //FIXME this logic
+            { Assertions.assertTrue(state.progress >= cancelAtProgress, "progress >= cancelAtProgress") },
+            { Assertions.assertTrue(state.progress < 1.0, "progress < 1.0") },
+            { Assertions.assertEquals(ProgressableStatus.CANCELLED, state.status, "status == CANCELLED") },
         )
         //totalFilesNumber can be null or defined. Cannot know by progress
     }
@@ -116,6 +120,7 @@ class CancelTest {
             { Assertions.assertEquals(totalFilesNumber, state.visitedFilesNumber, "visited == total") },
             { Assertions.assertEquals(totalFilesNumber, state.indexedFilesNumber, "indexed == total") },
             { Assertions.assertEquals(1.0, state.progress, "progress == 1.0") },
+            { Assertions.assertEquals(ProgressableStatus.FINISHED, state.status, "status == FINISHED") },
         )
     }
 
