@@ -1,7 +1,6 @@
 package searchApi.searching.features
 
-import api.IndexingState
-import api.isIndexEmpty
+import api.SearchingState
 import api.tools.searchapi.syncPerformIndex
 import api.tools.state.asyncCancelAtProgress
 import impl.trigram.TrigramSearchApi
@@ -28,96 +27,122 @@ class CancelTest {
     private val commonPath: Path = commonSetup.srcFolder
 
     /**
+     * typical common token to search
+     * */
+    private val commonToken: String = "class"
+
+    /**
      * Using not by interface, because we use methods exactly from TrigramSearchApi
      * */
     private val searchApiGenerator: () -> TrigramSearchApi = { TrigramSearchApi() }
 
     /**
-     * Cancel at the start indexing.
-     * Code shouldn't throw any exception, it should be saved no index.
+     * Cancel at the start searching.
+     * Code shouldn't throw any exception, it should be saved no search.
      * */
     @Test
-    fun curProjectIndexingAndCancelAtStartIndexingTest() {
+    fun curProjectSearchingAndCancelAtStartSearchingTest() {
         val searchApi = searchApiGenerator()
         val folder = commonPath
+        val token  = commonToken
 
-        val previouslyFinishedIndexingState = searchApi.syncPerformIndex(folder)
-        searchApi.removeFullIndex()
+        searchApi.syncPerformIndex(folder)
+        val previouslyFinishedState = searchApi.searchString(folder, token)
+        val previousTokenMatches = previouslyFinishedState.result.get()
+
         /*total should exist* */
-        val completedTotalFilesNumber = previouslyFinishedIndexingState.totalFilesNumber!!
+        val completedTotalFilesNumber = previouslyFinishedState.totalFilesNumber!!
 
-        val state: IndexingState = searchApi.createIndexAtFolder(folder)
+        val state: SearchingState = searchApi.searchString(folder, token)
         state.asyncCancelAtProgress(
             cancelAtProgress = 0.0,
             checkProgressEveryMillis = 1
         )
-        state.result.get()
+        val tokenMatches = state.result.get()
         Assertions.assertAll(
-            { Assertions.assertTrue(searchApi.isIndexEmpty(), "SearchApi has no index") },
+            { Assertions.assertFalse(previousTokenMatches.isEmpty(), "PreviousTokenMatches are not empty") },
+            { Assertions.assertTrue(tokenMatches.isEmpty(), "No token matches on cancel") },
             {
                 Assertions.assertTrue(
                     state.visitedFilesNumber < completedTotalFilesNumber,
-                    "visited < total(precalculated)"
+                    "Parsed files number ${state.visitedFilesNumber} < total(precalculated) $completedTotalFilesNumber"
                 )
             },
-            { Assertions.assertEquals(0L, state.indexedFilesNumber, "indexedFilesNumber == 0") },
+            { Assertions.assertEquals(0L, state.parsedFilesByteSize, "parsedFilesByteSize == 0") },
             { Assertions.assertEquals(null, state.totalFilesNumber, "totalFilesNumber == null") },
             { Assertions.assertEquals(1.0, state.progress, "progress == 1.0") },
         )
     }
 
     /**
-     * Cancel during indexing at progress cancelAtProgress.
-     * Code shouldn't throw any exception, it should be saved no index
+     * Cancel during searching at progress cancelAtProgress.
+     * Code shouldn't throw any exception, it should give any results
      * */
     @ParameterizedTest(name = "{0}")
     @MethodSource("searchApiProvider")
-    fun curProjectIndexingAndCancelDuringIndexTest(cancelAtProgress: Double) {
+    fun curProjectSearchingAndCancelDuringSearchTest(cancelAtProgress: Double) {
         val searchApi = searchApiGenerator()
         val folder = commonPath
+        val token = commonToken
 
-        val previouslyFinishedIndexingState = searchApi.syncPerformIndex(folder)
-        searchApi.removeFullIndex()
+        searchApi.syncPerformIndex(folder)
+        val previouslyFinishedState = searchApi.searchString(folder, token)
+        val previousTokenMatches = previouslyFinishedState.result.get()
+
         /*total should exist* */
-        val completedTotalFilesNumber = previouslyFinishedIndexingState.totalFilesNumber!!
+        val completedTotalFilesByteSize = previouslyFinishedState.totalFilesByteSize!!
 
-        val state: IndexingState = searchApi.createIndexAtFolder(folder)
+        val state: SearchingState = searchApi.searchString(folder, token)
         state.asyncCancelAtProgress(
             cancelAtProgress = cancelAtProgress,
-            checkProgressEveryMillis = 5
+            checkProgressEveryMillis = 1
         )
-        state.result.get()
+        val tokenMatches = state.result.get()
         Assertions.assertAll(
-            { Assertions.assertTrue(searchApi.isIndexEmpty(), "SearchApi has no index") },
+            { Assertions.assertTrue(tokenMatches.isEmpty(), "No token matches on cancel") },
+            { Assertions.assertFalse(previousTokenMatches.isEmpty(), "previousTokenMatches are not empty") },
             {
                 Assertions.assertTrue(
-                    state.visitedFilesNumber <= completedTotalFilesNumber,
-                    "visited <= total(precalculated)"
+                    state.visitedFilesByteSize <= completedTotalFilesByteSize,
+                    "visited <= total(precalculated) in bytes"
                 )
             },
-            { Assertions.assertTrue(state.indexedFilesNumber > 0L, "indexedFilesNumber > 0") },
+            {
+                Assertions.assertTrue(
+                    state.parsedFilesByteSize <= completedTotalFilesByteSize,
+                    "parsed <= total(precalculated) in bytes"
+                )
+            },
+            { Assertions.assertTrue(state.parsedFilesByteSize > 0L, "parsedFilesByteSize > 0") },
             { Assertions.assertEquals(1.0, state.progress, "progress == 1.0") }, //FIXME this logic
         )
         //totalFilesNumber can be null or defined. Cannot know by progress
     }
 
     /**
-     * Cancel after indexing.
-     * Code shouldn't throw any exception, it should be saved index for folder
-     * visited files number, indexed files number and total should be equal
+     * Cancel after searching.
+     * Code shouldn't throw any exception, it should find tokens in folder files.
+     * Visited files byte size, parsed files byte size, total files byte size should be equal
      * */
     @Test
-    fun curProjectIndexingAndCancelAfterIndexTest() {
+    fun curProjectSearchingAndCancelAfterSearchingTest() {
         val searchApi = searchApiGenerator()
         val folder = commonPath
-        val state: IndexingState = searchApi.syncPerformIndex(folder)
+        val token = commonToken
+
+        searchApi.syncPerformIndex(folder)
+        val state: SearchingState = searchApi.searchString(folder, token)
+        val tokenMatches = state.result.get()
         state.cancel()
         /*total should exist* */
         val totalFilesNumber = state.totalFilesNumber!!
+        /*total should exist* */
+        val totalFilesByteSize = state.totalFilesByteSize!!
         Assertions.assertAll(
-            { Assertions.assertTrue(searchApi.hasIndexAtFolder(folder), "SearchApi has index at folder") },
-            { Assertions.assertEquals(totalFilesNumber, state.visitedFilesNumber, "visited == total") },
-            { Assertions.assertEquals(totalFilesNumber, state.indexedFilesNumber, "indexed == total") },
+            { Assertions.assertFalse(tokenMatches.isEmpty(), "Token matches are not empty") },
+            { Assertions.assertEquals(totalFilesNumber, state.visitedFilesNumber,"visited == total files number") },
+            { Assertions.assertEquals(totalFilesByteSize, state.visitedFilesByteSize, "visited == total in bytes") },
+            { Assertions.assertEquals(totalFilesByteSize, state.parsedFilesByteSize, "parsed == total in bytes") },
             { Assertions.assertEquals(1.0, state.progress, "progress == 1.0") },
         )
     }

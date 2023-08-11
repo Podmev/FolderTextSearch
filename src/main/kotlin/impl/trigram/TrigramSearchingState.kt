@@ -9,6 +9,7 @@ import java.util.concurrent.Future
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 import kotlin.io.path.fileSize
+import kotlin.math.min
 
 /**
  * State of trigram search api for searching.
@@ -42,8 +43,15 @@ class TrigramSearchingState(override val result: Future<List<TokenMatch>>) : Sea
 
     override val visitedFilesByteSize: Long
         get() = visitedFilesByteSizeRef.get()
+
+    /**
+     * Need to take minimum because of not precise calculation of parsedFilesByteSizeRef
+     * */
     override val parsedFilesByteSize: Long
-        get() = parsedFilesByteSizeRef.get()
+        get() {
+            return parsedFilesByteSizeRef.get().let{ min(it, totalFilesByteSize ?: return it)}
+        }
+
     override val totalFilesByteSize: Long?
         get() = if (totalFilesByteSizeUpdatedRef.get()) totalFilesByteSizeRef.get() else null
 

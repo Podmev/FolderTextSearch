@@ -8,8 +8,8 @@ import java.nio.file.Path
  * Util function to calculate index for folder, then after it is done returns
  * Used in tests
  * */
-fun SearchApi.syncPerformIndex(folderPathString: Path): IndexingState {
-    val indexingState = createIndexAtFolder(folderPathString)
+fun SearchApi.syncPerformIndex(folderPath: Path): IndexingState {
+    val indexingState = createIndexAtFolder(folderPath)
     indexingState.result.get()
     assert(indexingState.finished)
     return indexingState

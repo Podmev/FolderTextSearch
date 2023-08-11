@@ -33,7 +33,7 @@ class IntellijIdeaTrigramTest {
         val folder = commonPath
         val startTime = LocalDateTime.now()
         println(startTime)
-        searchApi.syncPerformIndexWithLoggingAndCancel(folderPathString = folder, cancelAtProgress = 0.00)
+        searchApi.syncPerformIndexWithLoggingAndCancel(folderPath = folder, cancelAtProgress = 0.00)
     }
 
 
