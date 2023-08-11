@@ -3,8 +3,11 @@ package impl.trigram
 import api.ProgressableStatus
 import api.TokenMatch
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import utils.WithLogging
 import utils.coroutines.makeCancelablePoint
@@ -91,7 +94,7 @@ class TrigramSearcher : WithLogging() {
 
         narrowedPaths.asSequence().asFlow().onEach { path ->
             searchingContext.narrowedPathChannel.send(path)
-            LOG.finest("sent path to channel narrowedPathChannel: $path")
+            LOG.finest("sent path to channel narrowedPathChannel: $path, isActive:$isActive")
             //searchingContext.searchingState.addVisitedPath(path)
         }.collect {}
 
@@ -110,7 +113,8 @@ class TrigramSearcher : WithLogging() {
     private suspend fun asyncSearchingInPaths(searchingContext: TrigramSearchingContext) = coroutineScope {
         LOG.finest("started for folder: ${searchingContext.folderPath} and token: \"$searchingContext.token\"")
         for (path in searchingContext.narrowedPathChannel) {
-            LOG.finest("received path: $path")
+            if(!isActive) break
+            LOG.finest("received path: $path, isActive:$isActive")
             path.useLines { lines ->
                 lines.withIndex().asFlow().onEach { (lineIndex, line) ->
                     searchingContext.fileLineChannel.send(LineInFile(path, lineIndex, line))
@@ -125,12 +129,13 @@ class TrigramSearcher : WithLogging() {
      * For each line in fileLineChannel it sends all found token matches to tokenMatchChannel.
      * */
     private suspend fun asyncSearchingInFileLines(searchingContext: TrigramSearchingContext) = coroutineScope {
-        LOG.finest("started for folder: ${searchingContext.folderPath} and token: \"$searchingContext.token\"")
+        LOG.finest("started for folder: ${searchingContext.folderPath} and token: \"$searchingContext.token\", isActive:$isActive")
         for (lineInFile in searchingContext.fileLineChannel) {
-            LOG.finest("received lineInFile: $lineInFile")
-            searchStringInLine(lineInFile.path, lineInFile.line, searchingContext.token, lineInFile.lineIndex).asFlow()
+            if(!isActive) break
+            LOG.finest("received lineInFile: $lineInFile, isActive:$isActive")
+            searchStringInLine(lineInFile.path, lineInFile.line, searchingContext.token, lineInFile.lineIndex)
                 .onEach { tokenMatch ->
-                    LOG.finest("found token match in line: $tokenMatch, line: ${lineInFile.line}")
+                    LOG.finest("found token match in line: $tokenMatch, line: ${lineInFile.line}, isActive:$isActive")
                     searchingContext.tokenMatchChannel.send(tokenMatch)
                 }.collect {}
             searchingContext.searchingState.addParsedLine(lineInFile.line)
@@ -147,10 +152,11 @@ class TrigramSearcher : WithLogging() {
     private suspend fun asyncReadingTokenMatchesChannel(searchingContext: TrigramSearchingContext) = coroutineScope {
         LOG.finest("started for folder: ${searchingContext.folderPath} and token: \"$searchingContext.token\"")
         for (tokenMatch in searchingContext.tokenMatchChannel) {
-            LOG.finest("received tokenMatch: $tokenMatch")
+            if(!isActive) break
+            LOG.finest("received tokenMatch: $tokenMatch, isActive:$isActive")
             searchingContext.resultTokenMatchQueue.add(tokenMatch)
             val tokenMatchesNumber = searchingContext.searchingState.addTokenMatchToBuffer(tokenMatch)
-            LOG.finest("saving #${tokenMatchesNumber} token match: $tokenMatch")
+            LOG.finest("saving #${tokenMatchesNumber} token match: $tokenMatch, isActive:$isActive")
         }
         LOG.finest("finished for folder: ${searchingContext.folderPath} and token: \"$searchingContext.token\"")
     }
@@ -168,10 +174,12 @@ class TrigramSearcher : WithLogging() {
 
     /**
      * Searches token by single line and creates list of tokenMatches.
+     * Also converts to 1-based indices.
      * */
-    private fun searchStringInLine(filePath: Path, line: String, token: String, lineIndex: Int): Sequence<TokenMatch> {
+    private fun searchStringInLine(filePath: Path, line: String, token: String, lineIndex: Int): Flow<TokenMatch> {
         LOG.finest("#$lineIndex, \"$line\", token: $token")
         val positionsInLine = line.indicesOf(token)
-        return positionsInLine.map { TokenMatch(filePath, lineIndex.toLong() + 1, it.toLong() + 1) }
+        return positionsInLine.asFlow()
+            .map { TokenMatch(filePath, lineIndex.toLong() + 1, it.toLong() + 1) }
     }
 }

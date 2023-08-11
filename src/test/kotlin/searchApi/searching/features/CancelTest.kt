@@ -2,7 +2,6 @@ package searchApi.searching.features
 
 import api.ProgressableStatus
 import api.SearchingState
-import api.toSnapshot
 import api.tools.searchapi.syncPerformIndex
 import api.tools.state.asyncCancelAtProgress
 import impl.trigram.TrigramSearchApi
@@ -15,7 +14,6 @@ import searchApi.common.commonSetup
 import java.nio.file.Path
 import java.util.stream.Stream
 
-//TODO make tests
 /**
  * Checks correctness of cancel of searching in SearchApi
  * */
@@ -80,7 +78,7 @@ class CancelTest {
      * Code shouldn't throw any exception, it should give any results
      * */
     @ParameterizedTest(name = "{0}")
-    @MethodSource("searchApiProvider")
+    @MethodSource("progressProvider")
     fun curProjectSearchingAndCancelDuringSearchTest(cancelAtProgress: Double) {
         val searchApi = searchApiGenerator()
         val folder = commonPath
@@ -96,7 +94,7 @@ class CancelTest {
         val state: SearchingState = searchApi.searchString(folder, token)
         state.asyncCancelAtProgress(
             cancelAtProgress = cancelAtProgress,
-            checkProgressEveryMillis = 1
+            checkProgressEveryMillis = 0 //test is too small for any delay
         )
         val tokenMatches = state.result.get()
         Assertions.assertAll(
@@ -117,9 +115,11 @@ class CancelTest {
             { Assertions.assertTrue(state.parsedFilesByteSize > 0L, "parsedFilesByteSize > 0") },
             { Assertions.assertTrue(state.progress >= cancelAtProgress, "progress >= cancelAtProgress") },
             { Assertions.assertTrue(state.progress < 1.0, "progress < 1.0") },
+            { Assertions.assertTrue(state.progress < cancelAtProgress + 0.15, "progress < cancelAtProgress + 0.15") },
             { Assertions.assertEquals(ProgressableStatus.CANCELLED, state.status, "status == CANCELLED") },
+            { Assertions.assertNotNull(state.totalFilesNumber, "totalFilesNumber is not null") },
+            { Assertions.assertNotNull(state.totalFilesByteSize, "totalFilesByteSize is not null") },
         )
-        //totalFilesNumber can be null or defined. Cannot know by progress
     }
 
     /**
@@ -152,12 +152,18 @@ class CancelTest {
     }
 
     companion object {
+        /**
+         * Values for progress, which are not 0.0 and 1.0. Used for parametrized test.
+         * */
         private val inMiddleProgressList = listOf(
             0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9
         )
 
+        /**
+         * Provides arguments for tests: progress
+         * */
         @JvmStatic
-        fun searchApiProvider(): Stream<Arguments> {
+        fun progressProvider(): Stream<Arguments> {
             return inMiddleProgressList
                 .map { Arguments.of(it) }
                 .stream()

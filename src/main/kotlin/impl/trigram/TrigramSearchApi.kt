@@ -45,6 +45,7 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         fun cancelIndexing() {
             indexingState.changeStatus(ProgressableStatus.CANCELLING)
             deferred.cancel(CancellationException())
+            LOG.finest("deferred.cancel()")
         }
         indexingState.addCancellationAction(::cancelIndexing)
         return indexingState
@@ -70,6 +71,7 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         fun cancelIndexing() {
             searchingState.changeStatus(ProgressableStatus.CANCELLING)
             deferred.cancel(CancellationException())
+            LOG.finest("deferred.cancel()")
         }
         searchingState.addCancellationAction(::cancelIndexing)
         return searchingState

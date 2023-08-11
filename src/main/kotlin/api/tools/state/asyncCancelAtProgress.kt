@@ -15,9 +15,10 @@ fun ProgressableState.asyncCancelAtProgress(
 ): Deferred<Unit> {
     val state = this
     return GlobalScope.async {
-        while (!state.finished) {
+        while (!state.status.isTerminatingStatus) {
             val progress = state.progress
             if (progress >= cancelAtProgress) {
+                //Here there is cancel() fun in ProgressableState and CoroutineScope. We need from state.
                 state.cancel()
                 break
             }

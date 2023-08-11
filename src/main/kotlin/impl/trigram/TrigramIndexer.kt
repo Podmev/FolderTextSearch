@@ -143,7 +143,6 @@ internal class TrigramIndexer : WithLogging() {
         try {
             path.useLines { lines ->
                 lines
-                    //.map { line -> line.apply { println(line) } }
                     .forEachIndexed { lineIndex, line ->
                         constructIndexForLine(
                             path = path,
