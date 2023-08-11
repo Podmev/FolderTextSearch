@@ -86,6 +86,7 @@ class CancelTest {
             checkProgressEveryMillis = 5
         )
         state.result.get()
+        val progress = state.progress
         Assertions.assertAll(
             { Assertions.assertTrue(searchApi.isIndexEmpty(), "SearchApi has no index") },
             {
@@ -95,9 +96,9 @@ class CancelTest {
                 )
             },
             { Assertions.assertTrue(state.indexedFilesNumber > 0L, "indexedFilesNumber > 0") },
-            { Assertions.assertTrue(state.progress >= cancelAtProgress, "progress >= cancelAtProgress") },
-            { Assertions.assertTrue(state.progress < 1.0, "progress < 1.0") },
-            { Assertions.assertTrue(state.progress < cancelAtProgress + 0.1, "progress < cancelAtProgress + 0.1") },
+            { Assertions.assertTrue(progress >= cancelAtProgress, "progress >= cancelAtProgress") },
+            { Assertions.assertTrue(progress < 1.0, "progress < 1.0") },
+            { Assertions.assertTrue(progress < cancelAtProgress + 0.1, "progress ($progress) < cancelAtProgress + 0.1") },
             { Assertions.assertEquals(ProgressableStatus.CANCELLED, state.status, "status == CANCELLED") },
             { Assertions.assertNotNull(state.totalFilesNumber, "totalFilesNumber is not null") },
         )

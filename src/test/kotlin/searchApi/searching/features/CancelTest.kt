@@ -97,6 +97,7 @@ class CancelTest {
             checkProgressEveryMillis = 0 //test is too small for any delay
         )
         val tokenMatches = state.result.get()
+        val progress = state.progress
         Assertions.assertAll(
             { Assertions.assertTrue(tokenMatches.isEmpty(), "No token matches on cancel") },
             { Assertions.assertFalse(previousTokenMatches.isEmpty(), "previousTokenMatches are not empty") },
@@ -114,9 +115,9 @@ class CancelTest {
                 )
             },
             { Assertions.assertTrue(state.parsedFilesByteSize > 0L, "parsedFilesByteSize > 0") },
-            { Assertions.assertTrue(state.progress >= cancelAtProgress, "progress >= cancelAtProgress") },
-            { Assertions.assertTrue(state.progress < 1.0, "progress < 1.0") },
-            { Assertions.assertTrue(state.progress < cancelAtProgress + 0.15, "progress < cancelAtProgress + 0.15") },
+            { Assertions.assertTrue(progress >= cancelAtProgress, "progress >= cancelAtProgress") },
+            { Assertions.assertTrue(progress < 1.0, "progress < 1.0") },
+            { Assertions.assertTrue(progress < cancelAtProgress + 0.15, "progress ($progress) < cancelAtProgress + 0.15") },
             { Assertions.assertEquals(ProgressableStatus.CANCELLED, state.status, "status == CANCELLED") },
             { Assertions.assertNotNull(state.totalFilesNumber, "totalFilesNumber is not null") },
             { Assertions.assertNotNull(state.totalFilesByteSize, "totalFilesByteSize is not null") },
