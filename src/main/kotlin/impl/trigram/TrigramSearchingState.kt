@@ -36,7 +36,7 @@ class TrigramSearchingState(override val result: Future<List<TokenMatch>>) : Sea
     /**
      * Set fail reason
      */
-    fun setFailReason(throwable: Throwable){
+    fun setFailReason(throwable: Throwable) {
         innerFailReason = throwable
     }
 
@@ -47,11 +47,13 @@ class TrigramSearchingState(override val result: Future<List<TokenMatch>>) : Sea
      * Function to change status of search
      */
     fun changeStatus(status: ProgressableStatus) {
-        val newStatus = trigramChangeStatus(innerStatus, status)
-        if (newStatus != status) {
-            innerStatus = newStatus
-            if(newStatus.isTerminatingStatus){
-                finishedTime = LocalDateTime.now()
+        synchronized(innerStatus) {
+            val newStatus = trigramChangeStatus(innerStatus, status)
+            if (newStatus != status) {
+                innerStatus = newStatus
+                if (newStatus.isTerminatingStatus) {
+                    finishedTime = LocalDateTime.now()
+                }
             }
         }
     }
@@ -90,7 +92,7 @@ class TrigramSearchingState(override val result: Future<List<TokenMatch>>) : Sea
      * */
     override val parsedFilesByteSize: Long
         get() {
-            return parsedFilesByteSizeRef.get().let{ min(it, totalFilesByteSize ?: return it)}
+            return parsedFilesByteSizeRef.get().let { min(it, totalFilesByteSize ?: return it) }
         }
 
     override val totalFilesByteSize: Long?

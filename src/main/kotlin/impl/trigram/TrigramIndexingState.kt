@@ -32,7 +32,7 @@ class TrigramIndexingState(override val result: Future<List<Path>>) : IndexingSt
     /**
      * Set fail reason
      */
-    fun setFailReason(throwable: Throwable){
+    fun setFailReason(throwable: Throwable) {
         innerFailReason = throwable
     }
 
@@ -43,11 +43,13 @@ class TrigramIndexingState(override val result: Future<List<Path>>) : IndexingSt
      * Function to change status of search
      */
     fun changeStatus(status: ProgressableStatus) {
-        val newStatus = trigramChangeStatus(innerStatus, status)
-        if (newStatus != status) {
-            innerStatus = newStatus
-            if(newStatus.isTerminatingStatus){
-                finishedTime = LocalDateTime.now()
+        synchronized(innerStatus) {
+            val newStatus = trigramChangeStatus(innerStatus, status)
+            if (newStatus != innerStatus) {
+                innerStatus = newStatus
+                if (newStatus.isTerminatingStatus) {
+                    finishedTime = LocalDateTime.now()
+                }
             }
         }
     }
