@@ -1,15 +1,12 @@
 package impl.trigram
 
 import api.ProgressableStatus
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.onFailure
 import kotlinx.coroutines.channels.onSuccess
 import kotlinx.coroutines.channels.trySendBlocking
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import utils.WithLogging
 import java.nio.file.Files
 import java.nio.file.Path
@@ -122,6 +119,7 @@ internal class TrigramIndexer : WithLogging() {
         LOG.finest("started for folder: ${indexingContext.folderPath}")
 
         for (path in indexingContext.visitedPathChannel) {
+            if(!isActive) break
             if (isPossibleToIndexFile(path)) {
                 constructIndexForFile(path, indexingContext)
             }
@@ -189,6 +187,7 @@ internal class TrigramIndexer : WithLogging() {
     ) = coroutineScope {
         LOG.finest("started")
         for (path in indexingContext.indexedPathChannel) {
+            if(!isActive) break
             LOG.finest("received indexed path and saving to state: $path")
             val indexedFilesNumber = indexingContext.indexingState.addIndexedPathToBuffer(path)
             indexingContext.resultPathQueue.add(path)
@@ -205,6 +204,7 @@ internal class TrigramIndexer : WithLogging() {
     ) = coroutineScope {
         LOG.finest("started")
         for ((triplet, path) in indexingContext.tripletInPathChannel) {
+            if(!isActive) break
             LOG.finest("received path for triplet: $triplet $path")
             indexingContext.trigramMap.addCharTripletByPath(triplet, path)
         }

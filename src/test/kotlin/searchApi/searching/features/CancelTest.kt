@@ -15,22 +15,22 @@ import java.nio.file.Path
 import java.util.stream.Stream
 
 /**
- * Checks correctness of cancel of searching in SearchApi
+ * Checks correctness of cancel of searching in SearchApi.
  * */
 @Suppress("DeferredResultUnused")
 class CancelTest {
     /**
-     * Source code of current project
+     * Source code of current project.
      * */
     private val commonPath: Path = commonSetup.srcFolder
 
     /**
-     * typical common token to search
+     * Typical common token to search.
      * */
     private val commonToken: String = "class"
 
     /**
-     * Using not by interface, because we use methods exactly from TrigramSearchApi
+     * Using not by interface, because we use methods exactly from TrigramSearchApi.
      * */
     private val searchApiGenerator: () -> TrigramSearchApi = { TrigramSearchApi() }
 
@@ -101,15 +101,16 @@ class CancelTest {
             { Assertions.assertTrue(tokenMatches.isEmpty(), "No token matches on cancel") },
             { Assertions.assertFalse(previousTokenMatches.isEmpty(), "previousTokenMatches are not empty") },
             {
-                Assertions.assertTrue(
-                    state.visitedFilesByteSize <= completedTotalFilesByteSize,
-                    "visited <= total(precalculated) in bytes"
+                Assertions.assertEquals(
+                    completedTotalFilesByteSize,
+                    state.visitedFilesByteSize,
+                    "visited = total(precalculated) in bytes"
                 )
             },
             {
                 Assertions.assertTrue(
-                    state.parsedFilesByteSize <= completedTotalFilesByteSize,
-                    "parsed <= total(precalculated) in bytes"
+                    state.parsedFilesByteSize < completedTotalFilesByteSize,
+                    "parsed < total(precalculated) in bytes"
                 )
             },
             { Assertions.assertTrue(state.parsedFilesByteSize > 0L, "parsedFilesByteSize > 0") },

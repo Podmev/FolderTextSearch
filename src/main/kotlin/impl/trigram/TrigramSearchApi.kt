@@ -29,9 +29,10 @@ class TrigramSearchApi : SearchApi, WithLogging() {
     fun getTrigramImmutableMap(folderPath: Path) =
         trigramMapByFolder[folderPath]?.cloneMap() ?: emptyMap()
 
-    /*Creates index at folder and saves in inner structure.
-    * Works asynchronously.
-    * */
+    /**
+     * Creates index at folder and saves in inner structure.
+     * Works asynchronously.
+     * */
     @OptIn(DelicateCoroutinesApi::class)
     override fun createIndexAtFolder(folderPath: Path): IndexingState {
         validatePath(folderPath)

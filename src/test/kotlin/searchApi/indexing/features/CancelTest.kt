@@ -97,9 +97,10 @@ class CancelTest {
             { Assertions.assertTrue(state.indexedFilesNumber > 0L, "indexedFilesNumber > 0") },
             { Assertions.assertTrue(state.progress >= cancelAtProgress, "progress >= cancelAtProgress") },
             { Assertions.assertTrue(state.progress < 1.0, "progress < 1.0") },
+            { Assertions.assertTrue(state.progress < cancelAtProgress + 0.1, "progress < cancelAtProgress + 0.1") },
             { Assertions.assertEquals(ProgressableStatus.CANCELLED, state.status, "status == CANCELLED") },
+            { Assertions.assertNotNull(state.totalFilesNumber, "totalFilesNumber is not null") },
         )
-        //totalFilesNumber can be null or defined. Cannot know by progress
     }
 
     /**
