@@ -54,16 +54,16 @@ class ProgressTest {
 
         assertAll("general checks",
             { assertTrue(snapshotMap.isNotEmpty(), "received at least 1 snapshots") },
-            { assertTrue(snapshotMap.containsKey(1.0), "map should have snapshot at 1.0 progress") }
-        )
+            { assertTrue(snapshotMap.containsKey(1.0), "map should have snapshot at 1.0 progress") })
     }
 
     /**
-     * Checking snapshot at progress for searching state at different progresses
+     * Checking snapshot at progress for searching state at different progresses.
+     * Checks about start or 0% progress.
      * */
     @ParameterizedTest(name = "{0}")
     @MethodSource("progressProvider")
-    fun snapshotChecksAtProgressTest(checkAtProgress: Double) {
+    fun snapshotStartChecksAtProgressTest(checkAtProgress: Double) {
         val searchApi = searchApiGenerator()
         val folder = commonPath
         searchApi.syncPerformIndex(folder)
@@ -74,86 +74,93 @@ class ProgressTest {
         state.result.get()
         val totalFileNumber = snapshot.totalFilesNumber
         val totalFileByteSize = snapshot.totalFilesByteSize
-        val finished = snapshot.status == ProgressableStatus.FINISHED
+        val progress = snapshot.progress
+        val visitedFilesNumber = snapshot.visitedFilesNumber
+        val visitedFilesByteSize = snapshot.visitedFilesByteSize
+        val checks = buildList {
+            add { assertTrue(progress >= 0.0, "progress >= 0.0") }
+            if (visitedFilesNumber == 0L) {
+                add { assertEquals(0.0, progress, "progress==0.0, if there is no visited files yet") }
+            }
+            if (visitedFilesByteSize == 0L) {
+                val condMsg = ", if there is no saved visited files byte sizes"
+                add { assertEquals(0.0, progress, "progress==0.0$condMsg") }
+            }
+            if (totalFileNumber == null) {
+                val condMsg = ", if total files number is not defined yet"
+                add { assertEquals(0.0, progress, "progress==0.0$condMsg") }
+            }
+            if (totalFileByteSize == null) {
+                val condMsg = ", if total files byte size is not defined yet"
+                add { assertEquals(0.0, progress, "progress==0.0$condMsg") }
+            }
+        }
+        assertAll("progress checks", checks)
+    }
+
+    /**
+     * Checking snapshot at progress for searching state at different progresses
+     * Checks about middle state of in general
+     * */
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("progressProvider")
+    fun snapshotMiddleChecksAtProgressTest(checkAtProgress: Double) {
+        val searchApi = searchApiGenerator()
+        val folder = commonPath
+        searchApi.syncPerformIndex(folder)
+        val state: SearchingState = searchApi.searchString(folder, commonToken)
+        val snapshot = getSearchingSnapshotAtProgress(
+            searchingState = state, progress = checkAtProgress, checkProgressEveryMillis = 1
+        )
+        state.result.get()
+        val totalFileNumber = snapshot.totalFilesNumber
+        val totalFileByteSize = snapshot.totalFilesByteSize
         val progress = snapshot.progress
         val visitedFilesNumber = snapshot.visitedFilesNumber
         val visitedFilesByteSize = snapshot.visitedFilesByteSize
         val parsedFilesByteSize = snapshot.parsedFilesByteSize
         val checks = buildList {
-            add { assertTrue(progress >= 0.0, "progress >= 0.0") }
-            add { assertTrue(progress <= 1.0, "progress <= 1.0") }
-            add {
-                assertTrue(
-                    visitedFilesByteSize >= parsedFilesByteSize,
-                    "visitedFilesByteSize >= parsedFilesByteSize"
-                )
-            }
+            add { assertTrue(visitedFilesByteSize >= parsedFilesByteSize, "visitedFilesByteSize>=parsedFilesByteSize") }
             if (totalFileNumber != null) {
-                add {
-                    assertEquals(
-                        totalFileNumber,
-                        visitedFilesNumber,
-                        "total == visitedFilesNumber, if total!=null"
-                    )
-                }
-            }
-            if (finished) {
-                add {
-                    assertEquals(
-                        totalFileByteSize,
-                        parsedFilesByteSize,
-                        "total == searchedFilesNumber, if finished"
-                    )
-                }
-                add { assertEquals(1.0, progress, "progress == 1.0, if finished") }
-            }
-            if (visitedFilesNumber == 0L) {
-                add { assertEquals(0.0, progress, "progress == 0.0, if there is no visited files yet") }
-            }
-            if (visitedFilesByteSize == 0L) {
-                add {
-                    assertEquals(
-                        0.0,
-                        progress,
-                        "progress == 0.0, if there is no saved visited files byte sizes"
-                    )
-                }
-            }
-            if (totalFileNumber == null) {
-                add {
-                    assertEquals(
-                        0.0,
-                        progress,
-                        "progress == 0.0, if total files number is not defined yet"
-                    )
-                }
-            }
-            if (totalFileByteSize == null) {
-                add {
-                    assertEquals(
-                        0.0,
-                        progress,
-                        "progress == 0.0, if total files byte size is not defined yet"
-                    )
-                }
+                val condMsg = "total==visitedFilesNumber, if total!=null"
+                add { assertEquals(totalFileNumber, visitedFilesNumber, "total==visitedFilesNumber$condMsg") }
             }
             if (progress > 0.0) {
-                add { assertNotNull(totalFileNumber, "total != null, if progress > 0.0") }
-                add { assertNotNull(totalFileByteSize, "total != null, if progress > 0.0") }
-                add {
-                    assertEquals(
-                        totalFileNumber,
-                        visitedFilesNumber,
-                        "total == visitedFilesNumber, if progress > 0.0"
-                    )
-                }
-                add {
-                    assertEquals(
-                        totalFileByteSize,
-                        visitedFilesByteSize,
-                        "total == visitedFilesByteSize, if progress > 0.0"
-                    )
-                }
+                val condMsg = ", if progress > 0.0"
+                add { assertNotNull(totalFileNumber, "total!=null$condMsg") }
+                add { assertNotNull(totalFileByteSize, "total!=null$condMsg") }
+                add { assertEquals(totalFileNumber, visitedFilesNumber, "total==visitedFilesNumber$condMsg") }
+                add { assertEquals(totalFileByteSize, visitedFilesByteSize, "total==visitedFilesByteSize$condMsg") }
+            }
+        }
+        assertAll("progress checks", checks)
+    }
+
+    /**
+     * Checking snapshot at progress for searching state at different progresses.
+     * Checks about start or 0% progress.
+     * */
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("progressProvider")
+    fun snapshotFinishChecksAtProgressTest(checkAtProgress: Double) {
+        val searchApi = searchApiGenerator()
+        val folder = commonPath
+        searchApi.syncPerformIndex(folder)
+        val state: SearchingState = searchApi.searchString(folder, commonToken)
+        val snapshot = getSearchingSnapshotAtProgress(
+            searchingState = state, progress = checkAtProgress, checkProgressEveryMillis = 1
+        )
+        state.result.get()
+        val totalFileByteSize = snapshot.totalFilesByteSize
+        val finished = snapshot.status == ProgressableStatus.FINISHED
+        val progress = snapshot.progress
+        val parsedFilesByteSize = snapshot.parsedFilesByteSize
+        val checks = buildList {
+            add { assertTrue(progress <= 1.0, "progress <= 1.0") }
+            if (finished) {
+                val condMsg = ", if finished"
+                add { assertEquals(totalFileByteSize, parsedFilesByteSize, "total==searchedFilesNumber$condMsg") }
+                add { assertEquals(1.0, progress, "progress==1.0, if finished") }
             }
         }
         assertAll("progress checks", checks)
@@ -219,21 +226,22 @@ class ProgressTest {
         val aggregatedVisitedPathsSet = aggregatedVisitedPaths.toSet()
         val aggregatedTokenMatchesSet = aggregatedTokenMatches.toSet()
 
-        val totalBufferSizesChecks: List<() -> Unit> =
-            buildList {
-                add {
-                    assertEquals(
-                        finishedSnapshot.visitedFilesNumber, aggregatedVisitedPathsSet.size.toLong(),
-                        "Total visited files buffers sizes = total visited files number size"
-                    )
-                }
-                add {
-                    assertEquals(
-                        finishedSnapshot.tokenMatchesNumber, aggregatedTokenMatchesSet.size.toLong(),
-                        "Total token matches buffers sizes = total number of token matches"
-                    )
-                }
+        val totalBufferSizesChecks: List<() -> Unit> = buildList {
+            add {
+                assertEquals(
+                    finishedSnapshot.visitedFilesNumber,
+                    aggregatedVisitedPathsSet.size.toLong(),
+                    "Total visited files buffers sizes = total visited files number size"
+                )
             }
+            add {
+                assertEquals(
+                    finishedSnapshot.tokenMatchesNumber,
+                    aggregatedTokenMatchesSet.size.toLong(),
+                    "Total token matches buffers sizes = total number of token matches"
+                )
+            }
+        }
         assertAll("progress checks", totalBufferSizesChecks)
     }
 
@@ -261,14 +269,13 @@ class ProgressTest {
         val aggregatedTokenMatchesSet = aggregatedTokenMatches.toSet()
         val resultTokenMatchesSet = resultTokenMatches.toSet()
 
-        val tokenMatchesSetChecks =
-            compareSets(
-                resultTokenMatchesSet,
-                aggregatedTokenMatchesSet,
-                "resultTokenMatches",
-                "aggregatedTokenMatches",
-                "tokenMatch"
-            )
+        val tokenMatchesSetChecks = compareSets(
+            resultTokenMatchesSet,
+            aggregatedTokenMatchesSet,
+            "resultTokenMatches",
+            "aggregatedTokenMatches",
+            "tokenMatch"
+        )
         assertAll("progress checks", tokenMatchesSetChecks)
     }
 
