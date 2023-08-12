@@ -54,7 +54,7 @@ class ProgressTest {
 
         assertAll("general checks",
             { assertTrue(snapshotMap.isNotEmpty(), "received at least 1 snapshots") },
-            { assertTrue(snapshotMap.containsKey(1.0), "map should have snapshot at 1.0 progress")}
+            { assertTrue(snapshotMap.containsKey(1.0), "map should have snapshot at 1.0 progress") }
         )
     }
 
@@ -195,33 +195,29 @@ class ProgressTest {
 
     /**
      * Checking snapshots in total for searching state at different progresses
-     * Checking that buffers from all snapshots, including in the end together give all paths given as result
+     * Checking that buffers from all snapshots
+     * including the one in the end together give visitedFilesNumber and tokenMatchesNumber at finalSnapshot
      * */
     @Test
-    fun totalChecksSnapshotsAtDifferentProgressesTest() {
+    fun totalNumberChecksSnapshotsAtDifferentProgressesTest() {
         val searchApi = searchApiGenerator()
         val folder = commonPath
         searchApi.syncPerformIndex(folder)
-
         val state: SearchingState = searchApi.searchString(folder, commonToken)
         val searchingStateSnapshotMap: Map<Double, SearchingStateSnapshot> = getSearchingSnapshotsAtProgresses(
             searchingState = state, progressStep = 0.1, checkProgressEveryMillis = 1
         )
-        val resultTokenMatches = state.result.get()
+        state.result.get()
         val finishedSnapshot = state.toSnapshot()
-
         val snapshotListsByProgress: List<Pair<Double, SearchingStateSnapshot>> =
             searchingStateSnapshotMap.toSortedMap().toList()
         val snapshotList: List<SearchingStateSnapshot> = snapshotListsByProgress.map { it.second } + finishedSnapshot
-
         val aggregatedVisitedPaths =
             snapshotList.fold(emptyList<Path>()) { curList, snapshot -> curList + snapshot.visitedPathsBuffer }
         val aggregatedTokenMatches =
             snapshotList.fold(emptyList<TokenMatch>()) { curList, snapshot -> curList + snapshot.tokenMatchesBuffer }
-
         val aggregatedVisitedPathsSet = aggregatedVisitedPaths.toSet()
         val aggregatedTokenMatchesSet = aggregatedTokenMatches.toSet()
-        val resultTokenMatchesSet = resultTokenMatches.toSet()
 
         val totalBufferSizesChecks: List<() -> Unit> =
             buildList {
@@ -238,6 +234,33 @@ class ProgressTest {
                     )
                 }
             }
+        assertAll("progress checks", totalBufferSizesChecks)
+    }
+
+    /**
+     * Checking snapshots in total for searching state at different progresses
+     * Checking that buffers from all snapshots including the one in the end together
+     * give all token matches given as result
+     * */
+    @Test
+    fun totalSetChecksSnapshotsAtDifferentProgressesTest() {
+        val searchApi = searchApiGenerator()
+        val folder = commonPath
+        searchApi.syncPerformIndex(folder)
+        val state: SearchingState = searchApi.searchString(folder, commonToken)
+        val searchingStateSnapshotMap: Map<Double, SearchingStateSnapshot> = getSearchingSnapshotsAtProgresses(
+            searchingState = state, progressStep = 0.1, checkProgressEveryMillis = 1
+        )
+        val resultTokenMatches = state.result.get()
+        val finishedSnapshot = state.toSnapshot()
+        val snapshotListsByProgress: List<Pair<Double, SearchingStateSnapshot>> =
+            searchingStateSnapshotMap.toSortedMap().toList()
+        val snapshotList: List<SearchingStateSnapshot> = snapshotListsByProgress.map { it.second } + finishedSnapshot
+        val aggregatedTokenMatches =
+            snapshotList.fold(emptyList<TokenMatch>()) { curList, snapshot -> curList + snapshot.tokenMatchesBuffer }
+        val aggregatedTokenMatchesSet = aggregatedTokenMatches.toSet()
+        val resultTokenMatchesSet = resultTokenMatches.toSet()
+
         val tokenMatchesSetChecks =
             compareSets(
                 resultTokenMatchesSet,
@@ -246,9 +269,7 @@ class ProgressTest {
                 "aggregatedTokenMatches",
                 "tokenMatch"
             )
-        val allChecks: List<() -> Unit> = totalBufferSizesChecks + tokenMatchesSetChecks
-
-        assertAll("progress checks", allChecks)
+        assertAll("progress checks", tokenMatchesSetChecks)
     }
 
     companion object {
