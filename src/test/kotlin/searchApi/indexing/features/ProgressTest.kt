@@ -2,228 +2,187 @@ package searchApi.indexing.features
 
 import api.IndexingState
 import api.IndexingStateSnapshot
-import api.ProgressableStatus
 import api.toSnapshot
+import api.tools.state.getIndexingSnapshotAtProgress
+import api.tools.state.getIndexingSnapshotsAtProgresses
 import impl.trigram.TrigramSearchApi
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import searchApi.common.commonSetup
 import searchApi.common.compareSets
 import utils.paired
 import java.nio.file.Path
-import java.util.concurrent.ConcurrentHashMap
+import java.util.stream.Stream
 
-//TODO make more tests
-//TODO make tests decomposition
-
-/* Checks correctness of progress, visitedPathsBuffer, indexedPathsBuffer,
-* totalFilesNumber, visitedFilesNumber, indexedFilesNumber in indexing for SearchApi
-*
-* */
+/**
+ * Checks correctness of progress, visitedPathsBuffer, indexedPathsBuffer,
+ * totalFilesNumber, visitedFilesNumber, indexedFilesNumber in indexing for SearchApi
+ * */
 class ProgressTest {
 
-    /*source code of intellij idea* */
+    /**
+     * Source code of current project
+     * */
     private val commonPath: Path = commonSetup.srcFolder
 
-    /*using not by interface, because we use methods exactly from TrigramSearchApi* */
+    /**
+     * Using not by interface, because we use methods exactly from TrigramSearchApi
+     * */
     private val searchApiGenerator: () -> TrigramSearchApi = { TrigramSearchApi() }
 
-    /*Comparing snapshots for indexing state at different progresses
-    * */
+    /**
+     * Checking snapshots for indexing state at different progresses in general
+     * */
     @Test
-    fun curProjectIndexingSequencialSnapshotsTest() {
+    fun generalCompareSnapshotsAtDifferentProgressesTest() {
+        val searchApi = searchApiGenerator()
+        val folder = commonPath
+        val state: IndexingState = searchApi.createIndexAtFolder(folder)
+        val indexingStateSnapshotMap: Map<Double, IndexingStateSnapshot> =
+            getIndexingSnapshotsAtProgresses(indexingState = state, progressStep = 0.1, checkProgressEveryMillis = 1)
+        state.result.get()
+
+        assertAll("general checks",
+            { assertTrue(indexingStateSnapshotMap.isNotEmpty(), "received at least 1 snapshots") },
+            {
+                assertTrue(
+                    indexingStateSnapshotMap.containsKey(1.0), "map should have snapshot at 1.0 progress"
+                )
+            })
+    }
+
+    /**
+     * Checking snapshot at progress for indexing state at different progresses
+     * */
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("progressProvider")
+    fun snapshotChecksAtProgressTest(checkAtProgress: Double) {
+        val searchApi = searchApiGenerator()
+        val folder = commonPath
+        val state: IndexingState = searchApi.createIndexAtFolder(folder)
+        val snapshot = getIndexingSnapshotAtProgress(
+            indexingState = state, progress = checkAtProgress, checkProgressEveryMillis = 1
+        )
+        state.result.get()
+        val total = snapshot.totalFilesNumber
+        val finished = snapshot.finished
+        val progress = snapshot.progress
+        val indexedFilesNumber = snapshot.indexedFilesNumber
+        val visitedFilesNumber = snapshot.visitedFilesNumber
+        val checks = buildList {
+            add { assertTrue(progress >= 0.0, "progress >= 0.0") }
+            add { assertTrue(progress <= 1.0, "progress <= 1.0") }
+            add { assertTrue(visitedFilesNumber >= indexedFilesNumber, "visitedFilesNumber >= indexedFilesNumber") }
+            if (total != null) {
+                add { assertEquals(total, visitedFilesNumber, "total == visitedFilesNumber, if total!=null") }
+            }
+            if (finished) {
+                add { assertEquals(total, indexedFilesNumber, "total == indexedFilesNumber, if finished") }
+                add { assertEquals(1.0, progress, "progress == 1.0, if finished") }
+            }
+            if (visitedFilesNumber == 0L) {
+                add { assertEquals(0.0, progress, "progress == 0.0, if there is no indexed files yet") }
+            }
+            if (total == null) {
+                add { assertEquals(0.0, progress, "progress == 0.0, if total files number is not defined yet") }
+            }
+            if (progress > 0.0) {
+                add { assertNotNull(total, "total != null, if progress > 0.0") }
+                add { assertEquals(total, visitedFilesNumber, "total == visitedFilesNumber, if progress > 0.0") }
+            }
+        }
+        assertAll("progress checks", checks)
+    }
+
+    /**
+     * Comparing sequential snapshots by pairs for indexing state at different progresses
+     * */
+    @Test
+    fun byPairsCompareSnapshotsAtDifferentProgressesTest() {
         val searchApi = searchApiGenerator()
         val folder = commonPath
 
         val state: IndexingState = searchApi.createIndexAtFolder(folder)
-        val indexingStateSnapshotMap: Map<Double, IndexingStateSnapshot> =
-            getSnapshotsAtProgresses(
-                indexingState = state,
-                progressStep = 0.1,
-                checkProgressEveryMillis = 1
-            )
-        val resultPaths: List<Path> = state.result.get()!!
-        val finishedSnapshot = state.toSnapshot()
-
+        val indexingStateSnapshotMap: Map<Double, IndexingStateSnapshot> = getIndexingSnapshotsAtProgresses(
+            indexingState = state, progressStep = 0.1, checkProgressEveryMillis = 1
+        )
+        state.result.get()
         val snapshotListsByProgress: List<Pair<Double, IndexingStateSnapshot>> =
             indexingStateSnapshotMap.toSortedMap().toList()
         val snapshotList: List<IndexingStateSnapshot> = snapshotListsByProgress.map { it.second }
         val snapshotPairs: List<Pair<IndexingStateSnapshot, IndexingStateSnapshot>> = snapshotList.paired()
 
-        val mapChecks = getChecksByMap(indexingStateSnapshotMap)
-        val pairChecks = getPairChecks(snapshotPairs)
-        val singleChecks = getSingleChecks(snapshotList)
-        val accumulatingChecks = getAccumulatingChecks(snapshotList + finishedSnapshot, resultPaths)
-
-        val allChecks: List<() -> Unit> = mapChecks + pairChecks + singleChecks + accumulatingChecks
-
+        val allChecks: List<() -> Unit> = buildList {
+            for ((snapshot1, snapshot2) in snapshotPairs) {
+                val s1 = "snapshot1"
+                val s2 = "snapshot2"
+                val progressCondition = snapshot1.progress < snapshot2.progress
+                val visitedFilesNumberCondition = snapshot1.visitedFilesNumber <= snapshot2.visitedFilesNumber
+                val indexedFilesNumberCondition = snapshot1.indexedFilesNumber <= snapshot2.indexedFilesNumber
+                add { assertTrue(progressCondition, "$s1.progress < $s2.progress") }
+                add { assertTrue(visitedFilesNumberCondition, "$s1.visitedFilesNumber < $s2.visitedFilesNumber") }
+                add { assertTrue(indexedFilesNumberCondition, "$s1.indexedFilesNumber < $s2.indexedFilesNumber") }
+            }
+        }
         assertAll("progress checks", *allChecks.toTypedArray())
     }
 
-    /*General checks by map of snapshots by progress
-    * */
-    private fun getChecksByMap(indexingStateSnapshotMap: Map<Double, IndexingStateSnapshot>): List<() -> Unit> =
-        buildList {
-            add { Assertions.assertTrue(indexingStateSnapshotMap.isNotEmpty(), "received at least 1 snapshots") }
-            add {
-                Assertions.assertTrue(
-                    indexingStateSnapshotMap.containsKey(1.0),
-                    "map should have snapshot at 1.0 progress"
-                )
-            }
-        }
+    /**
+     * Checking snapshots in total for indexing state at different progresses
+     * Checking that buffers from all snapshots, including in the end together give all paths given as result
+     * */
+    @Test
+    fun totalChecksSnapshotsAtDifferentProgressesTest() {
+        val searchApi = searchApiGenerator()
+        val folder = commonPath
+        val state: IndexingState = searchApi.createIndexAtFolder(folder)
+        val indexingStateSnapshotMap: Map<Double, IndexingStateSnapshot> = getIndexingSnapshotsAtProgresses(
+            indexingState = state, progressStep = 0.1, checkProgressEveryMillis = 1
+        )
+        state.result.get()
+        val resultPaths: List<Path> = state.result.get()!!
+        val finishedSnapshot = state.toSnapshot()
 
-    /*Creates checks for all snapshots together.
-    * Sum of all buffers for visiting and indexing should be the same as result paths
-    * */
-    private fun getAccumulatingChecks(
-        snapshotList: List<IndexingStateSnapshot>,
-        resultPaths: List<Path>
-    ): List<() -> Unit> {
+        val snapshotListsByProgress: List<Pair<Double, IndexingStateSnapshot>> =
+            indexingStateSnapshotMap.toSortedMap().toList()
+        val snapshotList: List<IndexingStateSnapshot> = snapshotListsByProgress.map { it.second } + finishedSnapshot
+
         val aggregatedVisitedPaths =
             snapshotList.fold(emptyList<Path>()) { curList, snapshot -> curList + snapshot.visitedPathsBuffer }
         val aggregatedIndexedPaths =
             snapshotList.fold(emptyList<Path>()) { curList, snapshot -> curList + snapshot.indexedPathsBuffer }
+
         val aggregatedVisitedPathsSet = aggregatedVisitedPaths.toSet()
         val aggregatedIndexedPathsSet = aggregatedIndexedPaths.toSet()
         val resultPathsSet = resultPaths.toSet()
 
-        return compareSets(resultPathsSet, aggregatedVisitedPathsSet, "resultPaths", "visitedFilePaths", "path") +
-                compareSets(resultPathsSet, aggregatedIndexedPathsSet, "resultPaths", "aggregatedIndexedPaths", "path")
+        val visitedSetsChecks: List<() -> Unit> =
+            compareSets(resultPathsSet, aggregatedVisitedPathsSet, "resultPaths", "visitedFilePaths", "path")
+        val indexedSetsChecks =
+            compareSets(resultPathsSet, aggregatedIndexedPathsSet, "resultPaths", "aggregatedIndexedPaths", "path")
+        val allChecks: List<() -> Unit> = visitedSetsChecks + indexedSetsChecks
+
+        assertAll("progress checks", allChecks)
     }
 
-    /*Creates independent checks for snapshots for different components
-     * */
-    private fun getSingleChecks(snapshotList: List<IndexingStateSnapshot>): List<() -> Unit> =
-        buildList {
-            for (snapshot in snapshotList) {
-                val total = snapshot.totalFilesNumber
-                val finished = snapshot.status == ProgressableStatus.FINISHED
-                val progress = snapshot.progress
-                val indexedFilesNumber = snapshot.indexedFilesNumber
-                val visitedFilesNumber = snapshot.visitedFilesNumber
+    companion object {
+        /**
+         * Values for progress, which are not 0.0 and 1.0. Used for parametrized test.
+         * */
+        private val progressList = listOf(
+            0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0
+        )
 
-                add { Assertions.assertTrue(progress >= 0.0, "progress >= 0.0") }
-                add { Assertions.assertTrue(progress <= 1.0, "progress <= 1.0") }
-                add {
-                    Assertions.assertTrue(
-                        visitedFilesNumber >= indexedFilesNumber,
-                        "visitedFilesNumber >= indexedFilesNumber"
-                    )
-                }
-                if (total != null) {
-                    add {
-                        Assertions.assertEquals(
-                            total,
-                            visitedFilesNumber,
-                            " total == visitedFilesNumber, if total!=null"
-                        )
-                    }
-                }
-                if (finished) {
-                    add {
-                        Assertions.assertEquals(
-                            total,
-                            indexedFilesNumber,
-                            " total == indexedFilesNumber, if finished"
-                        )
-                    }
-                    add { Assertions.assertEquals(1.0, progress, " progress == 1.0, if finished") }
-                }
-                if (visitedFilesNumber == 0L) {
-                    add {
-                        Assertions.assertEquals(
-                            0.0,
-                            progress,
-                            " progress == 0.0, if there is no indexed files yet"
-                        )
-                    }
-                }
-                if (total == null) {
-                    add {
-                        Assertions.assertEquals(
-                            0.0,
-                            progress,
-                            " progress == 0.0, if total files number is not defined yet"
-                        )
-                    }
-                }
-                if (progress > 0.0) {
-                    add { Assertions.assertNotNull(total, "total != null, if progress > 0.0") }
-                    add {
-                        Assertions.assertEquals(
-                            total,
-                            visitedFilesNumber,
-                            " total == visitedFilesNumber, if progress > 0.0"
-                        )
-                    }
-                }
-            }
+        /**
+         * Provides arguments for tests: progress
+         * */
+        @JvmStatic
+        fun progressProvider(): Stream<Arguments> {
+            return progressList.map { Arguments.of(it) }.stream()
         }
-
-    /*Creates checks for pairs of snapshots, which were created one after another
-    * */
-    private fun getPairChecks(snapshotPairs: List<Pair<IndexingStateSnapshot, IndexingStateSnapshot>>): List<() -> Unit> =
-        buildList {
-            for ((snapshot1, snapshot2) in snapshotPairs) {
-                add {
-                    Assertions.assertTrue(
-                        snapshot1.progress < snapshot2.progress,
-                        "snapshot1.progress < snapshot2.progress"
-                    )
-                }
-                add {
-                    Assertions.assertTrue(
-                        snapshot1.visitedFilesNumber <= snapshot2.visitedFilesNumber,
-                        "snapshot1.visitedFilesNumber < snapshot2.visitedFilesNumber"
-                    )
-                }
-                add {
-                    Assertions.assertTrue(
-                        snapshot1.indexedFilesNumber <= snapshot2.indexedFilesNumber,
-                        "snapshot1.indexedFilesNumber < snapshot2.indexedFilesNumber"
-                    )
-                }
-            }
-        }
-
-    /*Takes state snapshots at different time of indexing.
-    * Starts looking for moments between 'curLookingProgress'  and 'curLookingProgress' + progressStep.
-    * Starts always from 0.0.
-    * If it finds state between these values of progress, it takes snapshot and saves to map by progress value
-    * It returns map of snapshots taken at progress save as a key
-    * Additionally in the end it saves snapshot at 1.0, it wasn't saved before.
-    * */
-    @Suppress("DeferredResultUnused")
-    @OptIn(DelicateCoroutinesApi::class)
-    fun getSnapshotsAtProgresses(
-        indexingState: IndexingState,
-        progressStep: Double,
-        checkProgressEveryMillis: Long
-    ): Map<Double, IndexingStateSnapshot> {
-        val indexingStateSnapshotMap = ConcurrentHashMap<Double, IndexingStateSnapshot>()
-        GlobalScope.async {
-            var curLookingProgress = 0.0
-            while (!indexingState.finished) {
-                val progress = indexingState.progress
-                if (curLookingProgress <= progress && progress < curLookingProgress + progressStep) {
-                    indexingStateSnapshotMap[curLookingProgress] = indexingState.toSnapshot()
-                    curLookingProgress += progressStep
-                } else if (progress > curLookingProgress + progressStep) {
-                    //progress went too far, we need to apply step already
-                    curLookingProgress += progressStep
-                }
-                delay(checkProgressEveryMillis)
-            }
-            if (!indexingStateSnapshotMap.containsKey(1.0)) {
-                indexingStateSnapshotMap[1.0] = indexingState.toSnapshot()
-            }
-        }
-        return indexingStateSnapshotMap
     }
 }
