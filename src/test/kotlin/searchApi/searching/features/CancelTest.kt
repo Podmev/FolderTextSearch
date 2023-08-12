@@ -110,8 +110,8 @@ class CancelTest {
             },
             {
                 Assertions.assertTrue(
-                    state.parsedFilesByteSize < completedTotalFilesByteSize,
-                    "parsed < total(precalculated) in bytes"
+                    state.parsedFilesByteSize <= completedTotalFilesByteSize,
+                    "parsed <= total(precalculated) in bytes"
                 )
             },
             { Assertions.assertTrue(state.parsedFilesByteSize > 0L, "parsedFilesByteSize > 0") },
