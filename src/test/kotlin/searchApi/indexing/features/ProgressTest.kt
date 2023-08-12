@@ -2,6 +2,7 @@ package searchApi.indexing.features
 
 import api.IndexingState
 import api.IndexingStateSnapshot
+import api.ProgressableStatus
 import api.toSnapshot
 import api.tools.state.getIndexingSnapshotAtProgress
 import api.tools.state.getIndexingSnapshotsAtProgresses
@@ -69,7 +70,7 @@ class ProgressTest {
         )
         state.result.get()
         val total = snapshot.totalFilesNumber
-        val finished = snapshot.finished
+        val finished = snapshot.status == ProgressableStatus.FINISHED
         val progress = snapshot.progress
         val indexedFilesNumber = snapshot.indexedFilesNumber
         val visitedFilesNumber = snapshot.visitedFilesNumber
