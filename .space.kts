@@ -29,7 +29,7 @@ job("Build and run tests") {
     container("openjdk:11") {
         resources {
             memory = 4096
-            cpu = 2048
+            cpu = 4096
         }
         kotlinScript { api ->
             try {
