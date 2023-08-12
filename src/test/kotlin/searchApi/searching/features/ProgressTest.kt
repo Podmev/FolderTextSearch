@@ -5,12 +5,13 @@ import api.tools.searchapi.syncPerformIndex
 import api.tools.state.getSearchingSnapshotAtProgress
 import api.tools.state.getSearchingSnapshotsAtProgresses
 import impl.trigram.TrigramSearchApi
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import searchApi.common.TwoObjectsComparator
 import searchApi.common.commonSetup
 import searchApi.common.compareSets
 import utils.paired
@@ -47,17 +48,14 @@ class ProgressTest {
         val folder = commonPath
         searchApi.syncPerformIndex(folder)
         val state: SearchingState = searchApi.searchString(folder, commonToken)
-        val searchingStateSnapshotMap: Map<Double, SearchingStateSnapshot> =
+        val snapshotMap: Map<Double, SearchingStateSnapshot> =
             getSearchingSnapshotsAtProgresses(searchingState = state, progressStep = 0.1, checkProgressEveryMillis = 1)
         state.result.get()
 
         assertAll("general checks",
-            { Assertions.assertTrue(searchingStateSnapshotMap.isNotEmpty(), "received at least 1 snapshots") },
-            {
-                Assertions.assertTrue(
-                    searchingStateSnapshotMap.containsKey(1.0), "map should have snapshot at 1.0 progress"
-                )
-            })
+            { assertTrue(snapshotMap.isNotEmpty(), "received at least 1 snapshots") },
+            { assertTrue(snapshotMap.containsKey(1.0), "map should have snapshot at 1.0 progress")}
+        )
     }
 
     /**
@@ -82,17 +80,17 @@ class ProgressTest {
         val visitedFilesByteSize = snapshot.visitedFilesByteSize
         val parsedFilesByteSize = snapshot.parsedFilesByteSize
         val checks = buildList {
-            add { Assertions.assertTrue(progress >= 0.0, "progress >= 0.0") }
-            add { Assertions.assertTrue(progress <= 1.0, "progress <= 1.0") }
+            add { assertTrue(progress >= 0.0, "progress >= 0.0") }
+            add { assertTrue(progress <= 1.0, "progress <= 1.0") }
             add {
-                Assertions.assertTrue(
+                assertTrue(
                     visitedFilesByteSize >= parsedFilesByteSize,
                     "visitedFilesByteSize >= parsedFilesByteSize"
                 )
             }
             if (totalFileNumber != null) {
                 add {
-                    Assertions.assertEquals(
+                    assertEquals(
                         totalFileNumber,
                         visitedFilesNumber,
                         "total == visitedFilesNumber, if total!=null"
@@ -101,20 +99,20 @@ class ProgressTest {
             }
             if (finished) {
                 add {
-                    Assertions.assertEquals(
+                    assertEquals(
                         totalFileByteSize,
                         parsedFilesByteSize,
                         "total == searchedFilesNumber, if finished"
                     )
                 }
-                add { Assertions.assertEquals(1.0, progress, "progress == 1.0, if finished") }
+                add { assertEquals(1.0, progress, "progress == 1.0, if finished") }
             }
             if (visitedFilesNumber == 0L) {
-                add { Assertions.assertEquals(0.0, progress, "progress == 0.0, if there is no visited files yet") }
+                add { assertEquals(0.0, progress, "progress == 0.0, if there is no visited files yet") }
             }
             if (visitedFilesByteSize == 0L) {
                 add {
-                    Assertions.assertEquals(
+                    assertEquals(
                         0.0,
                         progress,
                         "progress == 0.0, if there is no saved visited files byte sizes"
@@ -123,7 +121,7 @@ class ProgressTest {
             }
             if (totalFileNumber == null) {
                 add {
-                    Assertions.assertEquals(
+                    assertEquals(
                         0.0,
                         progress,
                         "progress == 0.0, if total files number is not defined yet"
@@ -132,7 +130,7 @@ class ProgressTest {
             }
             if (totalFileByteSize == null) {
                 add {
-                    Assertions.assertEquals(
+                    assertEquals(
                         0.0,
                         progress,
                         "progress == 0.0, if total files byte size is not defined yet"
@@ -140,17 +138,17 @@ class ProgressTest {
                 }
             }
             if (progress > 0.0) {
-                add { Assertions.assertNotNull(totalFileNumber, "total != null, if progress > 0.0") }
-                add { Assertions.assertNotNull(totalFileByteSize, "total != null, if progress > 0.0") }
+                add { assertNotNull(totalFileNumber, "total != null, if progress > 0.0") }
+                add { assertNotNull(totalFileByteSize, "total != null, if progress > 0.0") }
                 add {
-                    Assertions.assertEquals(
+                    assertEquals(
                         totalFileNumber,
                         visitedFilesNumber,
                         "total == visitedFilesNumber, if progress > 0.0"
                     )
                 }
                 add {
-                    Assertions.assertEquals(
+                    assertEquals(
                         totalFileByteSize,
                         visitedFilesByteSize,
                         "total == visitedFilesByteSize, if progress > 0.0"
@@ -182,38 +180,14 @@ class ProgressTest {
 
         val allChecks: List<() -> Unit> = buildList {
             for ((snapshot1, snapshot2) in snapshotPairs) {
-                val s1 = "snapshot1"
-                val s2 = "snapshot2"
-                val progressCondition = snapshot1.progress < snapshot2.progress
-                val visitedFilesNumberCondition = snapshot1.visitedFilesNumber <= snapshot2.visitedFilesNumber
-                val visitedFilesByteSizeCondition = snapshot1.visitedFilesByteSize <= snapshot2.visitedFilesByteSize
-                val parsedFilesByteSizeCondition = snapshot1.parsedFilesByteSize <= snapshot2.parsedFilesByteSize
-                val tokenMatchesNumberCondition = snapshot1.tokenMatchesNumber <= snapshot2.tokenMatchesNumber
-                add { Assertions.assertTrue(progressCondition, "$s1.progress < $s2.progress") }
-                add {
-                    Assertions.assertTrue(
-                        visitedFilesNumberCondition,
-                        "$s1.visitedFilesNumber < $s2.visitedFilesNumber"
-                    )
-                }
-                add {
-                    Assertions.assertTrue(
-                        visitedFilesByteSizeCondition,
-                        "$s1.visitedFilesByteSize < $s2.visitedFilesByteSize"
-                    )
-                }
-                add {
-                    Assertions.assertTrue(
-                        parsedFilesByteSizeCondition,
-                        "$s1.parsedFilesByteSize < $s2.parsedFilesByteSize"
-                    )
-                }
-                add {
-                    Assertions.assertTrue(
-                        tokenMatchesNumberCondition,
-                        "$s1.tokenMatchesNumber < $s2.tokenMatchesNumber"
-                    )
-                }
+                val comparator: TwoObjectsComparator<SearchingStateSnapshot> =
+                    TwoObjectsComparator(snapshot1, snapshot2, "snapshot1", "snapshot2")
+                add { comparator.assert("<", SearchingStateSnapshot::progress, "progress") }
+                add { comparator.assert("<", SearchingStateSnapshot::visitedFilesNumber, "visitedFilesNumber") }
+                add { comparator.assert("<", SearchingStateSnapshot::visitedFilesByteSize, "visitedFilesByteSize") }
+                add { comparator.assert("<", SearchingStateSnapshot::parsedFilesByteSize, "parsedFilesByteSize") }
+                add { comparator.assert("<", SearchingStateSnapshot::tokenMatchesNumber, "tokenMatchesNumber") }
+                add { comparator.assert("<", SearchingStateSnapshot::totalTime, "totalTime") }
             }
         }
         assertAll("progress checks", *allChecks.toTypedArray())
@@ -251,15 +225,27 @@ class ProgressTest {
 
         val totalBufferSizesChecks: List<() -> Unit> =
             buildList {
-                add{Assertions.assertEquals(finishedSnapshot.visitedFilesNumber, aggregatedVisitedPathsSet.size.toLong(),
-                    "Total visited files buffers sizes = total visited files number size")
+                add {
+                    assertEquals(
+                        finishedSnapshot.visitedFilesNumber, aggregatedVisitedPathsSet.size.toLong(),
+                        "Total visited files buffers sizes = total visited files number size"
+                    )
                 }
-                add{Assertions.assertEquals(finishedSnapshot.tokenMatchesNumber, aggregatedTokenMatchesSet.size.toLong(),
-                    "Total token matches buffers sizes = total number of token matches")
+                add {
+                    assertEquals(
+                        finishedSnapshot.tokenMatchesNumber, aggregatedTokenMatchesSet.size.toLong(),
+                        "Total token matches buffers sizes = total number of token matches"
+                    )
                 }
             }
         val tokenMatchesSetChecks =
-            compareSets(resultTokenMatchesSet, aggregatedTokenMatchesSet, "resultTokenMatches", "aggregatedTokenMatches", "tokenMatch")
+            compareSets(
+                resultTokenMatchesSet,
+                aggregatedTokenMatchesSet,
+                "resultTokenMatches",
+                "aggregatedTokenMatches",
+                "tokenMatch"
+            )
         val allChecks: List<() -> Unit> = totalBufferSizesChecks + tokenMatchesSetChecks
 
         assertAll("progress checks", allChecks)
