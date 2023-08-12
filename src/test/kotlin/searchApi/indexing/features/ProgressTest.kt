@@ -86,7 +86,7 @@ class ProgressTest {
                 add { assertEquals(1.0, progress, "progress == 1.0, if finished") }
             }
             if (visitedFilesNumber == 0L) {
-                add { assertEquals(0.0, progress, "progress == 0.0, if there is no indexed files yet") }
+                add { assertEquals(0.0, progress, "progress == 0.0, if there is no visited files yet") }
             }
             if (total == null) {
                 add { assertEquals(0.0, progress, "progress == 0.0, if total files number is not defined yet") }

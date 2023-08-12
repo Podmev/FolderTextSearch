@@ -28,6 +28,11 @@ interface SearchingState : ProgressableState {
     fun getVisitedPathsBuffer(flush: Boolean): List<Path>
 
     /**
+     * Number of found token matches.
+     * */
+    val tokenMatchesNumber: Long
+
+    /**
      * Number of visited files.
      * */
     val visitedFilesNumber: Long
@@ -68,6 +73,7 @@ fun SearchingState.toSnapshot(): SearchingStateSnapshot =
         progress = progress,
         visitedPathsBuffer = getVisitedPathsBuffer(true),
         tokenMatchesBuffer = getTokenMatchesBuffer(true),
+        tokenMatchesNumber = tokenMatchesNumber,
         visitedFilesNumber = visitedFilesNumber,
         totalFilesNumber = totalFilesNumber,
         visitedFilesByteSize = visitedFilesByteSize,

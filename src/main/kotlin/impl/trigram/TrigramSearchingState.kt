@@ -80,6 +80,9 @@ class TrigramSearchingState(override val result: Future<List<TokenMatch>>) : Sea
     //cancel
     private var cancellationAction: () -> Unit = {}
 
+    override val tokenMatchesNumber: Long
+        get() = tokenMatchesNumberRef.get()
+
     override val visitedFilesNumber: Long
         get() = visitedFilesNumberRef.get()
     override val totalFilesNumber: Long?

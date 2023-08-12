@@ -24,6 +24,10 @@ data class SearchingStateSnapshot(
      * */
     val tokenMatchesBuffer: List<TokenMatch>,
     /**
+     * Number of found token matches.
+     * */
+    val tokenMatchesNumber: Long,
+    /**
      * Number of visited files.
      * */
     val visitedFilesNumber: Long,

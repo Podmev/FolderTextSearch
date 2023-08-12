@@ -60,6 +60,7 @@ class IndexlessSearchingState(override val result: Future<List<TokenMatch>>) : S
         throw SearchException("Not supported getVisitedPathsBuffer for searching in indexless api")
     }
 
+    override val tokenMatchesNumber: Long = 0L
     override val visitedFilesNumber: Long = 0L
     override val totalFilesNumber: Long? = null
 
