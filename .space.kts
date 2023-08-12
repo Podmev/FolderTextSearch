@@ -19,9 +19,10 @@ job("Build and run tests") {
         kotlinScript { api ->
             try {
                 println("Running in branch: " + api.gitBranch())
-                api.gradlew("build -x test") //skipping tests
+                api.gradlew("build",  "-x", "test") //skipping tests
             } catch (ex: Exception) {
                 writeFailMessageToChat("Build failed", api, ex)
+                throw ex
             }
         }
     }
@@ -37,6 +38,7 @@ job("Build and run tests") {
                 api.gradlew("test")
             } catch (ex: Exception) {
                 writeFailMessageToChat("Test failed", api, ex)
+                throw ex
             }
         }
     }
