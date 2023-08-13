@@ -1,6 +1,7 @@
 package searchApi.indexing.features.concurrency
 
 import api.exception.BusySearchException
+import api.exception.NotDirSearchException
 import api.tools.searchapi.syncPerformIndex
 import impl.trigram.TrigramSearchApi
 import org.junit.jupiter.api.Assertions
@@ -126,6 +127,23 @@ class ConcurrentTest {
         val searchApi2 = searchApiGenerator()
         searchApi1.syncPerformIndex(folder)
         Assertions.assertFalse(searchApi2.hasIndexAtFolder(folder))
+    }
+
+    /**
+     * If we are calculating index for folder1, and try to calculate index for folder2, which is not a folder.
+     * It throws exception NotDirSearchException.
+     * */
+    @Test
+    fun noDirTest() {
+        val folder1 = commonSetup.srcFolder
+        val folder2 = commonSetup.commonPath.resolve("notFolder.txt")
+        val searchApi = searchApiGenerator()
+        searchApi.createIndexAtFolder(folder1)
+        Assertions.assertThrows(
+            /* expectedType = */ NotDirSearchException::class.java,
+            /* executable = */ { searchApi.createIndexAtFolder(folder2) },
+            /* message = */ "Folder2 is not really a folder"
+        )
     }
 
     /**
