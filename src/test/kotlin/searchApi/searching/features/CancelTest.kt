@@ -54,7 +54,7 @@ class CancelTest {
         val state: SearchingState = searchApi.searchString(folder, token)
         state.asyncCancelAtProgress(
             cancelAtProgress = 0.0,
-            checkProgressEveryMillis = 1
+            checkProgressEveryMillis = 0
         )
         val tokenMatches = state.result.get()
         Assertions.assertAll(
