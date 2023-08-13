@@ -18,6 +18,7 @@ import searchApi.indexing.features.concurrency.NumberOfInstances.DUAL
 import searchApi.indexing.features.concurrency.NumberOfInstances.SINGLE
 import searchApi.indexing.features.concurrency.Timing.CONCURRENT
 import searchApi.indexing.features.concurrency.Timing.SEQUENCIAL
+import java.util.concurrent.TimeUnit
 import java.util.stream.Stream
 
 /**
@@ -68,6 +69,8 @@ class ConcurrentTest {
         if (testCase.indexPresence.hasFolder2Index) searchApi2.syncPerformIndex(folder2)
         //main indexing. Depends on timing synchronous or asynchronous
         val indexingState1 = testCase.timing.constructIndex(searchApi1, folder1)
+        //sleep 10 milliseconds to separate reading from saved index
+        TimeUnit.MILLISECONDS.sleep(10)
         val indexingState2 = testCase.timing.constructIndex(searchApi2, folder2)
         //waiting finishing indexing for both states
         indexingState1.result.get()
@@ -112,6 +115,8 @@ class ConcurrentTest {
         //main indexing. Depends on timing synchronous or asynchronous
         //At first indexing first folder
         testCase.timing.constructIndex(searchApi1, folder1)
+        //sleep 10 milliseconds to separate reading from saved index
+        TimeUnit.MILLISECONDS.sleep(10)
         //When indexing second folder, throws exception BusySearchException
         Assertions.assertThrows(/* expectedType = */ BusySearchException::class.java,/* executable = */
             { testCase.timing.constructIndex(searchApi2, folder2) },/* message = */
@@ -214,10 +219,18 @@ class ConcurrentTest {
             ConcurrencyTestCase(CONCURRENT, NO_INDEX, SINGLE, PARENT_FOLDER),
             ConcurrencyTestCase(CONCURRENT, NO_INDEX, SINGLE, DIFFERENT_FOLDER),
 
-            ConcurrencyTestCase(CONCURRENT, ONLY_SECOND, SINGLE, SAME_FOLDER),
             ConcurrencyTestCase(CONCURRENT, ONLY_SECOND, SINGLE, SUB_FOLDER),
             ConcurrencyTestCase(CONCURRENT, ONLY_SECOND, SINGLE, PARENT_FOLDER),
             ConcurrencyTestCase(CONCURRENT, ONLY_SECOND, SINGLE, DIFFERENT_FOLDER),
+        )
+
+        /**
+         * List of positive ConcurrencyTestCases
+         * */
+        val positiveConcurrencyTestCases = listOf(
+            //CONCURRENT - SINGLE
+            //only second, but in fact it is both
+            ConcurrencyTestCase(CONCURRENT, ONLY_SECOND, SINGLE, SAME_FOLDER),
 
             ConcurrencyTestCase(CONCURRENT, ONLY_FIRST, SINGLE, SAME_FOLDER),
             ConcurrencyTestCase(CONCURRENT, ONLY_FIRST, SINGLE, SUB_FOLDER),
@@ -228,12 +241,7 @@ class ConcurrentTest {
             ConcurrencyTestCase(CONCURRENT, BOTH_INDICES, SINGLE, SUB_FOLDER),
             ConcurrencyTestCase(CONCURRENT, BOTH_INDICES, SINGLE, PARENT_FOLDER),
             ConcurrencyTestCase(CONCURRENT, BOTH_INDICES, SINGLE, DIFFERENT_FOLDER),
-        )
 
-        /**
-         * List of positive ConcurrencyTestCases
-         * */
-        val positiveConcurrencyTestCases = listOf(
             //CONCURRENT - DUAL
             ConcurrencyTestCase(CONCURRENT, NO_INDEX, DUAL, SAME_FOLDER),
             ConcurrencyTestCase(CONCURRENT, NO_INDEX, DUAL, SUB_FOLDER),

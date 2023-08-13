@@ -47,7 +47,7 @@ class CancelTest {
         val state: IndexingState = searchApi.createIndexAtFolder(folder)
         state.asyncCancelAtProgress(
             cancelAtProgress = 0.0,
-            checkProgressEveryMillis = 1
+            checkProgressEveryMillis = 0
         )
         state.result.get()
         Assertions.assertAll(
