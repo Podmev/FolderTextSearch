@@ -52,6 +52,7 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         val deferred = GlobalScope.async {
             indexer.asyncIndexing(folderPath, completableFuture, indexingState, trigramMapByFolder, indexInProcess)
         }
+
         fun cancelIndexing() {
             indexingState.changeStatus(ProgressableStatus.CANCELLING)
             deferred.cancel(CancellationException())
@@ -62,11 +63,16 @@ class TrigramSearchApi : SearchApi, WithLogging() {
     }
 
     /**
-     * Searches token in folder by using index in trigramMap, if there is no index, it throws exception.
+     * Searches token in folder by using index in trigramMap.
+     * If there is no index, it throws exception.
+     * If some index is calculation at the moment, it throws exception.
      * */
     @OptIn(DelicateCoroutinesApi::class)
     override fun searchString(folderPath: Path, token: String, settings: SearchSettings): SearchingState {
         LOG.finest("started")
+        if (indexInProcess.get()) {
+            throw BusySearchException("Cannot search while indexing")
+        }
         validateToken(token)
         validatePath(folderPath)
         val completableFuture = CompletableFuture<List<TokenMatch>>()
