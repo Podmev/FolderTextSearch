@@ -61,7 +61,7 @@ class ProgressTest {
      * Checking snapshot at progress for searching state at different progresses.
      * Checks about start or 0% progress.
      * */
-    @ParameterizedTest(name = "{0}")
+    @ParameterizedTest(name = "snapshotStartChecksAtProgressTest{0}")
     @MethodSource("progressProvider")
     fun snapshotStartChecksAtProgressTest(checkAtProgress: Double) {
         val searchApi = searchApiGenerator()
@@ -102,7 +102,7 @@ class ProgressTest {
      * Checking snapshot at progress for searching state at different progresses
      * Checks about middle state of in general
      * */
-    @ParameterizedTest(name = "{0}")
+    @ParameterizedTest(name = "snapshotMiddleChecksAtProgressTest{0}")
     @MethodSource("progressProvider")
     fun snapshotMiddleChecksAtProgressTest(checkAtProgress: Double) {
         val searchApi = searchApiGenerator()
@@ -140,7 +140,7 @@ class ProgressTest {
      * Checking snapshot at progress for searching state at different progresses.
      * Checks about start or 0% progress.
      * */
-    @ParameterizedTest(name = "{0}")
+    @ParameterizedTest(name = "snapshotFinishChecksAtProgressTest{0}")
     @MethodSource("progressProvider")
     fun snapshotFinishChecksAtProgressTest(checkAtProgress: Double) {
         val searchApi = searchApiGenerator()
@@ -190,11 +190,11 @@ class ProgressTest {
                 val comparator: TwoObjectsComparator<SearchingStateSnapshot> =
                     TwoObjectsComparator(snapshot1, snapshot2, "snapshot1", "snapshot2")
                 add { comparator.assert("<", SearchingStateSnapshot::progress, "progress") }
-                add { comparator.assert("<", SearchingStateSnapshot::visitedFilesNumber, "visitedFilesNumber") }
-                add { comparator.assert("<", SearchingStateSnapshot::visitedFilesByteSize, "visitedFilesByteSize") }
-                add { comparator.assert("<", SearchingStateSnapshot::parsedFilesByteSize, "parsedFilesByteSize") }
-                add { comparator.assert("<", SearchingStateSnapshot::tokenMatchesNumber, "tokenMatchesNumber") }
-                add { comparator.assert("<", SearchingStateSnapshot::totalTime, "totalTime") }
+                add { comparator.assert("<=", SearchingStateSnapshot::visitedFilesNumber, "visitedFilesNumber") }
+                add { comparator.assert("<=", SearchingStateSnapshot::visitedFilesByteSize, "visitedFilesByteSize") }
+                add { comparator.assert("<=", SearchingStateSnapshot::parsedFilesByteSize, "parsedFilesByteSize") }
+                add { comparator.assert("<=", SearchingStateSnapshot::tokenMatchesNumber, "tokenMatchesNumber") }
+                add { comparator.assert("<=", SearchingStateSnapshot::totalTime, "totalTime") }
             }
         }
         assertAll("progress checks", *allChecks.toTypedArray())

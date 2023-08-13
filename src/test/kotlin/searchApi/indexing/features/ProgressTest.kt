@@ -1,9 +1,6 @@
 package searchApi.indexing.features
 
-import api.IndexingState
-import api.IndexingStateSnapshot
-import api.ProgressableStatus
-import api.toSnapshot
+import api.*
 import api.tools.state.getIndexingSnapshotAtProgress
 import api.tools.state.getIndexingSnapshotsAtProgresses
 import impl.trigram.TrigramSearchApi
@@ -13,6 +10,7 @@ import org.junit.jupiter.api.assertAll
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import searchApi.common.TwoObjectsComparator
 import searchApi.common.commonSetup
 import searchApi.common.compareSets
 import utils.paired
@@ -59,7 +57,7 @@ class ProgressTest {
     /**
      * Checking snapshot at progress for indexing state at different progresses
      * */
-    @ParameterizedTest(name = "{0}")
+    @ParameterizedTest(name = "snapshotChecksAtProgressTest{0}")
     @MethodSource("progressProvider")
     fun snapshotChecksAtProgressTest(checkAtProgress: Double) {
         val searchApi = searchApiGenerator()
@@ -119,14 +117,11 @@ class ProgressTest {
 
         val allChecks: List<() -> Unit> = buildList {
             for ((snapshot1, snapshot2) in snapshotPairs) {
-                val s1 = "snapshot1"
-                val s2 = "snapshot2"
-                val progressCondition = snapshot1.progress < snapshot2.progress
-                val visitedFilesNumberCondition = snapshot1.visitedFilesNumber <= snapshot2.visitedFilesNumber
-                val indexedFilesNumberCondition = snapshot1.indexedFilesNumber <= snapshot2.indexedFilesNumber
-                add { assertTrue(progressCondition, "$s1.progress < $s2.progress") }
-                add { assertTrue(visitedFilesNumberCondition, "$s1.visitedFilesNumber < $s2.visitedFilesNumber") }
-                add { assertTrue(indexedFilesNumberCondition, "$s1.indexedFilesNumber < $s2.indexedFilesNumber") }
+                val comparator: TwoObjectsComparator<IndexingStateSnapshot> =
+                    TwoObjectsComparator(snapshot1, snapshot2, "snapshot1", "snapshot2")
+                add { comparator.assert("<", IndexingStateSnapshot::progress, "progress") }
+                add { comparator.assert("<=", IndexingStateSnapshot::visitedFilesNumber, "visitedFilesNumber") }
+                add { comparator.assert("<=", IndexingStateSnapshot::indexedFilesNumber, "indexedFilesNumber") }
             }
         }
         assertAll("progress checks", *allChecks.toTypedArray())

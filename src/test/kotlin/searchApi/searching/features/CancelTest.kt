@@ -77,7 +77,7 @@ class CancelTest {
      * Cancel during searching at progress cancelAtProgress.
      * Code shouldn't throw any exception, it should give any results
      * */
-    @ParameterizedTest(name = "{0}")
+    @ParameterizedTest(name = "curProjectSearchingAndCancelDuringSearchTest{0}")
     @MethodSource("progressProvider")
     fun curProjectSearchingAndCancelDuringSearchTest(cancelAtProgress: Double) {
         val searchApi = searchApiGenerator()
