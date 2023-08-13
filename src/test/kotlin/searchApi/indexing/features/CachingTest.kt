@@ -28,7 +28,7 @@ class CachingTest {
         val state1 = searchApi.syncPerformIndex(folder)
         val state2 = searchApi.syncPerformIndex(folder)
         Assertions.assertAll(
-            { Assertions.assertTrue(state1.totalTime > 500, "At first there is no cache, so index works longer") },
+            { Assertions.assertTrue(state1.totalTime > 300, "At first there is no cache, so index works longer") },
             { Assertions.assertTrue(state2.totalTime < 5, "Repeat index works fast - it uses cache") }
         )
     }

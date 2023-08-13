@@ -238,8 +238,12 @@ internal class TrigramIndexer : WithLogging() {
         private val forbiddenIndexExtensions: List<String> = listOf(
             ".jar",
             ".png",
+            ".jpg",
             ".bin",
             ".zip",
+            ".7z",
+            ".dll",
+            ".exe",
             "Win1251.txt", //problem with encoding. It is incorrect to put .txt to extensions
             ".class",
             "TipoMensagem.java", // problem with encoding in some symbols
