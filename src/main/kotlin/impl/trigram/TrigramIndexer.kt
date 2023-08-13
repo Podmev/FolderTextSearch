@@ -13,6 +13,7 @@ import java.nio.file.Path
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.LinkedBlockingQueue
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.stream.Stream
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.io.path.isRegularFile
@@ -37,7 +38,8 @@ internal class TrigramIndexer : WithLogging() {
         folderPath: Path,
         future: CompletableFuture<List<Path>>,
         indexingState: TrigramIndexingState,
-        trigramMapByFolder: MutableMap<Path, TrigramMap>
+        trigramMapByFolder: MutableMap<Path, TrigramMap>,
+        indexInProcess: AtomicBoolean
     ) = coroutineScope {
         try {
             indexingState.changeStatus(ProgressableStatus.IN_PROGRESS)
@@ -61,15 +63,18 @@ internal class TrigramIndexer : WithLogging() {
             //here we wait all coroutines to finish
             val resultPathList = resultPathQueue.toList()
             indexingState.changeStatus(ProgressableStatus.FINISHED)
+            indexInProcess.set(false)
             future.complete(resultPathList)
             LOG.finest("finished for folder: $folderPath, indexed ${resultPathList.size} files")
         } catch (ex: CancellationException) {
             indexingState.changeStatus(ProgressableStatus.CANCELLED)
+            indexInProcess.set(false)
             future.complete(emptyList())
             throw ex // Must let the CancellationException propagate
         } catch (th: Throwable) {
             indexingState.changeStatus(ProgressableStatus.FAILED)
             indexingState.setFailReason(th)
+            indexInProcess.set(false)
             future.complete(emptyList())
             LOG.severe("exception during making index: ${th.message}")
             th.printStackTrace()

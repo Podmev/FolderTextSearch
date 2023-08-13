@@ -51,9 +51,8 @@ class TrigramSearchApi : SearchApi, WithLogging() {
 
         val indexingState = TrigramIndexingState(completableFuture)
         val deferred = GlobalScope.async {
-            indexer.asyncIndexing(folderPath, completableFuture, indexingState, trigramMapByFolder)
+            indexer.asyncIndexing(folderPath, completableFuture, indexingState, trigramMapByFolder, indexInProcess)
         }
-        deferred.invokeOnCompletion { indexInProcess.set(false) }
         fun cancelIndexing() {
             indexingState.changeStatus(ProgressableStatus.CANCELLING)
             deferred.cancel(CancellationException())
