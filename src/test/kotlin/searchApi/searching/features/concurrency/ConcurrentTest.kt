@@ -91,8 +91,8 @@ class ConcurrentTest {
             { Assertions.assertTrue(tokenMatches.isNotEmpty(), "tokenMatches for token \"$token\" is not empty") }
         }
         assertAll(
-            { Assertions.assertEquals(10, tokens.size, "There 10 tokens") },
-            { Assertions.assertEquals(10, tokenMatchesList.size, "There 10 elements in tokenMatchesList") },
+            { Assertions.assertEquals(10, tokens.size, "There are 10 tokens") },
+            { Assertions.assertEquals(10, tokenMatchesList.size, "There are 10 elements in tokenMatchesList") },
             *checks.toTypedArray()
         )
     }
