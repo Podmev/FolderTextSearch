@@ -69,7 +69,7 @@ class CancelTest {
      * Cancel during indexing at progress cancelAtProgress.
      * Code shouldn't throw any exception, it should be saved no index.
      * */
-    @ParameterizedTest(name = "{0}")
+    @ParameterizedTest(name = "curProjectIndexingAndCancelDuringIndexTest{0}")
     @MethodSource("progressProvider")
     fun curProjectIndexingAndCancelDuringIndexTest(cancelAtProgress: Double) {
         val searchApi = searchApiGenerator()
@@ -83,7 +83,7 @@ class CancelTest {
         val state: IndexingState = searchApi.createIndexAtFolder(folder)
         state.asyncCancelAtProgress(
             cancelAtProgress = cancelAtProgress,
-            checkProgressEveryMillis = 5
+            checkProgressEveryMillis = 0
         )
         state.result.get()
         val progress = state.progress
