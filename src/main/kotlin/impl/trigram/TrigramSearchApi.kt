@@ -1,6 +1,7 @@
 package impl.trigram
 
 import api.*
+import api.exception.BusySearchException
 import api.exception.IllegalArgumentSearchException
 import api.exception.NotDirSearchException
 import api.exception.SearchException
@@ -12,6 +13,7 @@ import kotlinx.coroutines.async
 import utils.WithLogging
 import java.nio.file.Path
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.io.path.isDirectory
 
 /**
@@ -22,6 +24,12 @@ class TrigramSearchApi : SearchApi, WithLogging() {
     private val trigramMapByFolder: MutableMap<Path, TrigramMap> = mutableMapOf()
     private val indexer = TrigramIndexer()
     private val searcher = TrigramSearcher()
+
+    /**
+     * Flag for indexing activity
+     * True - it is going some indexing, false - no
+     * */
+    private val indexInProcess = AtomicBoolean(false)
 
     /**
      * Get index state. Using fo tests. It is not from interface
@@ -36,13 +44,16 @@ class TrigramSearchApi : SearchApi, WithLogging() {
     @OptIn(DelicateCoroutinesApi::class)
     override fun createIndexAtFolder(folderPath: Path): IndexingState {
         validatePath(folderPath)
+        if (!indexInProcess.compareAndSet(false, true)) {
+            throw BusySearchException("Cannot create index while indexing")
+        }
         val completableFuture = CompletableFuture<List<Path>>()
 
         val indexingState = TrigramIndexingState(completableFuture)
         val deferred = GlobalScope.async {
             indexer.asyncIndexing(folderPath, completableFuture, indexingState, trigramMapByFolder)
         }
-
+        deferred.invokeOnCompletion { indexInProcess.set(false) }
         fun cancelIndexing() {
             indexingState.changeStatus(ProgressableStatus.CANCELLING)
             deferred.cancel(CancellationException())

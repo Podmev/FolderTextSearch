@@ -67,9 +67,11 @@ class ConcurrentTest {
         if (testCase.indexPresence.hasFolder1Index) searchApi1.syncPerformIndex(folder1)
         if (testCase.indexPresence.hasFolder2Index) searchApi2.syncPerformIndex(folder2)
         //main indexing. Depends on timing synchronous or asynchronous
-        testCase.timing.constructIndex(searchApi1, folder1)
-        testCase.timing.constructIndex(searchApi2, folder2)
-
+        val indexingState1 = testCase.timing.constructIndex(searchApi1, folder1)
+        val indexingState2 = testCase.timing.constructIndex(searchApi2, folder2)
+        //waiting finishing indexing for both states
+        indexingState1.result.get()
+        indexingState2.result.get()
         assertAll({ Assertions.assertTrue(searchApi1.hasIndexAtFolder(folder1), "searchApi1 has index for folder1") },
             { Assertions.assertTrue(searchApi2.hasIndexAtFolder(folder2), "searchApi2 has index for folder2") })
     }
@@ -216,13 +218,7 @@ class ConcurrentTest {
             ConcurrencyTestCase(CONCURRENT, ONLY_SECOND, SINGLE, SUB_FOLDER),
             ConcurrencyTestCase(CONCURRENT, ONLY_SECOND, SINGLE, PARENT_FOLDER),
             ConcurrencyTestCase(CONCURRENT, ONLY_SECOND, SINGLE, DIFFERENT_FOLDER),
-        )
 
-        /**
-         * List of positive ConcurrencyTestCases
-         * */
-        val positiveConcurrencyTestCases = listOf(
-            //CONCURRENT - SINGLE
             ConcurrencyTestCase(CONCURRENT, ONLY_FIRST, SINGLE, SAME_FOLDER),
             ConcurrencyTestCase(CONCURRENT, ONLY_FIRST, SINGLE, SUB_FOLDER),
             ConcurrencyTestCase(CONCURRENT, ONLY_FIRST, SINGLE, PARENT_FOLDER),
@@ -232,7 +228,12 @@ class ConcurrentTest {
             ConcurrencyTestCase(CONCURRENT, BOTH_INDICES, SINGLE, SUB_FOLDER),
             ConcurrencyTestCase(CONCURRENT, BOTH_INDICES, SINGLE, PARENT_FOLDER),
             ConcurrencyTestCase(CONCURRENT, BOTH_INDICES, SINGLE, DIFFERENT_FOLDER),
+        )
 
+        /**
+         * List of positive ConcurrencyTestCases
+         * */
+        val positiveConcurrencyTestCases = listOf(
             //CONCURRENT - DUAL
             ConcurrencyTestCase(CONCURRENT, NO_INDEX, DUAL, SAME_FOLDER),
             ConcurrencyTestCase(CONCURRENT, NO_INDEX, DUAL, SUB_FOLDER),

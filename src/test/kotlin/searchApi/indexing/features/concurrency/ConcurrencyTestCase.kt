@@ -87,13 +87,22 @@ enum class IndexPresence {
  * Depends on timing synchronous or asynchronous
  * */
 enum class Timing {
+    /**
+     * Using asynchronous api
+     * */
     CONCURRENT {
-        override fun constructIndex(searchApi: SearchApi, folder: Path) =
-            searchApi.createIndexAtFolder(folder)
+        override fun constructIndex(searchApi: SearchApi, folder: Path): IndexingState {
+            return searchApi.createIndexAtFolder(folder)
+        }
     },
+
+    /**
+     * Using synchronous api
+     * */
     SEQUENCIAL {
-        override fun constructIndex(searchApi: SearchApi, folder: Path) =
-            searchApi.syncPerformIndex(folder)
+        override fun constructIndex(searchApi: SearchApi, folder: Path): IndexingState {
+            return searchApi.syncPerformIndex(folder)
+        }
     };
 
     abstract fun constructIndex(searchApi: SearchApi, folder: Path): IndexingState
