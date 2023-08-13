@@ -14,9 +14,7 @@ data class ConcurrencyTestCase(
     val indexPresence: IndexPresence,
     val numberOfInstances: NumberOfInstances,
     val folderCombination: FolderCombination
-) {
-
-}
+)
 
 /**
  * Relation second folder to first
