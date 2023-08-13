@@ -69,8 +69,8 @@ class ConcurrentTest {
         if (testCase.indexPresence.hasFolder2Index) searchApi2.syncPerformIndex(folder2)
         //main indexing. Depends on timing synchronous or asynchronous
         val indexingState1 = testCase.timing.constructIndex(searchApi1, folder1)
-        //sleep 10 milliseconds to separate reading from saved index
-        TimeUnit.MILLISECONDS.sleep(10)
+        //sleep 15 milliseconds to separate reading from saved index
+        TimeUnit.MILLISECONDS.sleep(15)
         val indexingState2 = testCase.timing.constructIndex(searchApi2, folder2)
         //waiting finishing indexing for both states
         indexingState1.result.get()
@@ -115,8 +115,8 @@ class ConcurrentTest {
         //main indexing. Depends on timing synchronous or asynchronous
         //At first indexing first folder
         testCase.timing.constructIndex(searchApi1, folder1)
-        //sleep 10 milliseconds to separate reading from saved index
-        TimeUnit.MILLISECONDS.sleep(10)
+        //sleep 15 milliseconds to separate reading from saved index
+        TimeUnit.MILLISECONDS.sleep(15)
         //When indexing second folder, throws exception BusySearchException
         Assertions.assertThrows(/* expectedType = */ BusySearchException::class.java,/* executable = */
             { testCase.timing.constructIndex(searchApi2, folder2) },/* message = */
