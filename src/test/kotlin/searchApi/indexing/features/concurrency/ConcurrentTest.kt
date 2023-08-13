@@ -55,7 +55,7 @@ class ConcurrentTest {
      *      - concurrent - asynchronous
      *      - sequential - synchronous
      * */
-    @ParameterizedTest(name = "{0}")
+    @ParameterizedTest(name = "positiveCombinationTest{0}")
     @MethodSource("positiveConcurrencyTestCaseProvider")
     fun positiveCombinationTest(testCase: ConcurrencyTestCase) {
         //choosing folders
@@ -101,7 +101,7 @@ class ConcurrentTest {
      *      - concurrent - asynchronous
      *      - sequential - synchronous
      * */
-    @ParameterizedTest(name = "{0}")
+    @ParameterizedTest(name = "negativeCombinationTest{0}")
     @MethodSource("negativeConcurrencyTestCaseProvider")
     fun negativeCombinationTest(testCase: ConcurrencyTestCase) {
         val folder1 = testCase.folderCombination.folder1

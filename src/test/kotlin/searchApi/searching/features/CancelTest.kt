@@ -39,7 +39,7 @@ class CancelTest {
      * Code shouldn't throw any exception, it should be saved no search.
      * */
     @Test
-    fun curProjectSearchingAndCancelAtStartSearchingTest() {
+    fun searchingAndCancelAtStartSearchingTest() {
         val searchApi = searchApiGenerator()
         val folder = commonPath
         val token  = commonToken
@@ -77,9 +77,9 @@ class CancelTest {
      * Cancel during searching at progress cancelAtProgress.
      * Code shouldn't throw any exception, it should give any results
      * */
-    @ParameterizedTest(name = "curProjectSearchingAndCancelDuringSearchTest{0}")
+    @ParameterizedTest(name = "searchingAndCancelDuringSearchTest{0}")
     @MethodSource("progressProvider")
-    fun curProjectSearchingAndCancelDuringSearchTest(cancelAtProgress: Double) {
+    fun searchingAndCancelDuringSearchTest(cancelAtProgress: Double) {
         val searchApi = searchApiGenerator()
         val folder = commonPath
         val token = commonToken
@@ -131,7 +131,7 @@ class CancelTest {
      * Visited files byte size, parsed files byte size, total files byte size should be equal
      * */
     @Test
-    fun curProjectSearchingAndCancelAfterSearchingTest() {
+    fun searchingAndCancelAfterSearchingTest() {
         val searchApi = searchApiGenerator()
         val folder = commonPath
         val token = commonToken

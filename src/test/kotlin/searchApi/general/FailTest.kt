@@ -25,7 +25,7 @@ internal class FailTest {
     /**
      * Searching token with length 0, should be thrown IllegalArgumentSearchException.
      * */
-    @ParameterizedTest(name = "{0}")
+    @ParameterizedTest(name = "token0LengthTest{0}")
     @MethodSource("searchApiProvider")
     fun token0LengthTest(searchApiGenerator: () -> SearchApi) {
         val searchApi = searchApiGenerator()
@@ -43,7 +43,7 @@ internal class FailTest {
     /**
      * Searching token with length 1, should be thrown IllegalArgumentSearchException.
      * */
-    @ParameterizedTest(name = "{0}")
+    @ParameterizedTest(name = "token1LengthTest{0}")
     @MethodSource("searchApiProvider")
     fun token1LengthTest(searchApiGenerator: () -> SearchApi) {
         val searchApi = searchApiGenerator()
@@ -61,7 +61,7 @@ internal class FailTest {
     /**
      * Searching token with length 2, should be thrown IllegalArgumentSearchException.
      * */
-    @ParameterizedTest(name = "{0}")
+    @ParameterizedTest(name = "token2LengthTest{0}")
     @MethodSource("searchApiProvider")
     fun token2LengthTest(searchApiGenerator: () -> SearchApi) {
         val searchApi = searchApiGenerator()
@@ -79,7 +79,7 @@ internal class FailTest {
     /**
      * Searching token has symbol \n, should be thrown IllegalArgumentSearchException.
      * */
-    @ParameterizedTest(name = "{0}")
+    @ParameterizedTest(name = "tokenWithEscapeNTest{0}")
     @MethodSource("searchApiProvider")
     fun tokenWithEscapeNTest(searchApiGenerator: () -> SearchApi) {
         val searchApi = searchApiGenerator()
@@ -97,7 +97,7 @@ internal class FailTest {
     /**
      * Searching token has symbol \r, should be thrown IllegalArgumentSearchException.
      * */
-    @ParameterizedTest(name = "{0}")
+    @ParameterizedTest(name = "tokenWithEscapeNTest{0}")
     @MethodSource("searchApiProvider")
     fun tokenWithEscapeRTest(searchApiGenerator: () -> SearchApi) {
         val searchApi = searchApiGenerator()
@@ -115,7 +115,7 @@ internal class FailTest {
     /**
      * Searching token has 2 symbols \n\r, should be thrown IllegalArgumentSearchException.
      * */
-    @ParameterizedTest(name = "{0}")
+    @ParameterizedTest(name = "tokenWithEscapeNEscapeRTest{0}")
     @MethodSource("searchApiProvider")
     fun tokenWithEscapeNEscapeRTest(searchApiGenerator: () -> SearchApi) {
         val searchApi = searchApiGenerator()
@@ -133,7 +133,7 @@ internal class FailTest {
     /**
      * Folder path is actually file, should be thrown NotDirSearchException.
      * */
-    @ParameterizedTest(name = "{0}")
+    @ParameterizedTest(name = "folderPathIsFileTest{0}")
     @MethodSource("searchApiProvider")
     fun folderPathIsFileTest(searchApiGenerator: () -> SearchApi) {
         val searchApi = searchApiGenerator()
@@ -146,7 +146,7 @@ internal class FailTest {
     /**
      * Folder path is wrong - there is nothing on this way, should be thrown NotDirSearchException.
      * */
-    @ParameterizedTest(name = "{0}")
+    @ParameterizedTest(name = "notExistingFolderTest{0}")
     @MethodSource("searchApiProvider")
     fun notExistingFolderTest(searchApiGenerator: () -> SearchApi) {
         val searchApi = searchApiGenerator()

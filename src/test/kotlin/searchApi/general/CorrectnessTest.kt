@@ -34,7 +34,7 @@ internal class CorrectnessTest {
     /**
      * Folder with single file with single line, which contains token 1 time.
      * */
-    @ParameterizedTest(name = "{0}")
+    @ParameterizedTest(name = "singleFileTest{0}")
     @MethodSource("searchApiProvider")
     fun singleFileTest(searchApiGenerator: () -> SearchApi) {
         val searchApi = searchApiGenerator()
@@ -50,7 +50,7 @@ internal class CorrectnessTest {
     /**
      * Folder with file and inner folder with file. Both files have single line, which contains token 1 time.
      * */
-    @ParameterizedTest(name = "{0}")
+    @ParameterizedTest(name = "fileAndFolderWithFileTest{0}")
     @MethodSource("searchApiProvider")
     fun fileAndFolderWithFileTest(searchApiGenerator: () -> SearchApi) {
         val searchApi = searchApiGenerator()
@@ -69,7 +69,7 @@ internal class CorrectnessTest {
     /**
      * Folder with single file with single line "aaaaaa", and we search "aaa", so it will be found there 4 times.
      * */
-    @ParameterizedTest(name = "{0}")
+    @ParameterizedTest(name = "fileWith6LetterA_searchAAATest{0}")
     @MethodSource("searchApiProvider")
     fun fileWith6LetterA_searchAAATest(searchApiGenerator: () -> SearchApi) {
         val searchApi = searchApiGenerator()
@@ -90,7 +90,7 @@ internal class CorrectnessTest {
     /**
      * Folder with single file with 3 lines, and each one of them has token on different position.
      * */
-    @ParameterizedTest(name = "{0}")
+    @ParameterizedTest(name = "fileWithMatchesOnDifferentLinesTest{0}")
     @MethodSource("searchApiProvider")
     fun fileWithMatchesOnDifferentLinesTest(searchApiGenerator: () -> SearchApi) {
         val searchApi = searchApiGenerator()
@@ -110,7 +110,7 @@ internal class CorrectnessTest {
     /**
      * Folder with 2 files, only 1 has token.
      * */
-    @ParameterizedTest(name = "{0}")
+    @ParameterizedTest(name = "twoFilesOneMatchTest{0}")
     @MethodSource("searchApiProvider")
     fun twoFilesOneMatchTest(searchApiGenerator: () -> SearchApi) {
         val searchApi = searchApiGenerator()
@@ -128,7 +128,7 @@ internal class CorrectnessTest {
     /**
      * Folder with sequence of 10 inner folder with single file, which has 1 match.
      * */
-    @ParameterizedTest(name = "{0}")
+    @ParameterizedTest(name = "deepFileTest{0}")
     @MethodSource("searchApiProvider")
     fun deepFileTest(searchApiGenerator: () -> SearchApi) {
         val searchApi = searchApiGenerator()
@@ -160,7 +160,7 @@ internal class CorrectnessTest {
     /**
      * Folder with 10 files, only 3 of them have match.
      * */
-    @ParameterizedTest(name = "{0}")
+    @ParameterizedTest(name = "tenFilesAndHasMatchTest{0}")
     @MethodSource("searchApiProvider")
     fun tenFilesAndHasMatchTest(searchApiGenerator: () -> SearchApi) {
         val searchApi = searchApiGenerator()
@@ -180,7 +180,7 @@ internal class CorrectnessTest {
     /**
      * Folder with file which has one time with 3 spaces ("   "), it will be 1 match.
      * */
-    @ParameterizedTest(name = "{0}")
+    @ParameterizedTest(name = "fileWith3SpacesTest{0}")
     @MethodSource("searchApiProvider")
     fun fileWith3SpacesTest(searchApiGenerator: () -> SearchApi) {
         val searchApi = searchApiGenerator()
@@ -198,7 +198,7 @@ internal class CorrectnessTest {
     /**
      * Folder with file which has one time with 3 doubleQuotes ("""), it will be 1 match
      * */
-    @ParameterizedTest(name = "{0}")
+    @ParameterizedTest(name = "fileWith3DoubleQuotesTest{0}")
     @MethodSource("searchApiProvider")
     fun fileWith3DoubleQuotesTest(searchApiGenerator: () -> SearchApi) {
         val searchApi = searchApiGenerator()
@@ -216,7 +216,7 @@ internal class CorrectnessTest {
     /**
      * Folder with file which has 1 space between words "aaa", if we look for "a a" it will be 1 match.
      * */
-    @ParameterizedTest(name = "{0}")
+    @ParameterizedTest(name = "fileWith1SpaceBetweenWordsTest{0}")
     @MethodSource("searchApiProvider")
     fun fileWith1SpaceBetweenWordsTest(searchApiGenerator: () -> SearchApi) {
         val searchApi = searchApiGenerator()
@@ -235,7 +235,7 @@ internal class CorrectnessTest {
      *Folder with emojis
      * Attention: emojis take 2 characters
      * */
-    @ParameterizedTest(name = "{0}")
+    @ParameterizedTest(name = "fileWithEmojisTest{0}")
     @MethodSource("searchApiProvider")
     fun fileWithEmojisTest(searchApiGenerator: () -> SearchApi) {
         val searchApi = searchApiGenerator()

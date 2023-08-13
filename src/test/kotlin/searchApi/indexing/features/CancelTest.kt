@@ -35,7 +35,7 @@ class CancelTest {
      * Code shouldn't throw any exception, it should be saved no index.
      * */
     @Test
-    fun curProjectIndexingAndCancelAtStartIndexingTest() {
+    fun indexingAndCancelAtStartIndexingTest() {
         val searchApi = searchApiGenerator()
         val folder = commonPath
 
@@ -69,9 +69,9 @@ class CancelTest {
      * Cancel during indexing at progress cancelAtProgress.
      * Code shouldn't throw any exception, it should be saved no index.
      * */
-    @ParameterizedTest(name = "curProjectIndexingAndCancelDuringIndexTest{0}")
+    @ParameterizedTest(name = "indexingAndCancelDuringIndexTest{0}")
     @MethodSource("progressProvider")
-    fun curProjectIndexingAndCancelDuringIndexTest(cancelAtProgress: Double) {
+    fun indexingAndCancelDuringIndexTest(cancelAtProgress: Double) {
         val searchApi = searchApiGenerator()
         val folder = commonPath
 
@@ -111,7 +111,7 @@ class CancelTest {
      * visited files number, indexed files number and total should be equal.
      * */
     @Test
-    fun curProjectIndexingAndCancelAfterIndexTest() {
+    fun indexingAndCancelAfterIndexTest() {
         val searchApi = searchApiGenerator()
         val folder = commonPath
         val state: IndexingState = searchApi.syncPerformIndex(folder)
