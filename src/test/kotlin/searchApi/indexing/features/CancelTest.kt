@@ -2,6 +2,7 @@ package searchApi.indexing.features
 
 import api.IndexingState
 import api.ProgressableStatus
+import api.SearchApi
 import api.isIndexEmpty
 import api.tools.searchapi.syncPerformIndex
 import api.tools.state.asyncCancelAtProgress
@@ -26,9 +27,9 @@ class CancelTest {
     private val commonPath: Path = commonSetup.srcFolder
 
     /**
-     * Using not by interface, because we use methods exactly from TrigramSearchApi.
+     * Generator of SearchApi, so every time we use it, it is with fresh state.
      * */
-    private val searchApiGenerator: () -> TrigramSearchApi = { TrigramSearchApi() }
+    private val searchApiGenerator: () -> SearchApi = { TrigramSearchApi() }
 
     /**
      * Cancel at the start indexing.

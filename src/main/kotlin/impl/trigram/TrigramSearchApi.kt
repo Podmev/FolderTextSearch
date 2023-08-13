@@ -3,9 +3,8 @@ package impl.trigram
 import api.*
 import api.exception.BusySearchException
 import api.exception.IllegalArgumentSearchException
+import api.exception.NoIndexSearchException
 import api.exception.NotDirSearchException
-import api.exception.SearchException
-import api.tools.searchapi.syncPerformIndex
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -63,7 +62,7 @@ class TrigramSearchApi : SearchApi, WithLogging() {
     }
 
     /**
-     * Searches token in folder by using index in trigramMap, if there is no index, it performs it from the start.
+     * Searches token in folder by using index in trigramMap, if there is no index, it throws exception.
      * */
     @OptIn(DelicateCoroutinesApi::class)
     override fun searchString(folderPath: Path, token: String, settings: SearchSettings): SearchingState {
@@ -71,8 +70,7 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         validateToken(token)
         validatePath(folderPath)
         val completableFuture = CompletableFuture<List<TokenMatch>>()
-        //FIXME - not asynchronous
-        val trigramMap: TrigramMap = getTrigramMapOrCalculate(folderPath)
+        val trigramMap: TrigramMap = getTrigramMapOrThrowException(folderPath)
 
         val searchingState = TrigramSearchingState(completableFuture)
         val deferred = GlobalScope.async {
@@ -109,15 +107,14 @@ class TrigramSearchApi : SearchApi, WithLogging() {
     override fun getAllIndexedFolders(): List<Path> = trigramMapByFolder.keys.toList()
 
     /**
-     * Gets or recalculate trigram map
+     * Gets ready trigram map of throws exception NoIndexSearchException
      * */
-    private fun getTrigramMapOrCalculate(folderPath: Path): TrigramMap {
+    private fun getTrigramMapOrThrowException(folderPath: Path): TrigramMap {
         val previouslyCalculatedTrigramMap = trigramMapByFolder[folderPath]
         if (previouslyCalculatedTrigramMap != null) {
             return previouslyCalculatedTrigramMap
         }
-        syncPerformIndex(folderPath)
-        return trigramMapByFolder[folderPath] ?: throw SearchException("Now it should exist trigramMap")
+        throw NoIndexSearchException("Cannot search without prepared index, run createIndexAtFolder at first")
     }
 
     /**

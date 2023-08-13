@@ -29,9 +29,9 @@ class ProgressTest {
     private val commonPath: Path = commonSetup.srcFolder
 
     /**
-     * Using not by interface, because we use methods exactly from TrigramSearchApi
+     * Generator of SearchApi, so every time we use it, it is with fresh state.
      * */
-    private val searchApiGenerator: () -> TrigramSearchApi = { TrigramSearchApi() }
+    private val searchApiGenerator: () -> SearchApi = { TrigramSearchApi() }
 
     /**
      * Checking snapshots for indexing state at different progresses in general

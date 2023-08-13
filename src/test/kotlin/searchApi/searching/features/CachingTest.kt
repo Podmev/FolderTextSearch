@@ -1,5 +1,6 @@
 package searchApi.searching.features
 
+import api.SearchApi
 import api.tools.searchapi.syncPerformIndex
 import api.tools.searchapi.syncPerformSearch
 import impl.trigram.TrigramSearchApi
@@ -17,9 +18,9 @@ import kotlin.math.sqrt
  * */
 class CachingTest {
     /**
-     * Using not by interface, because we use methods exactly from TrigramSearchApi.
+     * Generator of SearchApi, so every time we use it, it is with fresh state.
      * */
-    private val searchApiGenerator: () -> TrigramSearchApi = { TrigramSearchApi() }
+    private val searchApiGenerator: () -> SearchApi = { TrigramSearchApi() }
 
     /**
      * 10 same searches on same folder after inicial warmup search (witch is a bit longer).

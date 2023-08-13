@@ -14,7 +14,9 @@ import java.nio.file.Path
 class IndexTrigramTest {
     private val commonPath: Path = commonSetup.commonPath
 
-    /*using not by interface, because we use methods exactly from TrigramSearchApi* */
+    /**
+     * Using not by interface, because we use methods exactly from TrigramSearchApi
+     * */
     private val searchApiGenerator: () -> TrigramSearchApi = { TrigramSearchApi() }
 
     /*Folder with single file with single line* */

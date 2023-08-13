@@ -1,5 +1,6 @@
 package searchApi.searching.features.concurrency
 
+import api.SearchApi
 import api.tools.searchapi.syncPerformIndex
 import impl.trigram.TrigramSearchApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,9 +20,9 @@ import java.util.stream.Stream
  * */
 class ConcurrentTest {
     /**
-     * Using not by interface, because we use methods exactly from TrigramSearchApi.
+     * Generator of SearchApi, so every time we use it, it is with fresh state.
      * */
-    private val searchApiGenerator: () -> TrigramSearchApi = { TrigramSearchApi() }
+    private val searchApiGenerator: () -> SearchApi = { TrigramSearchApi() }
 
     /**
      * Checking double searching of 2 folders with positive scenarios.
