@@ -48,6 +48,7 @@ class ConcurrentTest {
      *      - no index,
      *      - only fist folder,
      *      - only second folder,
+     *      - both folders
      *   - number of instances of SearchApi
      *      - single, one for both folders
      *      - dual, each folder has own searchApi
@@ -94,6 +95,7 @@ class ConcurrentTest {
      *      - no index,
      *      - only fist folder,
      *      - only second folder,
+     *      - both folders
      *   - number of instances of SearchApi
      *      - single, one for both folders
      *      - dual, each folder has own searchApi
