@@ -83,17 +83,52 @@ class TrigramSearchApi : SearchApi, WithLogging() {
             searcher.asyncSearching(folderPath, token, trigramMap, completableFuture, searchingState)
         }
 
-        fun cancelIndexing() {
+        fun cancelSearching() {
             searchingState.changeStatus(ProgressableStatus.CANCELLING)
             deferred.cancel(CancellationException())
             LOG.finest("deferred.cancel()")
         }
-        searchingState.addCancellationAction(::cancelIndexing)
+        searchingState.addCancellationAction(::cancelSearching)
         return searchingState
     }
 
+    /**
+     * Operation with indexing and searching together
+     * */
+    @OptIn(DelicateCoroutinesApi::class)
     override fun indexAndSearchString(folderPath: Path, token: String, settings: SearchSettings): SearchingState {
-        TODO("Not yet implemented")
+        validatePath(folderPath)
+        if (!indexInProcess.compareAndSet(false, true)) {
+            throw BusySearchException("Cannot create index while indexing")
+        }
+        val completableIndexFuture = CompletableFuture<List<Path>>()
+        val completableSearchFuture = CompletableFuture<List<TokenMatch>>()
+
+        val indexingState = TrigramIndexingState(completableIndexFuture)
+        val searchingState = TrigramSearchingState(completableSearchFuture)
+        val indexingAndSearchingState = TrigramIndexingAndSearchingState(indexingState, searchingState)
+
+        val deferred = GlobalScope.async {
+            val trigramMapDeferred = async {
+                indexer.asyncIndexing(
+                    folderPath = folderPath,
+                    future = completableIndexFuture,
+                    indexingState = indexingState,
+                    trigramMapByFolder = trigramMapByFolder,
+                    indexInProcess = indexInProcess
+                )
+            }
+            val trigramMap: TrigramMap = trigramMapDeferred.await()
+            searcher.asyncSearching(folderPath, token, trigramMap, completableSearchFuture, searchingState)
+        }
+
+        fun cancelIndexing() = indexingState.changeStatus(ProgressableStatus.CANCELLING)
+        fun cancelSearching() = searchingState.changeStatus(ProgressableStatus.CANCELLING)
+        fun cancelIndexingAndSearching() = deferred.cancel(CancellationException())
+        indexingState.addCancellationAction(::cancelIndexing)
+        searchingState.addCancellationAction(::cancelSearching)
+        indexingAndSearchingState.addCancellationAction(::cancelIndexingAndSearching)
+        return indexingAndSearchingState
     }
 
     /**
@@ -104,12 +139,25 @@ class TrigramSearchApi : SearchApi, WithLogging() {
     /**
      * Removes index at folder in inner structure
      * */
-    override fun removeIndexAtFolder(folderPath: Path): Boolean = trigramMapByFolder.remove(folderPath) != null
+    override fun removeIndexAtFolder(folderPath: Path): Boolean {
+        if (!indexInProcess.compareAndSet(false, true)) {
+            throw BusySearchException("Cannot remove full index while indexing")
+        }
+        val result = trigramMapByFolder.remove(folderPath) != null
+        indexInProcess.set(true)
+        return result
+    }
 
     /**
      * Removes full index by clearing inner structure
      * */
-    override fun removeFullIndex() = trigramMapByFolder.clear()
+    override fun removeFullIndex() {
+        if (!indexInProcess.compareAndSet(false, true)) {
+            throw BusySearchException("Cannot remove full index while indexing")
+        }
+        trigramMapByFolder.clear()
+        indexInProcess.set(true)
+    }
 
     /**
      * Takes folders with index from inner structure

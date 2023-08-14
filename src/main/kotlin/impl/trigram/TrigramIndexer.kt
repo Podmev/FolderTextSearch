@@ -41,12 +41,13 @@ internal class TrigramIndexer : WithLogging() {
         indexingState: TrigramIndexingState,
         trigramMapByFolder: MutableMap<Path, TrigramMap>,
         indexInProcess: AtomicBoolean
-    ) = coroutineScope {
+    ): TrigramMap = coroutineScope {
         try {
             indexingState.changeStatus(ProgressableStatus.IN_PROGRESS)
             LOG.finest("started for folder: $folderPath")
             val resultPathQueue: Queue<Path> = LinkedBlockingQueue()
             val foundTrigramMap: TrigramMap? = trigramMapByFolder[folderPath]
+            var resultTrigramMap = foundTrigramMap
             coroutineScope {
                 if (foundTrigramMap == null) {
                     val trigramMap = TrigramMap()
@@ -59,6 +60,7 @@ internal class TrigramIndexer : WithLogging() {
                         launch { asyncReadingTripletInPathChannel(indexingContext) }
                     }
                     trigramMapByFolder[folderPath] = trigramMap
+                    resultTrigramMap = trigramMap
                 }
             }
             //here we wait all coroutines to finish
@@ -67,6 +69,7 @@ internal class TrigramIndexer : WithLogging() {
             indexInProcess.set(false)
             future.complete(resultPathList)
             LOG.finest("finished for folder: $folderPath, indexed ${resultPathList.size} files")
+            return@coroutineScope resultTrigramMap!!
         } catch (ex: CancellationException) {
             indexingState.changeStatus(ProgressableStatus.CANCELLED)
             indexInProcess.set(false)
@@ -79,6 +82,7 @@ internal class TrigramIndexer : WithLogging() {
             future.complete(emptyList())
             LOG.severe("exception during making index: ${th.message}")
             th.printStackTrace()
+            throw th
         }
     }
 

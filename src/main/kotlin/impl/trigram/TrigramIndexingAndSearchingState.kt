@@ -4,6 +4,7 @@ import api.IndexingState
 import api.ProgressableStatus
 import api.SearchingState
 import api.TokenMatch
+import api.exception.FailedSearchException
 import utils.WithLogging
 import utils.max
 import java.nio.file.Path
@@ -17,6 +18,9 @@ class TrigramIndexingAndSearchingState(
     private val indexingState: IndexingState,
     private val searchingState: SearchingState,
 ) : SearchingState, WithLogging() {
+    //cancel
+    private var cancellationAction: () -> Unit = {}
+
     override val startTime: LocalDateTime
         get() = indexingState.startTime
     override val lastWorkingTime: LocalDateTime
@@ -26,8 +30,8 @@ class TrigramIndexingAndSearchingState(
         get() = trigramAggregateIndexAndSearchStatus(indexingState.status, searchingState.status)
 
     override val failReason: Throwable?
-        get() = indexingState.failReason ?: searchingState.failReason //TODO add inconsistent status error
-
+        get() = indexingState.failReason ?: searchingState.failReason
+        ?: (if (status == ProgressableStatus.FAILED) FailedSearchException("Failed status") else null)
 
     override val tokenMatchesNumber: Long
         get() = searchingState.tokenMatchesNumber
@@ -54,6 +58,7 @@ class TrigramIndexingAndSearchingState(
     override fun cancel() {
         indexingState.cancel()
         searchingState.cancel()
+        cancellationAction()
     }
 
     override val result: Future<List<TokenMatch>>
@@ -62,6 +67,13 @@ class TrigramIndexingAndSearchingState(
     override fun getTokenMatchesBuffer(flush: Boolean): List<TokenMatch> = searchingState.getTokenMatchesBuffer(flush)
 
     override fun getVisitedPathsBuffer(flush: Boolean): List<Path> = searchingState.getVisitedPathsBuffer(flush)
+
+    /**
+     * Setting action for cancel.
+     * */
+    fun addCancellationAction(action: () -> Unit) {
+        cancellationAction = action
+    }
 
     companion object {
         private const val COMPLETELY_FINISHED_PROGRESS: Double = 1.0
