@@ -92,6 +92,10 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         return searchingState
     }
 
+    override fun indexAndSearchString(folderPath: Path, token: String, settings: SearchSettings): SearchingState {
+        TODO("Not yet implemented")
+    }
+
     /**
      * Checks if there is index for folder in inner structure
      * */

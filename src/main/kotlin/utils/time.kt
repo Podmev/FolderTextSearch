@@ -28,6 +28,11 @@ fun prettyMillis(millis: Long): String {
 }
 
 /**
+ * Max of 2 objets LocalDateTime
+ */
+fun max(a: LocalDateTime, b: LocalDateTime): LocalDateTime = if (a > b) a else b
+
+/**
  * Returns formatted string with separated parts of time units, including time their names too:
  * minutes (unlimited), seconds (till 59), milliseconds (till 999)
  * */

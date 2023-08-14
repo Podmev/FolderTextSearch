@@ -26,6 +26,15 @@ interface SearchApi {
     ): SearchingState
 
     /**
+     * Index folder and then search string
+     * */
+    fun indexAndSearchString(
+        folderPath: Path,
+        token: String,
+        settings: SearchSettings = defaultSearchSettings
+    ): SearchingState
+
+    /**
      * Checks if exists already index for folder
      * On fresh start should be false
      * After successful indexing at folder, it should be true normally
