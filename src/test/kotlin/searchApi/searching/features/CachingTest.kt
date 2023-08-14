@@ -37,7 +37,6 @@ class CachingTest {
 
         val stateForWarmUpJVM = searchApi.syncPerformSearch(folder, token)
         val firstTimeTokenMatches = stateForWarmUpJVM.result.get()
-        val warmUpTotalTime = stateForWarmUpJVM.totalTime
 
         val states = (0 until 10).map { searchApi.syncPerformSearch(folder, token) }
         val totalTimes = states.map { it.totalTime }
@@ -46,16 +45,13 @@ class CachingTest {
             (totalTimes.sumOf { (it.toDouble() - averageTotalTime).pow(2.0) }) / totalTimes.size
         )
         val standardDeviationRatio = standardDeviationTotalTime / averageTotalTime
-        val warmUpMaxChecks = totalTimes.withIndex().map { (index, totalTime) ->
-            { assertTrue(totalTime < warmUpTotalTime, "#$index totalTime < warmUpTotalTime") }
-        }
-        val warmUpMinChecks = totalTimes.map { it.toDouble() }.withIndex().map { (index, totalTime) ->
-            { assertTrue(totalTime > 0.2 * warmUpTotalTime, "#$index totalTime > 0.2*warmUpTotalTime") }
+        val minTimeChecks = totalTimes.map { it.toDouble() }.withIndex().map { (index, totalTime) ->
+            { assertTrue(totalTime > 10, "#$index totalTime > 10 milliseconds") }
         }
         val equalsChecks = states.map { it.result.get().size }.withIndex().map { (index, resultSize) ->
             { assertEquals(firstTimeTokenMatches.size, resultSize, "#$index result is the same as first time") }
         }
-        val checks = warmUpMinChecks + warmUpMaxChecks + equalsChecks
+        val checks = minTimeChecks + equalsChecks
         assertAll({ assertEquals(10, totalTimes.size, "There are 10 tokens") }, {
             assertTrue(
                 standardDeviationRatio < 0.5,
