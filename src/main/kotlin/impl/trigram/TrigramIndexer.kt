@@ -8,6 +8,7 @@ import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.onEach
 import utils.WithLogging
+import java.nio.charset.MalformedInputException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
@@ -124,10 +125,9 @@ internal class TrigramIndexer : WithLogging() {
         LOG.finest("started for folder: ${indexingContext.folderPath}")
 
         for (path in indexingContext.visitedPathChannel) {
-            if(!isActive) break
-            if (isPossibleToIndexFile(path)) {
-                constructIndexForFile(path, indexingContext)
-            }
+            if (!isActive) break
+            val successful = constructIndexForFile(path, indexingContext)
+            if (!successful) LOG.finest("skipped file $path")
             indexingContext.indexedPathChannel.trySendBlocking(path)
                 .onSuccess { LOG.finest("send successfully path $path to indexedPathChannel") }
                 .onFailure { t: Throwable? -> LOG.severe("Cannot send path in indexedPathChannel: ${t?.message}") }
@@ -142,7 +142,7 @@ internal class TrigramIndexer : WithLogging() {
     /**
      * Lazy for each line separately constructs index.
      * */
-    private suspend fun constructIndexForFile(path: Path, indexingContext: TrigramIndexingContext) {
+    private suspend fun constructIndexForFile(path: Path, indexingContext: TrigramIndexingContext): Boolean {
         try {
             path.useLines { lines ->
                 lines
@@ -156,8 +156,12 @@ internal class TrigramIndexer : WithLogging() {
                     }
             }
             LOG.finest("finished for path: $path")
+            return true
         } catch (ex: CancellationException) {
             throw ex // Must let the CancellationException propagate
+        } catch (ex: MalformedInputException) {
+            //Broken on reading file - skipping it
+            return false
         } catch (th: Throwable) {
             LOG.severe("exception during constructing index for file ${path}: ${th.message}")
             th.printStackTrace()
@@ -192,7 +196,7 @@ internal class TrigramIndexer : WithLogging() {
     ) = coroutineScope {
         LOG.finest("started")
         for (path in indexingContext.indexedPathChannel) {
-            if(!isActive) break
+            if (!isActive) break
             LOG.finest("received indexed path and saving to state: $path")
             val indexedFilesNumber = indexingContext.indexingState.addIndexedPathToBuffer(path)
             indexingContext.resultPathQueue.add(path)
@@ -209,47 +213,11 @@ internal class TrigramIndexer : WithLogging() {
     ) = coroutineScope {
         LOG.finest("started")
         for ((triplet, path) in indexingContext.tripletInPathChannel) {
-            if(!isActive) break
+            if (!isActive) break
             LOG.finest("received path for triplet: $triplet $path")
             indexingContext.trigramMap.addCharTripletByPath(triplet, path)
         }
         LOG.finest("finished")
     }
 
-    //TODO fix without using direct list of exceptions
-    //https://stackoverflow.com/questions/620993/determining-binary-text-file-type-in-java
-    /**
-     * Predicate for file if it is possible and reasonable to index.
-     * */
-    private fun isPossibleToIndexFile(path: Path): Boolean {
-        val fileName: String = path.fileName.toString()
-        for (forbiddenIndexExtension in forbiddenIndexExtensions) {
-            if (fileName.endsWith(forbiddenIndexExtension)) {
-                return false
-            }
-        }
-        return true
-    }
-
-    companion object {
-        /**
-         * Extensions of files which are not supposed to be indexed
-         * */
-        private val forbiddenIndexExtensions: List<String> = listOf(
-            ".jar",
-            ".png",
-            ".jpg",
-            ".bin",
-            ".zip",
-            ".7z",
-            ".dll",
-            ".exe",
-            "Win1251.txt", //problem with encoding. It is incorrect to put .txt to extensions
-            ".class",
-            "TipoMensagem.java", // problem with encoding in some symbols
-            "image1",
-            "image2",
-            "Test_ISO_8859_15.java",
-        )
-    }
 }
