@@ -4,20 +4,18 @@ import api.SearchApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import utils.diffTime
-import utils.prettyDiffTimeFrom
+import utils.prettyMillis
 import java.nio.file.Path
-import java.time.LocalDateTime
 
 /**
  * Util function to calculate index for folder with detailed logging, then after it is done returns
  * Used in tests
  * */
 fun SearchApi.syncPerformIndexWithLoggingAndCancel(folderPath: Path, cancelAtProgress: Double) {
-    val startTime = LocalDateTime.now()
     val indexingState = createIndexAtFolder(folderPath)
     runBlocking {
-        var lastLogged = startTime
-        println("started indexing folder $folderPath at $startTime")
+        var lastLogged = indexingState.startTime
+        println("started indexing folder $folderPath at ${indexingState.startTime}")
         var setCancelled = false
         while (!indexingState.finished) {
             delay(50)
@@ -27,23 +25,20 @@ fun SearchApi.syncPerformIndexWithLoggingAndCancel(folderPath: Path, cancelAtPro
                 setCancelled = true
                 println("cancel at progress $progress (>=${cancelAtProgress})")
             }
-            val curTime = LocalDateTime.now()
-            val millis = diffTime(startTime, curTime)
+            val curTime = indexingState.lastWorkingTime
             val millisFromLastLogging = diffTime(lastLogged, curTime)
-            val logStepMillis = getIndexLogStepMillis(millis)
+            val logStepMillis = getIndexLogStepMillis(indexingState.totalTime)
             if (millisFromLastLogging > logStepMillis) {
-                printIndexingStepLog(indexingState, millis)
+                printIndexingStepLog(indexingState, indexingState.totalTime)
                 lastLogged = curTime
             }
         }
-        val finishTime = LocalDateTime.now()
-        val millis = diffTime(startTime, finishTime)
-        printIndexingStepLog(indexingState, millis)
+        printIndexingStepLog(indexingState, indexingState.totalTime)
     }
     val paths = indexingState.result.get()!!
     println(
         "indexing folder \"$folderPath\" is finished with ${paths.size} paths " +
-                "with total time: ${prettyDiffTimeFrom(startTime)}"
+                "with total time: ${prettyMillis(indexingState.totalTime)}"
     )
     assert(indexingState.finished)
 }

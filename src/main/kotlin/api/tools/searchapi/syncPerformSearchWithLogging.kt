@@ -5,39 +5,37 @@ import api.SearchingState
 import api.TokenMatch
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import utils.*
+import utils.diffTime
+import utils.format
+import utils.prettyBytes
+import utils.prettyMillis
 import java.nio.file.Path
-import java.time.LocalDateTime
 
 /**
  * Util function to search token in folder with detailed logging, then after it is done returns tokens
  * Used in tests
  * */
 fun SearchApi.syncPerformSearchWithLogging(folderPath: Path, token: String, delayMillis: Long = 2L): List<TokenMatch> {
-    val startTime = LocalDateTime.now()
     val searchingState = searchString(folderPath, token)
     runBlocking {
-        var lastLogged = startTime
-        println("started searching folder $folderPath at $startTime")
+        var lastLogged = searchingState.startTime
+        println("started searching folder $folderPath at ${searchingState.startTime}")
         while (!searchingState.finished) {
             delay(delayMillis)
-            val curTime = LocalDateTime.now()
-            val millis = diffTime(startTime, curTime)
+            val curTime = searchingState.lastWorkingTime
             val millisFromLastLogging = diffTime(lastLogged, curTime)
-            val logStepMillis = getSearchLogStepMillis(millis)
+            val logStepMillis = getSearchLogStepMillis(searchingState.totalTime)
             if (millisFromLastLogging > logStepMillis) {
-                printSearchStepLog(searchingState, millis)
+                printSearchStepLog(searchingState, searchingState.totalTime)
                 lastLogged = curTime
             }
         }
-        val finishTime = LocalDateTime.now()
-        val millis = diffTime(startTime, finishTime)
-        printSearchStepLog(searchingState, millis)
+        printSearchStepLog(searchingState, searchingState.totalTime)
     }
     val tokenMatches = searchingState.result.get()!!
     println(
         "searching in folder \"$folderPath\" is finished with ${tokenMatches.size} token matches " +
-                "with total time: ${prettyDiffTimeFrom(startTime)}"
+                "with total time: ${prettyMillis(searchingState.totalTime)}"
     )
     assert(searchingState.finished)
     return tokenMatches
