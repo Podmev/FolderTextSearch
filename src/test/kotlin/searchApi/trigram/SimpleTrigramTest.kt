@@ -2,13 +2,13 @@ package searchApi.trigram
 
 import api.SearchApi
 import api.TokenMatch
-import api.tools.searchapi.syncPerformIndex
-import api.tools.searchapi.syncSearchTokenAfterIndex
+import api.tools.searchapi.index.syncPerformIndex
+import api.tools.searchapi.search.syncSearchTokenAfterIndex
 import impl.trigram.TrigramSearchApi
 import org.junit.jupiter.api.Test
-import searchApi.common.commonSetup
 import searchApi.common.assertEqualsTokenMatches
 import searchApi.common.assertEqualsTrigramMap
+import searchApi.common.commonSetup
 import java.nio.file.Path
 
 /**

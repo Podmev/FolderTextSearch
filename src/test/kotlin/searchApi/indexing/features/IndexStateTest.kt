@@ -1,7 +1,7 @@
 package searchApi.indexing.features
 
 import api.SearchApi
-import api.tools.searchapi.syncPerformIndex
+import api.tools.searchapi.index.syncPerformIndex
 import impl.trigram.TrigramSearchApi
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

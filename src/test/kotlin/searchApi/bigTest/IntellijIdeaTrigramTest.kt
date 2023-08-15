@@ -1,10 +1,10 @@
 package searchApi.bigTest
 
 import api.SearchApi
-import api.tools.searchapi.syncPerformIndexWithLogging
-import api.tools.searchapi.syncPerformIndexWithLoggingAndCancel
-import api.tools.searchapi.syncPerformSearchWithLogging
-import api.tools.searchapi.syncSearchToken
+import api.tools.searchapi.index.syncPerformIndexWithLogging
+import api.tools.searchapi.index.syncPerformIndexWithLoggingAndCancel
+import api.tools.searchapi.search.syncPerformSearchWithLogging
+import api.tools.searchapi.search.syncSearchToken
 import impl.trigram.TrigramSearchApi
 import searchApi.common.commonSetup
 import utils.prettyDiffTime

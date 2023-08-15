@@ -1,7 +1,7 @@
 package searchApi.searching.features.concurrency
 
 import api.SearchApi
-import api.tools.searchapi.syncPerformIndex
+import api.tools.searchapi.index.syncPerformIndex
 import impl.trigram.TrigramSearchApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async

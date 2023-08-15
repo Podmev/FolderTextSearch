@@ -1,9 +1,6 @@
 package impl.trigram
 
-import api.IndexingState
-import api.ProgressableStatus
-import api.SearchingState
-import api.TokenMatch
+import api.*
 import api.exception.FailedSearchException
 import utils.WithLogging
 import utils.max
@@ -12,12 +9,12 @@ import java.time.LocalDateTime
 import java.util.concurrent.Future
 
 /**
- * State of trigram search api for searching.
+ * State of trigram search api for searching and indexing.
  * */
 class TrigramIndexingAndSearchingState(
-    private val indexingState: IndexingState,
-    private val searchingState: SearchingState,
-) : SearchingState, WithLogging() {
+    override val indexingState: IndexingState,
+    override val searchingState: SearchingState,
+) : IndexingAndSearchingState, WithLogging() {
     //cancel
     private var cancellationAction: () -> Unit = {}
 

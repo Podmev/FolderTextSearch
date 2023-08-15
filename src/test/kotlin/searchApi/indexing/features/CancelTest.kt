@@ -4,7 +4,7 @@ import api.IndexingState
 import api.ProgressableStatus
 import api.SearchApi
 import api.isIndexEmpty
-import api.tools.searchapi.syncPerformIndex
+import api.tools.searchapi.index.syncPerformIndex
 import api.tools.state.asyncCancelAtProgress
 import impl.trigram.TrigramSearchApi
 import org.junit.jupiter.api.Assertions

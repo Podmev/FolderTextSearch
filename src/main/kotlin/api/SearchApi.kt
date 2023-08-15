@@ -32,7 +32,7 @@ interface SearchApi {
         folderPath: Path,
         token: String,
         settings: SearchSettings = defaultSearchSettings
-    ): SearchingState
+    ): IndexingAndSearchingState
 
     /**
      * Checks if exists already index for folder

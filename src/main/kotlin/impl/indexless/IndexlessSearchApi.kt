@@ -48,8 +48,15 @@ class IndexlessSearchApi : SearchApi, WithLogging() {
     /**
      * No indexing, so it is just searching
      * */
-    override fun indexAndSearchString(folderPath: Path, token: String, settings: SearchSettings): SearchingState =
-        searchString(folderPath, token, settings)
+    override fun indexAndSearchString(
+        folderPath: Path,
+        token: String,
+        settings: SearchSettings
+    ): IndexingAndSearchingState =
+        IndexlessIndexingAndSearchingState(
+            indexingState = createIndexAtFolder(folderPath),
+            searchingState = searchString(folderPath, token, settings)
+        )
 
     /**
      * This implementation never has index at any folder. So it is false.

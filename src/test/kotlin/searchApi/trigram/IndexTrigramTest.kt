@@ -1,6 +1,6 @@
 package searchApi.trigram
 
-import api.tools.searchapi.syncPerformIndex
+import api.tools.searchapi.index.syncPerformIndex
 import impl.trigram.TrigramSearchApi
 import org.junit.jupiter.api.Test
 import searchApi.common.assertEqualsTrigramMap

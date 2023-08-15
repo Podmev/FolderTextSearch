@@ -3,7 +3,7 @@ package searchApi.indexing.features.concurrency
 import api.SearchApi
 import api.exception.BusySearchException
 import api.exception.NotDirSearchException
-import api.tools.searchapi.syncPerformIndex
+import api.tools.searchapi.index.syncPerformIndex
 import impl.trigram.TrigramSearchApi
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

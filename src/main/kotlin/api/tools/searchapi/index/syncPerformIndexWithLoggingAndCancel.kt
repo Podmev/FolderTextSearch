@@ -1,4 +1,4 @@
-package api.tools.searchapi
+package api.tools.searchapi.index
 
 import api.SearchApi
 import kotlinx.coroutines.delay

@@ -2,7 +2,7 @@ package searchApi.general
 
 import api.SearchApi
 import api.TokenMatch
-import api.tools.searchapi.syncSearchTokenAfterIndex
+import api.tools.searchapi.search.syncSearchTokenAfterIndex
 import impl.indexless.IndexlessSearchApi
 import impl.trigram.TrigramSearchApi
 import org.junit.jupiter.params.ParameterizedTest

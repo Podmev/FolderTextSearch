@@ -2,7 +2,7 @@ package searchApi.searching.features.concurrency
 
 import api.SearchApi
 import api.SearchingState
-import api.tools.searchapi.syncPerformSearch
+import api.tools.searchapi.search.syncPerformSearch
 import searchApi.common.commonSetup
 import java.nio.file.Path
 

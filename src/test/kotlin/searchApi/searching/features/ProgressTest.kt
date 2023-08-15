@@ -1,7 +1,7 @@
 package searchApi.searching.features
 
 import api.*
-import api.tools.searchapi.syncPerformIndex
+import api.tools.searchapi.index.syncPerformIndex
 import api.tools.state.getSearchingSnapshotAtProgress
 import api.tools.state.getSearchingSnapshotsAtProgresses
 import impl.trigram.TrigramSearchApi

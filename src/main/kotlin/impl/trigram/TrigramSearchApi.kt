@@ -96,7 +96,11 @@ class TrigramSearchApi : SearchApi, WithLogging() {
      * Operation with indexing and searching together
      * */
     @OptIn(DelicateCoroutinesApi::class)
-    override fun indexAndSearchString(folderPath: Path, token: String, settings: SearchSettings): SearchingState {
+    override fun indexAndSearchString(
+        folderPath: Path,
+        token: String,
+        settings: SearchSettings
+    ): IndexingAndSearchingState {
         validatePath(folderPath)
         if (!indexInProcess.compareAndSet(false, true)) {
             throw BusySearchException("Cannot create index while indexing")
@@ -144,7 +148,7 @@ class TrigramSearchApi : SearchApi, WithLogging() {
             throw BusySearchException("Cannot remove full index while indexing")
         }
         val result = trigramMapByFolder.remove(folderPath) != null
-        indexInProcess.set(true)
+        indexInProcess.set(false)
         return result
     }
 
@@ -156,7 +160,7 @@ class TrigramSearchApi : SearchApi, WithLogging() {
             throw BusySearchException("Cannot remove full index while indexing")
         }
         trigramMapByFolder.clear()
-        indexInProcess.set(true)
+        indexInProcess.set(false)
     }
 
     /**

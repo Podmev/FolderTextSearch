@@ -1,4 +1,4 @@
-package api.tools.searchapi
+package api.tools.searchapi.search
 
 import api.SearchApi
 import api.SearchingState
