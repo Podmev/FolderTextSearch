@@ -2,6 +2,7 @@ package impl.trigram
 
 import api.ProgressableStatus
 import api.TokenMatch
+import impl.trigram.map.TrigramMap
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow

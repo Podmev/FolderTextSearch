@@ -1,6 +1,7 @@
 package impl.trigram
 
 import api.TokenMatch
+import impl.trigram.map.TrigramMap
 import kotlinx.coroutines.channels.Channel
 import java.nio.file.Path
 import java.util.*

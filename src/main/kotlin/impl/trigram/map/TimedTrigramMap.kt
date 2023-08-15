@@ -1,0 +1,107 @@
+package impl.trigram.map
+
+import api.exception.RuntimeSearchException
+import utils.WithLogging
+import java.nio.file.Path
+import java.nio.file.attribute.FileTime
+import kotlin.io.path.getLastModifiedTime
+
+/*TODO add support:
+*  - timestamp
+* */
+
+/**
+ * Structure for saving index, based on saving set of file paths where it can be found 3 sequencial characters
+ * Here: charTriplet is 3 sequencial characters, like "abc", "d3d", "213"
+ * Used single flow to put everything in one thread
+ *
+ *
+ * */
+class TimedTrigramMap : TrigramMap, WithLogging() {
+    private val pathsByTriplet: MutableMap<String, MutableSet<Path>> = HashMap()
+    private val tripletsByPath: MutableMap<Path, MutableSet<String>> = HashMap()
+    private val timeByPath: MutableMap<Path, FileTime> = HashMap()
+
+    /**
+     * Add new char triplet to structure with file path containing it.
+     * */
+    override fun addCharTripletByPath(charTriplet: String, path: Path) {
+        validateCharTriplet(charTriplet)
+        addCharTripletByPathToPathsByTriplet(charTriplet, path)
+        addCharTripletByPathToTripletsByPath(charTriplet, path)
+        LOG.finest("add by triplet \"$charTriplet\" new path: $path")
+    }
+
+    /**
+     * Get all file paths containing char triplet
+     * */
+    override fun getPathsByCharTriplet(charTriplet: String): Set<Path> {
+        validateCharTriplet(charTriplet)
+        return pathsByTriplet[charTriplet] ?: emptySet()
+    }
+
+    //OPTIMIZE
+    /**
+     * Deep cloning map with recreated sets
+     * */
+    override fun clonePathsByTripletsMap(): Map<String, Set<Path>> = buildMap {
+        for ((triplet, paths) in pathsByTriplet)
+            put(
+                key = triplet,
+                value = buildSet {
+                    for (path in paths) add(path)
+                }
+            )
+    }
+
+    /**
+     * Registes modification time of path, actual at current moment
+     * */
+    fun registerPathTime(path: Path) {
+        val modifiedTime: FileTime = path.getLastModifiedTime()
+        timeByPath[path] = modifiedTime
+    }
+
+    /**
+     * Gets modification time of path saved here before
+     * */
+    fun getRegisteredPathTime(path: Path): FileTime? = timeByPath[path]
+
+    private fun addCharTripletByPathToPathsByTriplet(
+        charTriplet: String, path: Path
+    ) {
+        val existingPathsWithTriplet: MutableSet<Path>? = pathsByTriplet[charTriplet]
+        if (existingPathsWithTriplet != null) {
+            val isAdded = existingPathsWithTriplet.add(path)
+            if (isAdded) {
+                LOG.finest("add by triplet \"$charTriplet\" (now total ${existingPathsWithTriplet.size}) new path: $path")
+            } else {
+                LOG.finest("duplicate by triplet \"$charTriplet\" (saved before) path $path")
+            }
+            return
+        }
+        pathsByTriplet[charTriplet] = mutableSetOf(path)
+    }
+
+    private fun addCharTripletByPathToTripletsByPath(
+        charTriplet: String, path: Path
+    ) {
+        val existingTripletsWithPath: MutableSet<String>? = tripletsByPath[path]
+        if (existingTripletsWithPath != null) {
+            val isAdded = existingTripletsWithPath.add(charTriplet)
+            if (isAdded) {
+                LOG.finest("add new triplet \"$charTriplet\" (now total ${existingTripletsWithPath.size}) by path: $path")
+            } else {
+                LOG.finest("duplicate triplet \"$charTriplet\" (saved before) by path $path")
+            }
+            return
+        }
+        tripletsByPath[path] = mutableSetOf(charTriplet)
+    }
+
+    private fun validateCharTriplet(charTriplet: String) {
+        if (charTriplet.length != 3) {
+            throw RuntimeSearchException("Char triplet does have 3 characters, but ${charTriplet.length} $charTriplet")
+        }
+    }
+}

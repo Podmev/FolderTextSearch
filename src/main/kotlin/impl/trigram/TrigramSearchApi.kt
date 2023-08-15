@@ -5,6 +5,10 @@ import api.exception.BusySearchException
 import api.exception.IllegalArgumentSearchException
 import api.exception.NoIndexSearchException
 import api.exception.NotDirSearchException
+import impl.trigram.map.SimpleTrigramMap
+import impl.trigram.map.TimedTrigramMap
+import impl.trigram.map.TrigramMap
+import impl.trigram.map.TrigramMapType
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -19,9 +23,9 @@ import kotlin.io.path.isDirectory
  * Trigram implementation of Search Api without indexing and any optimizations.
  * Can be used as etalon to check results, but not for performance and flexibility.
  * */
-class TrigramSearchApi : SearchApi, WithLogging() {
+class TrigramSearchApi(trigramMapType: TrigramMapType = TrigramMapType.SIMPLE) : SearchApi, WithLogging() {
     private val trigramMapByFolder: MutableMap<Path, TrigramMap> = mutableMapOf()
-    private val indexer = TrigramIndexer()
+    private val indexer = TrigramIndexer { getTrigramMapCreatorByType(trigramMapType) }
     private val searcher = TrigramSearcher()
 
     /**
@@ -33,8 +37,8 @@ class TrigramSearchApi : SearchApi, WithLogging() {
     /**
      * Get index state. Using fo tests. It is not from interface
      * */
-    fun getTrigramImmutableMap(folderPath: Path) =
-        trigramMapByFolder[folderPath]?.cloneMap() ?: emptyMap()
+    fun getTrigramImmutableMap(folderPath: Path): Map<String, Set<Path>> =
+        trigramMapByFolder[folderPath]?.clonePathsByTripletsMap() ?: emptyMap()
 
     /**
      * Creates index at folder and saves in inner structure.
@@ -97,9 +101,7 @@ class TrigramSearchApi : SearchApi, WithLogging() {
      * */
     @OptIn(DelicateCoroutinesApi::class)
     override fun indexAndSearchString(
-        folderPath: Path,
-        token: String,
-        settings: SearchSettings
+        folderPath: Path, token: String, settings: SearchSettings
     ): IndexingAndSearchingState {
         validatePath(folderPath)
         validateToken(token)
@@ -211,6 +213,15 @@ class TrigramSearchApi : SearchApi, WithLogging() {
          * Forbidden to use these characters in token.
          * */
         private val forbiddenCharsInToken: List<Char> = listOf('\n', '\r')
+
+        /**
+         * Chooses type of trigramMap creator
+         * */
+        private fun getTrigramMapCreatorByType(trigramMapType: TrigramMapType): TrigramMap =
+            when (trigramMapType) {
+                TrigramMapType.SIMPLE -> SimpleTrigramMap()
+                TrigramMapType.TIMED -> TimedTrigramMap()
+            }
 
     }
 }

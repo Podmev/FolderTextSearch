@@ -1,28 +1,24 @@
-package impl.trigram
+package impl.trigram.map
 
 import api.exception.RuntimeSearchException
 import utils.WithLogging
 import java.nio.file.Path
-
-/*TODO add support:
-*  - timestamp
-* */
 
 /**
  * Structure for saving index, based on saving set of file paths where it can be found 3 sequencial characters
  * Here: charTriplet is 3 sequencial characters, like "abc", "d3d", "213"
  * Used single flow to put everything in one thread
  * */
-class TrigramMap : WithLogging() {
-    private val map: MutableMap<String, MutableSet<Path>> = HashMap()
+class SimpleTrigramMap : TrigramMap, WithLogging() {
+    private val pathsByTriplets: MutableMap<String, MutableSet<Path>> = HashMap()
 
     /**
      * Add new char triplet to structure with file path containing it.
      * */
-    fun addCharTripletByPath(charTriplet: String, path: Path) {
+    override fun addCharTripletByPath(charTriplet: String, path: Path) {
         validateCharTriplet(charTriplet)
 
-        val existingPathsWithTriplet: MutableSet<Path>? = map[charTriplet]
+        val existingPathsWithTriplet: MutableSet<Path>? = pathsByTriplets[charTriplet]
         if (existingPathsWithTriplet != null) {
             val isAdded = existingPathsWithTriplet.add(path)
             if (isAdded) {
@@ -32,7 +28,7 @@ class TrigramMap : WithLogging() {
             }
             return
         }
-        map[charTriplet] = mutableSetOf(path)
+        pathsByTriplets[charTriplet] = mutableSetOf(path)
         LOG.finest("add by triplet \"$charTriplet\" new path: $path")
 
     }
@@ -40,9 +36,9 @@ class TrigramMap : WithLogging() {
     /**
      * Get all file paths containing char triplet
      * */
-    fun getPathsByCharTriplet(charTriplet: String): Set<Path> {
+    override fun getPathsByCharTriplet(charTriplet: String): Set<Path> {
         validateCharTriplet(charTriplet)
-        return map[charTriplet] ?: emptySet()
+        return pathsByTriplets[charTriplet] ?: emptySet()
     }
 
     private fun validateCharTriplet(charTriplet: String) {
@@ -55,8 +51,8 @@ class TrigramMap : WithLogging() {
     /**
      * Deep cloning map with recreated sets
      * */
-    fun cloneMap(): Map<String, Set<Path>> = buildMap {
-        for ((triplet, paths) in map)
+    override fun clonePathsByTripletsMap(): Map<String, Set<Path>> = buildMap {
+        for ((triplet, paths) in pathsByTriplets)
             put(
                 key = triplet,
                 value = buildSet {

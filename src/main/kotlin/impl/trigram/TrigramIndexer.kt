@@ -1,6 +1,7 @@
 package impl.trigram
 
 import api.ProgressableStatus
+import impl.trigram.map.TrigramMap
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.onFailure
 import kotlinx.coroutines.channels.onSuccess
@@ -24,7 +25,9 @@ import kotlin.streams.asSequence
 /**
  * Only logic of constructing index for TrigramSearApi
  * */
-internal class TrigramIndexer : WithLogging() {
+internal class TrigramIndexer(
+    val createNewTrigramMap: () -> TrigramMap
+) : WithLogging() {
     /**
      * Main logic of indexing, checks if index is created already.
      * If there is no index, it starts indexing.
@@ -50,7 +53,7 @@ internal class TrigramIndexer : WithLogging() {
             var resultTrigramMap = foundTrigramMap
             coroutineScope {
                 if (foundTrigramMap == null) {
-                    val trigramMap = TrigramMap()
+                    val trigramMap = createNewTrigramMap()
                     LOG.finest("created new trigramMap for folder $folderPath")
                     val indexingContext = TrigramIndexingContext(folderPath, indexingState, resultPathQueue, trigramMap)
                     coroutineScope {

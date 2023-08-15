@@ -1,5 +1,6 @@
 package impl.trigram
 
+import impl.trigram.map.TrigramMap
 import kotlinx.coroutines.channels.Channel
 import java.nio.file.Path
 import java.util.*
