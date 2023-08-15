@@ -102,6 +102,7 @@ class TrigramSearchApi : SearchApi, WithLogging() {
         settings: SearchSettings
     ): IndexingAndSearchingState {
         validatePath(folderPath)
+        validateToken(token)
         if (!indexInProcess.compareAndSet(false, true)) {
             throw BusySearchException("Cannot create index while indexing")
         }
