@@ -9,10 +9,7 @@ import impl.trigram.map.SimpleTrigramMap
 import impl.trigram.map.TimedTrigramMap
 import impl.trigram.map.TrigramMap
 import impl.trigram.map.TrigramMapType
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
+import kotlinx.coroutines.*
 import utils.WithLogging
 import java.nio.file.Path
 import java.util.concurrent.CompletableFuture
@@ -33,6 +30,17 @@ class TrigramSearchApi(trigramMapType: TrigramMapType = TrigramMapType.SIMPLE) :
      * True - it is going some indexing, false - no
      * */
     private val indexInProcess = AtomicBoolean(false)
+
+    /**
+     * Flag for incremental indexing activity
+     * True - it is going indexing, false - no
+     * */
+    private val incrementalIndexingInProcess = AtomicBoolean(false)
+
+    /**
+     * job for permanent incremental indexing
+     * */
+    private var incrementalIndexingJob: Job? = null
 
     /**
      * Get index state. Using fo tests. It is not from interface
@@ -136,6 +144,34 @@ class TrigramSearchApi(trigramMapType: TrigramMapType = TrigramMapType.SIMPLE) :
         searchingState.addCancellationAction(::cancelSearching)
         indexingAndSearchingState.addCancellationAction(::cancelIndexingAndSearching)
         return indexingAndSearchingState
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    override fun startIncrementalIndexing(): Boolean {
+        if (!incrementalIndexingInProcess.compareAndSet(false, true)) {
+            return false
+        }
+        incrementalIndexingJob = GlobalScope.launch {
+            /*todo listener */
+            while (true) {
+                delay(100)
+                LOG.info("incremental indexing in process")
+            }
+        }
+        return true
+    }
+
+    override fun stopIncrementalIndexing(): Boolean {
+        if (!incrementalIndexingInProcess.compareAndSet(true, false)) {
+            return false
+        }
+        runBlocking {
+            incrementalIndexingJob?.cancel(CancellationException("Stopped incremental indexing"))
+            incrementalIndexingJob?.join()
+            incrementalIndexingJob = null
+            LOG.info("incremental indexing is stopped")
+        }
+        return true
     }
 
     /**

@@ -35,6 +35,16 @@ interface SearchApi {
     ): IndexingAndSearchingState
 
     /**
+     * Starts background incremental indexing
+     */
+    fun startIncrementalIndexing(): Boolean
+
+    /**
+     * Stops background incremental indexing
+     */
+    fun stopIncrementalIndexing(): Boolean
+
+    /**
      * Checks if exists already index for folder
      * On fresh start should be false
      * After successful indexing at folder, it should be true normally

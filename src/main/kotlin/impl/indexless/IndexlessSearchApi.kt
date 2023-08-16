@@ -3,6 +3,7 @@ package impl.indexless
 import api.*
 import api.exception.IllegalArgumentSearchException
 import api.exception.NotDirSearchException
+import api.exception.SearchException
 import utils.WithLogging
 import utils.indicesOf
 import java.nio.file.Files
@@ -57,6 +58,14 @@ class IndexlessSearchApi : SearchApi, WithLogging() {
             indexingState = createIndexAtFolder(folderPath),
             searchingState = searchString(folderPath, token, settings)
         )
+
+    override fun startIncrementalIndexing(): Boolean {
+        throw SearchException("Not supported incremental indexing")
+    }
+
+    override fun stopIncrementalIndexing(): Boolean {
+        throw SearchException("Not supported incremental indexing")
+    }
 
     /**
      * This implementation never has index at any folder. So it is false.
