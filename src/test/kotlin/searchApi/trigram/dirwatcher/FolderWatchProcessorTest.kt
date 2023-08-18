@@ -13,6 +13,7 @@ import org.junit.jupiter.api.assertAll
 import searchApi.common.commonSetup
 import java.io.File
 import java.nio.file.Path
+import kotlin.io.path.writeText
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 
@@ -191,9 +192,7 @@ class FolderWatchProcessorTest {
         watcherHolder.addWatch(indexFolder)
 
         runBlocking {
-            launch {
-                folderWatchProcessor.asyncProcessEvents(fileChangeReactor)
-            }
+            launch { folderWatchProcessor.asyncProcessEvents(fileChangeReactor) }
             launch {
                 delay(10)
                 filePath1.toFile().createNewFile()
@@ -218,6 +217,70 @@ class FolderWatchProcessorTest {
         )
     }
 
+    /**
+     * Checking reusage fileChangeReactor, folderWatchProcessor and watcherHolder with setup and cleanup
+     * Same actions causes same result
+     * */
+    @Test
+    fun twoSessionsTest() {
+        val innerFolderPath = indexFolder.resolve("a")
+        innerFolderPath.toFile().mkdir()
+        val filePath = innerFolderPath.resolve("a.txt")
+
+        val watcherHolder = WatcherHolder()
+        val fileChangeReactor = SaveInListFileChangeReactor()
+        val folderWatchProcessor = FolderWatchProcessor(watcherHolder)
+        //session 1
+
+        watcherHolder.setup()
+        watcherHolder.addWatch(indexFolder)
+
+        runBlocking {
+            launch { folderWatchProcessor.asyncProcessEvents(fileChangeReactor) }
+            launch {
+                delay(10)
+                filePath.toFile().createNewFile()
+                delay(10)
+                filePath.writeText("aaaa")
+                delay(10)
+                filePath.toFile().delete()
+                delay(10)
+                watcherHolder.cleanUp()
+            }
+        }
+        val created1 = fileChangeReactor.createdFiles.clone()
+        val modified1 = fileChangeReactor.modifiedFiles.clone()
+        val deleted1 = fileChangeReactor.deletedFiles.clone()
+        fileChangeReactor.cleanAll()
+
+        //session 2
+        watcherHolder.setup()
+        watcherHolder.addWatch(indexFolder)
+
+        runBlocking {
+            launch { folderWatchProcessor.asyncProcessEvents(fileChangeReactor) }
+            launch {
+                delay(10)
+                filePath.toFile().createNewFile()
+                delay(10)
+                filePath.writeText("aaaa")
+                delay(10)
+                filePath.toFile().delete()
+                delay(10)
+                watcherHolder.cleanUp()
+            }
+        }
+        val created2 = fileChangeReactor.createdFiles
+        val modified2 = fileChangeReactor.modifiedFiles
+        val deleted2 = fileChangeReactor.deletedFiles
+
+        assertAll(
+            { Assertions.assertEquals(created1, created2, "created files are the same in 2 sessions") },
+            { Assertions.assertEquals(modified1, modified2, "modified files are the same in 2 sessions") },
+            { Assertions.assertEquals(deleted1, deleted2, "deleted files are the same in 2 session") }
+        )
+    }
+
     class SaveInListFileChangeReactor : FileChangeReactor {
         val modifiedFiles = ArrayList<Path>()
         val createdFiles = ArrayList<Path>()
@@ -233,6 +296,12 @@ class FolderWatchProcessorTest {
 
         override fun reactOnModifiedFile(folder: Path, filePath: Path) {
             modifiedFiles.add(filePath)
+        }
+
+        fun cleanAll() {
+            modifiedFiles.clear()
+            createdFiles.clear()
+            deletedFiles.clear()
         }
     }
 
