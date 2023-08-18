@@ -3,6 +3,7 @@ package impl.trigram.map
 import api.exception.RuntimeSearchException
 import utils.WithLogging
 import java.nio.file.Path
+import java.nio.file.attribute.FileTime
 
 /**
  * Structure for saving index, based on saving set of file paths where it can be found 3 sequencial characters
@@ -59,6 +60,19 @@ class SimpleTrigramMap : TrigramMap, WithLogging() {
                     for (path in paths) add(path)
                 }
             )
+    }
+
+    override fun registerPathTime(path: Path) {
+        /*do nothing*/
+    }
+
+    override fun getRegisteredPathTime(path: Path): FileTime? = null
+    override fun addAllCharTripletsByPathAndRegisterTime(charTriplets: Set<String>, path: Path) {
+        /*do nothing*/
+    }
+
+    override fun removeAllCharTripletsByPathAndUnregisterTime(path: Path) {
+        /*do nothing*/
     }
 
 }

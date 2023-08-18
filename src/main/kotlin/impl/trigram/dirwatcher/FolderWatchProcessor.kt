@@ -26,15 +26,20 @@ class FolderWatchProcessor(
     suspend fun asyncProcessEvents(fileChangeReactor: FileChangeReactor) = coroutineScope {
         try {
             LOG.finest("started")
+            LOG.finest("started while(true)")
             while (true) {
-                LOG.finest("started while(true)")
+                LOG.finest("started another iteration while(true)")
                 if (!isActive) return@coroutineScope
                 LOG.finest("before makeCancelablePoint")
                 makeCancelablePoint()
                 LOG.finest("before taking key")
                 // wait for key to be signaled
                 val key: WatchKey = withContext(Dispatchers.IO) { watcherHolder.watcher.take() }
-                if (processEventsByWatchKey(key, fileChangeReactor)) continue
+                if (!processEventsByWatchKey(key, fileChangeReactor)) {
+                    LOG.finest("couldn't process watch key - so we go to next iteration")
+                    continue
+                }
+                LOG.finest("after successfully processing watch key")
                 // Reset the key -- this step is critical if you want to
                 // receive further watch events.  If the key is no longer valid,
                 // the directory is inaccessible so exit the loop.
@@ -61,7 +66,7 @@ class FolderWatchProcessor(
         val pathAndSubPath = watcherHolder.getPathAndSubPath(key)
         if (pathAndSubPath == null) {
             LOG.severe("WatchKey not recognized!!")
-            return true
+            return false
         }
         val (folder: Path, innerFolder: Path) = pathAndSubPath
         LOG.finest("folder:$folder, innerFolder:$innerFolder")
@@ -70,7 +75,7 @@ class FolderWatchProcessor(
             makeCancelablePoint()
             processEvent(folder, innerFolder, event, fileChangeReactor)
         }
-        return false
+        return true
     }
 
     /**

@@ -5,7 +5,9 @@ import api.exception.BusySearchException
 import api.exception.IllegalArgumentSearchException
 import api.exception.NoIndexSearchException
 import api.exception.NotDirSearchException
+import impl.trigram.dirwatcher.FolderWatchProcessor
 import impl.trigram.dirwatcher.WatcherHolder
+import impl.trigram.incremental.TrigramIncrementalIndexer
 import impl.trigram.map.SimpleTrigramMap
 import impl.trigram.map.TimedTrigramMap
 import impl.trigram.map.TrigramMap
@@ -21,7 +23,7 @@ import kotlin.io.path.isDirectory
  * Trigram implementation of Search Api without indexing and any optimizations.
  * Can be used as etalon to check results, but not for performance and flexibility.
  * */
-class TrigramSearchApi(trigramMapType: TrigramMapType = TrigramMapType.SIMPLE) : SearchApi, WithLogging() {
+class TrigramSearchApi(trigramMapType: TrigramMapType = TrigramMapType.TIMED) : SearchApi, WithLogging() {
     /**
      * Flag for incremental indexing activity
      * True - it is going indexing, false - no
@@ -41,8 +43,8 @@ class TrigramSearchApi(trigramMapType: TrigramMapType = TrigramMapType.SIMPLE) :
         { path: Path -> if (incrementalIndexingInProcess.get()) watcherHolder.addWatch(path) }
     )
     private val searcher = TrigramSearcher()
-
-
+    private val incrementalIndexer: TrigramIncrementalIndexer = TrigramIncrementalIndexer(trigramMapByFolder)
+    private val folderWatchProcessor = FolderWatchProcessor(watcherHolder)
 
     /**
      * job for permanent incremental indexing
@@ -160,18 +162,21 @@ class TrigramSearchApi(trigramMapType: TrigramMapType = TrigramMapType.SIMPLE) :
         }
 
         val job = GlobalScope.launch {
+            LOG.info("started incremental indexing")
+            LOG.info("setting up watcherHolder")
             watcherHolder.setup()
             //creating watch for all paths
+            LOG.info("adding all existed indexed folders to watcher holder")
             trigramMapByFolder.keys.forEach { watcherHolder.addWatch(it) }
-            /*todo listener */
-            while (true) {
-                delay(100)
-                LOG.info("incremental indexing in process")
-            }
+            //subscribing events from fil system and send to incrementalIndexer
+            LOG.info("running asyncProcessEvents in folderWatchProcessor")
+            launch { folderWatchProcessor.asyncProcessEvents(incrementalIndexer) }
+            //read events and apply to index (trigramMapByFolder)
+            LOG.info("running asyncProcessFileChanges in incrementalIndexer")
+            launch { incrementalIndexer.asyncProcessFileChanges() }
         }
         job.invokeOnCompletion {
-            //removing all watches when incremental indexing finishes
-            watcherHolder.cleanUp()
+            LOG.info("finished incremental indexing")
         }
         incrementalIndexingJob = job
         return true
@@ -182,8 +187,13 @@ class TrigramSearchApi(trigramMapType: TrigramMapType = TrigramMapType.SIMPLE) :
             return false
         }
         runBlocking {
+            //removing all watches when incremental indexing finishes
+            LOG.info("cleaning up watcherHolder")
+            watcherHolder.cleanUp()
+            LOG.info("sending cancel to incrementalIndexingJob")
             incrementalIndexingJob?.cancel(CancellationException("Stopped incremental indexing"))
             incrementalIndexingJob?.join()
+            LOG.info("set link to incrementalIndexingJob as null")
             incrementalIndexingJob = null
             LOG.info("incremental indexing is stopped")
         }

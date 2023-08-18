@@ -199,6 +199,7 @@ internal class TrigramIndexer(
             LOG.finest("received indexed path and saving to state: $path")
             val indexedFilesNumber = indexingContext.indexingState.addIndexedPathToBuffer(path)
             indexingContext.resultPathQueue.add(path)
+            indexingContext.trigramMap.registerPathTime(path)
             LOG.finest("successfully indexed $indexedFilesNumber files")
         }
         LOG.finest("finished")

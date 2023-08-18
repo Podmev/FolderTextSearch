@@ -6,10 +6,6 @@ import java.nio.file.Path
 import java.nio.file.attribute.FileTime
 import kotlin.io.path.getLastModifiedTime
 
-/*TODO add support:
-*  - timestamp
-* */
-
 /**
  * Structure for saving index, based on saving set of file paths where it can be found 3 sequencial characters
  * Here: charTriplet is 3 sequencial characters, like "abc", "d3d", "213"
@@ -57,7 +53,7 @@ class TimedTrigramMap : TrigramMap, WithLogging() {
     /**
      * Registes modification time of path, actual at current moment
      * */
-    fun registerPathTime(path: Path) {
+    override fun registerPathTime(path: Path) {
         val modifiedTime: FileTime = path.getLastModifiedTime()
         timeByPath[path] = modifiedTime
     }
@@ -65,7 +61,35 @@ class TimedTrigramMap : TrigramMap, WithLogging() {
     /**
      * Gets modification time of path saved here before
      * */
-    fun getRegisteredPathTime(path: Path): FileTime? = timeByPath[path]
+    override fun getRegisteredPathTime(path: Path): FileTime? = timeByPath[path]
+
+    override fun addAllCharTripletsByPathAndRegisterTime(charTriplets: Set<String>, path: Path) {
+        LOG.info("started")
+        timeByPath[path] = path.getLastModifiedTime()
+        tripletsByPath[path] = charTriplets.toMutableSet()
+        for (charTriplet in charTriplets) {
+            val foundPaths: MutableSet<Path>? = pathsByTriplet[charTriplet]
+            if (foundPaths != null) {
+                foundPaths.add(path)
+            } else {
+                pathsByTriplet[charTriplet] = mutableSetOf(path)
+            }
+        }
+        LOG.info("finished with $pathsByTriplet, $tripletsByPath")
+    }
+
+    override fun removeAllCharTripletsByPathAndUnregisterTime(path: Path) {
+        LOG.info("started")
+        timeByPath.remove(path)
+        val oldTriplets = tripletsByPath[path]
+        if (oldTriplets != null) {
+            for (charTriplet in oldTriplets.iterator()) {
+                pathsByTriplet[charTriplet]?.remove(path)
+            }
+        }
+        tripletsByPath.remove(path)
+        LOG.info("finished with $pathsByTriplet, $tripletsByPath")
+    }
 
     private fun addCharTripletByPathToPathsByTriplet(
         charTriplet: String, path: Path
