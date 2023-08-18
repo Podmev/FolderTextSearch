@@ -26,7 +26,7 @@ import kotlin.streams.asSequence
  * Only logic of constructing index for TrigramSearApi
  * */
 internal class TrigramIndexer(
-    val createNewTrigramMap: () -> TrigramMap
+    val createNewTrigramMap: () -> TrigramMap, val addPathFolderWatch: (Path) -> Unit
 ) : WithLogging() {
     /**
      * Main logic of indexing, checks if index is created already.
@@ -64,6 +64,7 @@ internal class TrigramIndexer(
                     }
                     trigramMapByFolder[folderPath] = trigramMap
                     resultTrigramMap = trigramMap
+                    addPathFolderWatch(folderPath)
                 }
             }
             //here we wait all coroutines to finish
@@ -101,9 +102,7 @@ internal class TrigramIndexer(
         withContext(Dispatchers.IO) {
             Files.walk(indexingContext.folderPath)
         }.use { it: Stream<Path> ->
-            it.asSequence()
-                .filter { path -> path.isRegularFile() }
-                .asFlow().onEach { path ->
+            it.asSequence().filter { path -> path.isRegularFile() }.asFlow().onEach { path ->
                     LOG.finest("visiting file by path $path")
                     indexingContext.visitedPathChannel.send(path)
                     val visitedFilesNumber = indexingContext.indexingState.addVisitedPathToBuffer(path)
@@ -152,13 +151,9 @@ internal class TrigramIndexer(
     private suspend fun constructIndexForFile(path: Path, indexingContext: TrigramIndexingContext): Boolean {
         try {
             path.useLines { lines ->
-                lines
-                    .forEachIndexed { lineIndex, line ->
+                lines.forEachIndexed { lineIndex, line ->
                         constructIndexForLine(
-                            path = path,
-                            line = line,
-                            lineIndex = lineIndex,
-                            indexingContext = indexingContext
+                            path = path, line = line, lineIndex = lineIndex, indexingContext = indexingContext
                         )
                     }
             }
@@ -180,10 +175,7 @@ internal class TrigramIndexer(
      * Runs with sliding window of 3 characters and sends to triplet in path channel.
      * */
     private suspend fun constructIndexForLine(
-        path: Path,
-        line: String,
-        lineIndex: Int,
-        indexingContext: TrigramIndexingContext
+        path: Path, line: String, lineIndex: Int, indexingContext: TrigramIndexingContext
     ) {
         LOG.finest("started line $lineIndex for path: $path")
         if (line.length < 3) return

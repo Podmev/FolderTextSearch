@@ -5,6 +5,7 @@ import api.exception.BusySearchException
 import api.exception.IllegalArgumentSearchException
 import api.exception.NoIndexSearchException
 import api.exception.NotDirSearchException
+import impl.trigram.dirwatcher.WatcherHolder
 import impl.trigram.map.SimpleTrigramMap
 import impl.trigram.map.TimedTrigramMap
 import impl.trigram.map.TrigramMap
@@ -21,9 +22,11 @@ import kotlin.io.path.isDirectory
  * Can be used as etalon to check results, but not for performance and flexibility.
  * */
 class TrigramSearchApi(trigramMapType: TrigramMapType = TrigramMapType.SIMPLE) : SearchApi, WithLogging() {
-    private val trigramMapByFolder: MutableMap<Path, TrigramMap> = mutableMapOf()
-    private val indexer = TrigramIndexer { getTrigramMapCreatorByType(trigramMapType) }
-    private val searcher = TrigramSearcher()
+    /**
+     * Flag for incremental indexing activity
+     * True - it is going indexing, false - no
+     * */
+    private val incrementalIndexingInProcess = AtomicBoolean(false)
 
     /**
      * Flag for indexing activity
@@ -31,11 +34,15 @@ class TrigramSearchApi(trigramMapType: TrigramMapType = TrigramMapType.SIMPLE) :
      * */
     private val indexInProcess = AtomicBoolean(false)
 
-    /**
-     * Flag for incremental indexing activity
-     * True - it is going indexing, false - no
-     * */
-    private val incrementalIndexingInProcess = AtomicBoolean(false)
+    private val trigramMapByFolder: MutableMap<Path, TrigramMap> = mutableMapOf()
+    private val watcherHolder = WatcherHolder()
+    private val indexer = TrigramIndexer(
+        { getTrigramMapCreatorByType(trigramMapType) },
+        { path: Path -> if (incrementalIndexingInProcess.get()) watcherHolder.addWatch(path) }
+    )
+    private val searcher = TrigramSearcher()
+
+
 
     /**
      * job for permanent incremental indexing
@@ -151,13 +158,22 @@ class TrigramSearchApi(trigramMapType: TrigramMapType = TrigramMapType.SIMPLE) :
         if (!incrementalIndexingInProcess.compareAndSet(false, true)) {
             return false
         }
-        incrementalIndexingJob = GlobalScope.launch {
+
+        val job = GlobalScope.launch {
+            watcherHolder.setup()
+            //creating watch for all paths
+            trigramMapByFolder.keys.forEach { watcherHolder.addWatch(it) }
             /*todo listener */
             while (true) {
                 delay(100)
                 LOG.info("incremental indexing in process")
             }
         }
+        job.invokeOnCompletion {
+            //removing all watches when incremental indexing finishes
+            watcherHolder.cleanUp()
+        }
+        incrementalIndexingJob = job
         return true
     }
 
@@ -187,6 +203,7 @@ class TrigramSearchApi(trigramMapType: TrigramMapType = TrigramMapType.SIMPLE) :
             throw BusySearchException("Cannot remove full index while indexing")
         }
         val result = trigramMapByFolder.remove(folderPath) != null
+        watcherHolder.removeWatch(folderPath)
         indexInProcess.set(false)
         return result
     }
@@ -199,6 +216,7 @@ class TrigramSearchApi(trigramMapType: TrigramMapType = TrigramMapType.SIMPLE) :
             throw BusySearchException("Cannot remove full index while indexing")
         }
         trigramMapByFolder.clear()
+        watcherHolder.removeAllWatches()
         indexInProcess.set(false)
     }
 
