@@ -66,9 +66,19 @@ class WatcherHolder : WithLogging() {
     }
 
     /**
+     * Checks if the folder is registered.
+     * */
+    fun hasWatchByFolder(folder: Path): Boolean = watchMapByFolder.contains(folder)
+
+    /**
      * Gets the pair of main folder and inner folder by watchKey and null if it is not found.
      * */
     fun getPathAndSubPath(watchKey: WatchKey): Pair<Path, Path>? = watchMapByKey[watchKey]
+
+    /**
+     * Gets the pairs of watch and inner folder by main folder and null if it is not found.
+     * */
+    fun getWatchKeysWithPath(folder: Path): List<Pair<WatchKey, Path>>? = watchMapByFolder[folder]?.toList()
 
     /**
      * Removes watchKey and associated entries from maps.
@@ -82,7 +92,6 @@ class WatcherHolder : WithLogging() {
         watchMapByFolder.remove(folder)
         return true
     }
-
 
     /**
      * Removes all watchKeys and associated entries from maps.
@@ -111,15 +120,9 @@ class WatcherHolder : WithLogging() {
     }
 
     /**
-     * Checks if the folder is registered.
-     * */
-    private fun hasWatchByFolder(folder: Path): Boolean = watchMapByFolder.contains(folder)
-
-    /**
      * Creates new watcher.
      * */
     private fun createNewWatcherService() = FileSystems.getDefault().newWatchService()
-
 
     /**
      * Register inner folder of folder (can be several layers).
@@ -149,7 +152,6 @@ class WatcherHolder : WithLogging() {
         }
         watchMapByFolder[folder] = mutableMapOf(Pair(watchKey, innerFolder))
     }
-
 
     /**
      * Registers folder recursively by walking only subfolders.
