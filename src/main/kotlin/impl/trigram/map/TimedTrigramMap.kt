@@ -25,7 +25,7 @@ class TimedTrigramMap : TrigramMap, WithLogging() {
         validateCharTriplet(charTriplet)
         addCharTripletByPathToPathsByTriplet(charTriplet, path)
         addCharTripletByPathToTripletsByPath(charTriplet, path)
-        LOG.finest("add by triplet \"$charTriplet\" new path: $path")
+        LOG.info("add by triplet \"$charTriplet\" new path: $path")
     }
 
     /**
@@ -98,9 +98,9 @@ class TimedTrigramMap : TrigramMap, WithLogging() {
         if (existingPathsWithTriplet != null) {
             val isAdded = existingPathsWithTriplet.add(path)
             if (isAdded) {
-                LOG.finest("add by triplet \"$charTriplet\" (now total ${existingPathsWithTriplet.size}) new path: $path")
+                LOG.info("add by triplet \"$charTriplet\" (now total ${existingPathsWithTriplet.size}) new path: $path")
             } else {
-                LOG.finest("duplicate by triplet \"$charTriplet\" (saved before) path $path")
+                LOG.info("duplicate by triplet \"$charTriplet\" (saved before) path $path")
             }
             return
         }
@@ -114,9 +114,9 @@ class TimedTrigramMap : TrigramMap, WithLogging() {
         if (existingTripletsWithPath != null) {
             val isAdded = existingTripletsWithPath.add(charTriplet)
             if (isAdded) {
-                LOG.finest("add new triplet \"$charTriplet\" (now total ${existingTripletsWithPath.size}) by path: $path")
+                LOG.info("add new triplet \"$charTriplet\" (now total ${existingTripletsWithPath.size}) by path: $path")
             } else {
-                LOG.finest("duplicate triplet \"$charTriplet\" (saved before) by path $path")
+                LOG.info("duplicate triplet \"$charTriplet\" (saved before) by path $path")
             }
             return
         }

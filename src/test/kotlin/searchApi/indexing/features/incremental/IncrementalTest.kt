@@ -45,7 +45,7 @@ class IncrementalTest {
      * Changes happened in different inner folder
      * */
     @Test
-    fun incrementalDifferentInnerFolderThenHaveUpdatesTest() {
+    fun differentInnerFolderThenHaveUpdatesTest() {
         val searchApi = searchApiGenerator()
         val text = "abcdefg"
 
@@ -58,7 +58,6 @@ class IncrementalTest {
 
         val file2: File = indexFolder.resolve("bbb").resolve("a.txt").toFile().also { it.parentFile.mkdirs() }
         file2.writeText(text)
-        file1.writeText(text + text)
         TimeUnit.MILLISECONDS.sleep(100)
 
         val tokensAfterChange: List<TokenMatch> = searchApi.syncSearchToken(indexFolder, commonToken)
@@ -74,10 +73,10 @@ class IncrementalTest {
 
     /**
      * Checking have updates on files when using incremental indexing if indexed folder changed.
-     * Changes happened in same files
+     * Changes happened in same inner folder
      * */
     @Test
-    fun incrementalSameInnerFolderNewFileThenHaveUpdatesTest() {
+    fun sameInnerFolderNewFileThenHaveUpdatesTest() {
         val searchApi = searchApiGenerator()
         val text = "abcdefg"
         val innerFolder = indexFolder.resolve("aaa")
@@ -101,6 +100,71 @@ class IncrementalTest {
             tokensBeforeChange,
             tokensAfterChange,
             "Search gives the different result with incremental indexing"
+        )
+    }
+
+    /**
+     * Checking have updates on files when using incremental indexing,
+     * if firstly was performed index, then folder changed and only after started incremental indexing.
+     * Changes happened in different inner folder
+     * */
+    @Test
+    fun differentInnerFolderIncrementalIndexingStartsAfterIndexAndChangeThenHaveUpdatesTest() {
+        val searchApi = searchApiGenerator()
+        val text = "abcdefg"
+
+        val file1: File = indexFolder.resolve("aaa").resolve("a.txt").toFile().also { it.parentFile.mkdirs() }
+        file1.writeText(text)
+
+        searchApi.syncPerformIndex(indexFolder)
+        val tokensBeforeChange: List<TokenMatch> = searchApi.syncSearchToken(indexFolder, commonToken)
+
+        val file2: File = indexFolder.resolve("bbb").resolve("a.txt").toFile().also { it.parentFile.mkdirs() }
+        file2.writeText(text)
+        TimeUnit.MILLISECONDS.sleep(100)
+
+        searchApi.startIncrementalIndexing()
+
+        val tokensAfterChange: List<TokenMatch> = searchApi.syncSearchToken(indexFolder, commonToken)
+        searchApi.stopIncrementalIndexing()
+
+        Assertions.assertNotEquals(
+            tokensBeforeChange,
+            tokensAfterChange,
+            "Search gives the different result with incremental indexing even staring after changes"
+        )
+    }
+
+    /**
+     * Checking have updates on files when using incremental indexing,
+     * if firstly was performed index, then folder changed and only after started incremental indexing.
+     * Changes happened in same inner folder
+     * */
+    @Test
+    fun sameInnerFolderIncrementalIndexingStartsAfterIndexAndChangeThenHaveUpdatesTest() {
+        val searchApi = searchApiGenerator()
+        val text = "abcdefg"
+
+        val sameInnerFolder = indexFolder.resolve("aaa")
+        val file1: File = sameInnerFolder.resolve("a.txt").toFile().also { it.parentFile.mkdirs() }
+        file1.writeText(text)
+
+        searchApi.syncPerformIndex(indexFolder)
+        val tokensBeforeChange: List<TokenMatch> = searchApi.syncSearchToken(indexFolder, commonToken)
+
+        val file2: File = sameInnerFolder.resolve("a.txt").toFile().also { it.parentFile.mkdirs() }
+        file2.writeText(text)
+        TimeUnit.MILLISECONDS.sleep(100)
+
+        searchApi.startIncrementalIndexing()
+
+        val tokensAfterChange: List<TokenMatch> = searchApi.syncSearchToken(indexFolder, commonToken)
+        searchApi.stopIncrementalIndexing()
+
+        Assertions.assertNotEquals(
+            tokensBeforeChange,
+            tokensAfterChange,
+            "Search gives the different result with incremental indexing even staring after changes"
         )
     }
 

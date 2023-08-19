@@ -55,14 +55,16 @@ class WatcherHolder : WithLogging() {
      * Everything gets saved in maps.
      * */
     fun addWatch(folder: Path): Boolean {
-        LOG.finest("started for path: $folder")
-        if (hasWatchByFolder(folder)) return false
-        LOG.finest("registering: $folder")
-        registerAll(folder)
-        LOG.finest("after registering all")
-        LOG.finest("watchMapByKey: ${watchMapByKey.size}: $watchMapByKey")
-        LOG.finest("watchMapByFolder: ${watchMapByFolder.size}: $watchMapByFolder")
-        return true
+        synchronized(innerWatcher) {
+            LOG.finest("started for path: $folder")
+            if (hasWatchByFolder(folder)) return false
+            LOG.finest("registering: $folder")
+            registerAll(folder)
+            LOG.finest("after registering all")
+            LOG.finest("watchMapByKey: ${watchMapByKey.size}: $watchMapByKey")
+            LOG.finest("watchMapByFolder: ${watchMapByFolder.size}: $watchMapByFolder")
+            return true
+        }
     }
 
     /**
@@ -84,13 +86,15 @@ class WatcherHolder : WithLogging() {
      * Removes watchKey and associated entries from maps.
      * */
     fun removeWatch(folder: Path): Boolean {
-        val innerMap = watchMapByFolder[folder] ?: return false
-        for (key in innerMap.keys) {
-            key.cancel()
-            watchMapByKey.remove(key)
+        synchronized(innerWatcher) {
+            val innerMap = watchMapByFolder[folder] ?: return false
+            for (key in innerMap.keys) {
+                key.cancel()
+                watchMapByKey.remove(key)
+            }
+            watchMapByFolder.remove(folder)
+            return true
         }
-        watchMapByFolder.remove(folder)
-        return true
     }
 
     /**
@@ -98,11 +102,13 @@ class WatcherHolder : WithLogging() {
      * After this method all maps are empty.
      * */
     fun removeAllWatches() {
-        for ((watchKey, _) in watchMapByKey) {
-            watchKey.cancel()
+        synchronized(innerWatcher) {
+            for ((watchKey, _) in watchMapByKey) {
+                watchKey.cancel()
+            }
+            watchMapByKey.clear()
+            watchMapByFolder.clear()
         }
-        watchMapByKey.clear()
-        watchMapByFolder.clear()
     }
 
     /**
