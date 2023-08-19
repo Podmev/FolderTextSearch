@@ -9,6 +9,8 @@ import utils.coroutines.makeCancelablePoint
 import java.io.IOException
 import java.nio.file.*
 import java.nio.file.StandardWatchEventKinds.*
+import java.nio.file.attribute.BasicFileAttributes
+import kotlin.io.path.isDirectory
 
 /**
  * Service to process events files from registered folders
@@ -87,7 +89,7 @@ class FolderWatchProcessor(
      *  - Depending on kind of event it fires one of three methods of FileChangeReactor
      * */
     @Suppress("UNCHECKED_CAST")
-    private suspend fun processEvent(
+    private fun processEvent(
         folder: Path, innerFolder: Path, event: WatchEvent<*>, fileChangeReactor: FileChangeReactor
     ) {
         val kind: WatchEvent.Kind<out Any> = event.kind()
@@ -96,33 +98,51 @@ class FolderWatchProcessor(
         if (kind === OVERFLOW) return
         // The filename is the context of the event.
         val filename: Path = (event as WatchEvent<Path>).context()
-        if (!checkFileIsPlain(filename, innerFolder)) return
+
 
         val filePath = innerFolder.resolve(filename)
-        when (kind) {
-            ENTRY_CREATE -> fileChangeReactor.reactOnCreatedFile(folder, filePath)
-            ENTRY_DELETE -> fileChangeReactor.reactOnDeletedFile(folder, filePath)
-            ENTRY_MODIFY -> fileChangeReactor.reactOnModifiedFile(folder, filePath)
+        LOG.finest("filename:${filename} is directory: ${filePath.isDirectory()}")
+        when {
+            filePath.isDirectory() -> processDirectoryEvent(kind, folder, filePath, fileChangeReactor)
+            else -> processRegularFileEvent(kind, folder, filePath, fileChangeReactor)
         }
         LOG.finest("changes $kind of file: folder: $folder, innerFolder:$folder, filename:$filename")
     }
 
-    //TODO check if it is needed
-    /**
-     * Verify that the new file is a text file
-     * */
-    private suspend fun checkFileIsPlain(filename: Path, innerFolder: Path): Boolean {
-        return try {
-            // Resolve the filename against the directory.
-            // If the filename is "test" and the directory is "foo",
-            // the resolved name is "test/foo".
-            val child: Path = innerFolder.resolve(filename)
-            withContext(Dispatchers.IO) {
-                Files.probeContentType(child)
-            } == "text/plain"
-        } catch (x: IOException) {
-            System.err.println(x)
-            false
+    private fun processDirectoryEvent(
+        kind: WatchEvent.Kind<out Any>, folder: Path, innerFolderPath: Path, fileChangeReactor: FileChangeReactor
+    ) {
+        LOG.finest("start processing directory $kind for $innerFolderPath")
+        when (kind) {
+            ENTRY_CREATE -> {
+                watcherHolder.addWatch(folder, innerFolderPath)
+
+                Files.walkFileTree(innerFolderPath, object : SimpleFileVisitor<Path>() {
+                    @Throws(IOException::class)
+                    override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
+                        LOG.finest("sending created file from new subfolder: $innerFolderPath: $file")
+                        fileChangeReactor.reactOnCreatedFile(folder, file)
+                        return FileVisitResult.CONTINUE
+                    }
+                })
+            }
+
+            ENTRY_DELETE -> {/*deleted directory is not interesting  */
+            }
+
+            ENTRY_MODIFY -> {/*modified directory is not interesting*/
+            }
+        }
+    }
+
+    private fun processRegularFileEvent(
+        kind: WatchEvent.Kind<out Any>, folder: Path, filePath: Path, fileChangeReactor: FileChangeReactor
+    ) {
+        LOG.finest("start processing regular file $kind for $filePath")
+        when (kind) {
+            ENTRY_CREATE -> fileChangeReactor.reactOnCreatedFile(folder, filePath)
+            ENTRY_DELETE -> fileChangeReactor.reactOnDeletedFile(folder, filePath)
+            ENTRY_MODIFY -> fileChangeReactor.reactOnModifiedFile(folder, filePath)
         }
     }
 

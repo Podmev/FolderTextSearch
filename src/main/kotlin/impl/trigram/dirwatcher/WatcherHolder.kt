@@ -53,13 +53,14 @@ class WatcherHolder : WithLogging() {
     /**
      * Adds folder (tree root) to structure. Creates watchKey for each subfolder.
      * Everything gets saved in maps.
+     * @param [subFolder] this folder is used when we need to add only subFolder of main folder
      * */
-    fun addWatch(folder: Path): Boolean {
+    fun addWatch(folder: Path, subFolder: Path = folder): Boolean {
         synchronized(innerWatcher) {
-            LOG.finest("started for path: $folder")
-            if (hasWatchByFolder(folder)) return false
+            LOG.finest("started for path: $folder${if (subFolder != folder) ", subfolder = $subFolder" else ""}")
+            if (hasWatchByFolder(folder) && subFolder == folder) return false
             LOG.finest("registering: $folder")
-            registerAll(folder)
+            registerAll(folder, subFolder)
             LOG.finest("after registering all")
             LOG.finest("watchMapByKey: ${watchMapByKey.size}: $watchMapByKey")
             LOG.finest("watchMapByFolder: ${watchMapByFolder.size}: $watchMapByFolder")
@@ -163,13 +164,13 @@ class WatcherHolder : WithLogging() {
      * Registers folder recursively by walking only subfolders.
      * */
     @Throws(IOException::class)
-    private fun registerAll(start: Path) {
+    private fun registerAll(start: Path, mafinestlder: Path) {
         // register folder and sub-folders
         Files.walkFileTree(start, object : SimpleFileVisitor<Path>() {
             @Throws(IOException::class)
             override fun preVisitDirectory(folder: Path, attrs: BasicFileAttributes): FileVisitResult {
                 LOG.finest("preVisit folder: $folder")
-                register(start, folder)
+                register(mafinestlder, folder)
                 return FileVisitResult.CONTINUE
             }
         })

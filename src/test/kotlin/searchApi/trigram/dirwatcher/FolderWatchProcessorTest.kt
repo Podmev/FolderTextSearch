@@ -13,6 +13,9 @@ import org.junit.jupiter.api.assertAll
 import searchApi.common.commonSetup
 import java.io.File
 import java.nio.file.Path
+import java.util.*
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.deleteRecursively
 import kotlin.io.path.writeText
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -22,7 +25,11 @@ import kotlin.test.BeforeTest
  * */
 class FolderWatchProcessorTest {
     private val commonFolder: Path = commonSetup.commonPath
-    private val indexFolder: Path = commonFolder.resolve("tempFolder")
+
+    /**
+     * Using unique temp folder name to cut influence from different tests
+     * */
+    private val indexFolder: Path = commonFolder.resolve("tempFolder${UUID.randomUUID()}")
 
     @BeforeTest
     fun init() {
@@ -205,7 +212,7 @@ class FolderWatchProcessorTest {
             }
         }
         assertAll(
-            { Assertions.assertEquals(emptyList<Path>(), fileChangeReactor.modifiedFiles, "no modified files") },
+            { Assertions.assertEquals(emptyList<Path>(), fileChangeReactor.deletedFiles, "no deleted files") },
             { Assertions.assertEquals(emptyList<Path>(), fileChangeReactor.modifiedFiles, "no modified files") },
             {
                 Assertions.assertEquals(
@@ -278,6 +285,104 @@ class FolderWatchProcessorTest {
             { Assertions.assertEquals(created1, created2, "created files are the same in 2 sessions") },
             { Assertions.assertEquals(modified1, modified2, "modified files are the same in 2 sessions") },
             { Assertions.assertEquals(deleted1, deleted2, "deleted files are the same in 2 session") }
+        )
+    }
+
+    /**
+     * Checking receiving events for creating 3 files from new inner folder
+     * */
+    @Test
+    fun newInnerFolderCreating3FilesTest() {
+        val watcherHolder = WatcherHolder()
+        val fileChangeReactor = SaveInListFileChangeReactor()
+        val folderWatchProcessor = FolderWatchProcessor(watcherHolder)
+
+        val innerFolderPath1 = indexFolder.resolve("a")
+        val innerFolderPath2 = indexFolder.resolve("b")
+        innerFolderPath1.toFile().mkdir()
+        val filePath0 = innerFolderPath1.resolve("a.txt")
+        filePath0.toFile().createNewFile()
+        //innerFolderPath2 is not created yet
+        val filePath1 = innerFolderPath2.resolve("a.txt")
+        val filePath2 = innerFolderPath2.resolve("b.txt")
+        val filePath3 = innerFolderPath2.resolve("c.txt")
+        val filePaths = listOf(filePath1, filePath2, filePath3)
+        watcherHolder.setup()
+        watcherHolder.addWatch(indexFolder)
+
+        runBlocking {
+            launch { folderWatchProcessor.asyncProcessEvents(fileChangeReactor) }
+            launch {
+                delay(10)
+                innerFolderPath2.toFile().mkdir()
+                delay(10)
+                filePath1.toFile().createNewFile()
+                delay(10)
+                filePath2.toFile().createNewFile()
+                delay(10)
+                filePath3.toFile().createNewFile()
+                delay(10)
+                watcherHolder.cleanUp()
+            }
+        }
+        assertAll(
+            { Assertions.assertEquals(emptyList<Path>(), fileChangeReactor.deletedFiles, "no deleted files") },
+            { Assertions.assertEquals(emptyList<Path>(), fileChangeReactor.modifiedFiles, "no modified files") },
+            {
+                Assertions.assertEquals(
+                    /* expected = */ filePaths,
+                    /* actual = */ fileChangeReactor.createdFiles,
+                    /* message = */ "3 created files"
+                )
+            },
+        )
+    }
+
+    /**
+     * Checking receiving events for deleting 3 files from inner folder, which was deleted with 3 files inside
+     * */
+    @OptIn(ExperimentalPathApi::class)
+    @Test
+    fun deletingInnerFolderWith3FilesTest() {
+        val watcherHolder = WatcherHolder()
+        val fileChangeReactor = SaveInListFileChangeReactor()
+        val folderWatchProcessor = FolderWatchProcessor(watcherHolder)
+
+        val innerFolderPath1 = indexFolder.resolve("a")
+        innerFolderPath1.toFile().mkdir()
+        val filePath0 = innerFolderPath1.resolve("a.txt")
+        filePath0.toFile().createNewFile()
+
+        val innerFolderPath2 = indexFolder.resolve("b")
+        innerFolderPath2.toFile().mkdir()
+        val filePath1 = innerFolderPath2.resolve("a.txt")
+        val filePath2 = innerFolderPath2.resolve("b.txt")
+        val filePath3 = innerFolderPath2.resolve("c.txt")
+        val filePaths = listOf(filePath1, filePath2, filePath3)
+        filePaths.forEach { it.toFile().createNewFile() }
+
+        watcherHolder.setup()
+        watcherHolder.addWatch(indexFolder)
+
+        runBlocking {
+            launch { folderWatchProcessor.asyncProcessEvents(fileChangeReactor) }
+            launch {
+                delay(10)
+                innerFolderPath2.deleteRecursively()
+                delay(10)
+                watcherHolder.cleanUp()
+            }
+        }
+        assertAll(
+            { Assertions.assertEquals(emptyList<Path>(), fileChangeReactor.createdFiles, "no created files") },
+            { Assertions.assertEquals(emptyList<Path>(), fileChangeReactor.modifiedFiles, "no modified files") },
+            {
+                Assertions.assertEquals(
+                    /* expected = */ filePaths,
+                    /* actual = */ fileChangeReactor.deletedFiles,
+                    /* message = */ "3 deleted files"
+                )
+            },
         )
     }
 
