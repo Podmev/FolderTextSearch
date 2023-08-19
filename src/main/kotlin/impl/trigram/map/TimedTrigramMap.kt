@@ -25,7 +25,7 @@ class TimedTrigramMap : TrigramMap, WithLogging() {
         validateCharTriplet(charTriplet)
         addCharTripletByPathToPathsByTriplet(charTriplet, path)
         addCharTripletByPathToTripletsByPath(charTriplet, path)
-        LOG.info("add by triplet \"$charTriplet\" new path: $path")
+        LOG.finest("add by triplet \"$charTriplet\" new path: $path")
     }
 
     /**
@@ -41,13 +41,9 @@ class TimedTrigramMap : TrigramMap, WithLogging() {
      * Deep cloning map with recreated sets
      * */
     override fun clonePathsByTripletsMap(): Map<String, Set<Path>> = buildMap {
-        for ((triplet, paths) in pathsByTriplet)
-            put(
-                key = triplet,
-                value = buildSet {
-                    for (path in paths) add(path)
-                }
-            )
+        for ((triplet, paths) in pathsByTriplet) put(key = triplet, value = buildSet {
+            for (path in paths) add(path)
+        })
     }
 
     /**
@@ -63,8 +59,11 @@ class TimedTrigramMap : TrigramMap, WithLogging() {
      * */
     override fun getRegisteredPathTime(path: Path): FileTime? = timeByPath[path]
 
+    override fun getAllRegisteredPathsWithTime(): List<Pair<Path, FileTime>> = timeByPath.toList()
+    override fun getAllRegisteredPaths(): List<Path> = timeByPath.keys.toList()
+
     override fun addAllCharTripletsByPathAndRegisterTime(charTriplets: Set<String>, path: Path) {
-        LOG.info("started")
+        LOG.finest("started")
         timeByPath[path] = path.getLastModifiedTime()
         tripletsByPath[path] = charTriplets.toMutableSet()
         for (charTriplet in charTriplets) {
@@ -75,11 +74,11 @@ class TimedTrigramMap : TrigramMap, WithLogging() {
                 pathsByTriplet[charTriplet] = mutableSetOf(path)
             }
         }
-        LOG.info("finished with $pathsByTriplet, $tripletsByPath")
+        LOG.finest("finished with $pathsByTriplet, $tripletsByPath")
     }
 
     override fun removeAllCharTripletsByPathAndUnregisterTime(path: Path) {
-        LOG.info("started")
+        LOG.finest("started")
         timeByPath.remove(path)
         val oldTriplets = tripletsByPath[path]
         if (oldTriplets != null) {
@@ -88,7 +87,7 @@ class TimedTrigramMap : TrigramMap, WithLogging() {
             }
         }
         tripletsByPath.remove(path)
-        LOG.info("finished with $pathsByTriplet, $tripletsByPath")
+        LOG.finest("finished with $pathsByTriplet, $tripletsByPath")
     }
 
     private fun addCharTripletByPathToPathsByTriplet(
@@ -98,9 +97,9 @@ class TimedTrigramMap : TrigramMap, WithLogging() {
         if (existingPathsWithTriplet != null) {
             val isAdded = existingPathsWithTriplet.add(path)
             if (isAdded) {
-                LOG.info("add by triplet \"$charTriplet\" (now total ${existingPathsWithTriplet.size}) new path: $path")
+                LOG.finest("add by triplet \"$charTriplet\" (now total ${existingPathsWithTriplet.size}) new path: $path")
             } else {
-                LOG.info("duplicate by triplet \"$charTriplet\" (saved before) path $path")
+                LOG.finest("duplicate by triplet \"$charTriplet\" (saved before) path $path")
             }
             return
         }
@@ -114,9 +113,9 @@ class TimedTrigramMap : TrigramMap, WithLogging() {
         if (existingTripletsWithPath != null) {
             val isAdded = existingTripletsWithPath.add(charTriplet)
             if (isAdded) {
-                LOG.info("add new triplet \"$charTriplet\" (now total ${existingTripletsWithPath.size}) by path: $path")
+                LOG.finest("add new triplet \"$charTriplet\" (now total ${existingTripletsWithPath.size}) by path: $path")
             } else {
-                LOG.info("duplicate triplet \"$charTriplet\" (saved before) by path $path")
+                LOG.finest("duplicate triplet \"$charTriplet\" (saved before) by path $path")
             }
             return
         }

@@ -28,15 +28,15 @@ interface FileChangeReactor {
  * */
 class LogFileChangeReactor : FileChangeReactor, WithLogging() {
     override fun reactOnCreatedFile(folder: Path, filePath: Path) {
-        LOG.info("Event created file $filePath in folder $folder")
+        LOG.finest("Event created file $filePath in folder $folder")
     }
 
     override fun reactOnDeletedFile(folder: Path, filePath: Path) {
-        LOG.info("Event deleted file $filePath in folder $folder")
+        LOG.finest("Event deleted file $filePath in folder $folder")
     }
 
     override fun reactOnModifiedFile(folder: Path, filePath: Path) {
-        LOG.info("Event modified file $filePath in folder $folder")
+        LOG.finest("Event modified file $filePath in folder $folder")
     }
 
 }

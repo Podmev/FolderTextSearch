@@ -8,6 +8,7 @@ import searchApi.common.commonSetup
 import java.io.File
 import java.nio.file.Path
 import java.nio.file.WatchKey
+import java.util.*
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.assertNotNull
@@ -17,8 +18,8 @@ import kotlin.test.assertNotNull
  * */
 class WatcherHolderTest {
     private val commonFolder: Path = commonSetup.commonPath
-    private val indexFolder1: Path = commonFolder.resolve("tempFolder1")
-    private val indexFolder2: Path = commonFolder.resolve("tempFolder2")
+    private val indexFolder1: Path = commonFolder.resolve("tempFolder1${UUID.randomUUID()}")
+    private val indexFolder2: Path = commonFolder.resolve("tempFolder2${UUID.randomUUID()}")
 
     @BeforeTest
     fun init() {

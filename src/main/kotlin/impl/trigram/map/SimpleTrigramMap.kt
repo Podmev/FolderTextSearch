@@ -67,6 +67,10 @@ class SimpleTrigramMap : TrigramMap, WithLogging() {
     }
 
     override fun getRegisteredPathTime(path: Path): FileTime? = null
+
+    override fun getAllRegisteredPathsWithTime(): List<Pair<Path, FileTime>> = emptyList()
+    override fun getAllRegisteredPaths(): List<Path> = emptyList()
+
     override fun addAllCharTripletsByPathAndRegisterTime(charTriplets: Set<String>, path: Path) {
         /*do nothing*/
     }

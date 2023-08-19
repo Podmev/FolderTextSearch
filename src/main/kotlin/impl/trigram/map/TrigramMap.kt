@@ -37,6 +37,16 @@ interface TrigramMap {
     fun getRegisteredPathTime(path: Path): FileTime?
 
     /**
+     * Gets list of all registered files with time
+     * */
+    fun getAllRegisteredPathsWithTime(): List<Pair<Path, FileTime>>
+
+    /**
+     * Gets list of all registered files
+     * */
+    fun getAllRegisteredPaths(): List<Path>
+
+    /**
      * Bulk operation for adding all char triplets by path, and register file
      * */
     fun addAllCharTripletsByPathAndRegisterTime(charTriplets: Set<String>, path: Path)

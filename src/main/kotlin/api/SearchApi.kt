@@ -36,8 +36,10 @@ interface SearchApi {
 
     /**
      * Starts background incremental indexing
+     *
+     * @param [withInitialUpdate] - set false if you don't need to update all folders on start
      */
-    fun startIncrementalIndexing(): Boolean
+    fun startIncrementalIndexing(withInitialUpdate: Boolean = true): Boolean
 
     /**
      * Stops background incremental indexing

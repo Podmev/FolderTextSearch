@@ -156,27 +156,34 @@ class TrigramSearchApi(trigramMapType: TrigramMapType = TrigramMapType.TIMED) : 
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    override fun startIncrementalIndexing(): Boolean {
+    override fun startIncrementalIndexing(withInitialUpdate: Boolean): Boolean {
         if (!incrementalIndexingInProcess.compareAndSet(false, true)) {
             return false
         }
 
         val job = GlobalScope.launch {
-            LOG.info("started incremental indexing")
-            LOG.info("setting up watcherHolder")
+            LOG.finest("started incremental indexing")
+            LOG.finest("setting up watcherHolder")
             watcherHolder.setup()
             //creating watch for all paths
-            LOG.info("adding all existed indexed folders to watcher holder")
+            LOG.finest("adding all existed indexed folders to watcher holder")
             trigramMapByFolder.keys.forEach { watcherHolder.addWatch(it) }
+            if (withInitialUpdate) {
+                //updating indices for all folder at start
+                coroutineScope {
+                    launch { incrementalIndexer.updateAllIndicesOnIncrementalIndexingStart() }
+                }
+            }
+
             //subscribing events from fil system and send to incrementalIndexer
-            LOG.info("running asyncProcessEvents in folderWatchProcessor")
+            LOG.finest("running asyncProcessEvents in folderWatchProcessor")
             launch { folderWatchProcessor.asyncProcessEvents(incrementalIndexer) }
             //read events and apply to index (trigramMapByFolder)
-            LOG.info("running asyncProcessFileChanges in incrementalIndexer")
+            LOG.finest("running asyncProcessFileChanges in incrementalIndexer")
             launch { incrementalIndexer.asyncProcessFileChanges() }
         }
         job.invokeOnCompletion {
-            LOG.info("finished incremental indexing")
+            LOG.finest("finished incremental indexing")
         }
         incrementalIndexingJob = job
         return true
@@ -188,14 +195,14 @@ class TrigramSearchApi(trigramMapType: TrigramMapType = TrigramMapType.TIMED) : 
         }
         runBlocking {
             //removing all watches when incremental indexing finishes
-            LOG.info("cleaning up watcherHolder")
+            LOG.finest("cleaning up watcherHolder")
             watcherHolder.cleanUp()
-            LOG.info("sending cancel to incrementalIndexingJob")
+            LOG.finest("sending cancel to incrementalIndexingJob")
             incrementalIndexingJob?.cancel(CancellationException("Stopped incremental indexing"))
             incrementalIndexingJob?.join()
-            LOG.info("set link to incrementalIndexingJob as null")
+            LOG.finest("set link to incrementalIndexingJob as null")
             incrementalIndexingJob = null
-            LOG.info("incremental indexing is stopped")
+            LOG.finest("incremental indexing is stopped")
         }
         return true
     }

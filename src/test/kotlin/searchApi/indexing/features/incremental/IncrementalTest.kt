@@ -124,6 +124,7 @@ class IncrementalTest {
         TimeUnit.MILLISECONDS.sleep(100)
 
         searchApi.startIncrementalIndexing()
+        TimeUnit.MILLISECONDS.sleep(100)
 
         val tokensAfterChange: List<TokenMatch> = searchApi.syncSearchToken(indexFolder, commonToken)
         searchApi.stopIncrementalIndexing()
@@ -152,11 +153,12 @@ class IncrementalTest {
         searchApi.syncPerformIndex(indexFolder)
         val tokensBeforeChange: List<TokenMatch> = searchApi.syncSearchToken(indexFolder, commonToken)
 
-        val file2: File = sameInnerFolder.resolve("a.txt").toFile().also { it.parentFile.mkdirs() }
+        val file2: File = sameInnerFolder.resolve("b.txt").toFile().also { it.parentFile.mkdirs() }
         file2.writeText(text)
         TimeUnit.MILLISECONDS.sleep(100)
 
         searchApi.startIncrementalIndexing()
+        TimeUnit.MILLISECONDS.sleep(100)
 
         val tokensAfterChange: List<TokenMatch> = searchApi.syncSearchToken(indexFolder, commonToken)
         searchApi.stopIncrementalIndexing()

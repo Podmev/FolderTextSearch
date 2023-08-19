@@ -59,7 +59,7 @@ class IndexlessSearchApi : SearchApi, WithLogging() {
             searchingState = searchString(folderPath, token, settings)
         )
 
-    override fun startIncrementalIndexing(): Boolean {
+    override fun startIncrementalIndexing(withInitialUpdate: Boolean): Boolean {
         throw SearchException("Not supported incremental indexing")
     }
 
@@ -121,7 +121,7 @@ class IndexlessSearchApi : SearchApi, WithLogging() {
         }
 
     private fun searchStringInLine(filePath: Path, line: String, token: String, lineIndex: Int): Sequence<TokenMatch> {
-        LOG.info("#$lineIndex, \"$line\", token: $token")
+        LOG.finest("#$lineIndex, \"$line\", token: $token")
         val positionsInLine = line.indicesOf(token)
         return positionsInLine.map { TokenMatch(filePath, lineIndex.toLong() + 1, it.toLong() + 1) }
     }

@@ -2,13 +2,16 @@ package impl.trigram.incremental
 
 import impl.trigram.dirwatcher.FileChangeReactor
 import impl.trigram.map.TrigramMap
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import utils.WithLogging
 import utils.coroutines.makeCancelablePoint
+import java.io.IOException
 import java.nio.charset.MalformedInputException
+import java.nio.file.FileVisitResult
+import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.SimpleFileVisitor
+import java.nio.file.attribute.BasicFileAttributes
 import java.nio.file.attribute.FileTime
 import kotlin.io.path.getLastModifiedTime
 import kotlin.io.path.useLines
@@ -22,33 +25,79 @@ internal class TrigramIncrementalIndexer(
     private val context = TrigramIncrementalIndexingContext(trigramMapByFolder)
 
     override fun reactOnCreatedFile(folder: Path, filePath: Path): Unit = runBlocking {
-        LOG.info("Event created file $filePath in folder $folder")
+        LOG.finest("Event created file $filePath in folder $folder")
         context.changedFileChannel.send(FileEvent(FileEvent.Kind.CREATED, folder, filePath))
     }
 
     override fun reactOnDeletedFile(folder: Path, filePath: Path): Unit = runBlocking {
-        LOG.info("Event deleted file $filePath in folder $folder")
+        LOG.finest("Event deleted file $filePath in folder $folder")
         context.changedFileChannel.send(FileEvent(FileEvent.Kind.DELETED, folder, filePath))
     }
 
     override fun reactOnModifiedFile(folder: Path, filePath: Path): Unit = runBlocking {
-        LOG.info("Event modified file $filePath in folder $folder")
+        LOG.finest("Event modified file $filePath in folder $folder")
         context.changedFileChannel.send(FileEvent(FileEvent.Kind.MODIFIED, folder, filePath))
+    }
+
+    /**
+     * Updating all indices, but it will happen only when asyncProcessFileChanges will run (starting incremental index)
+     * It works with sending events
+     * */
+    suspend fun updateAllIndicesOnIncrementalIndexingStart() {
+        LOG.finest("start")
+        for (folder in context.trigramMapByFolder.keys) {
+            updateIndexFolderOnIncrementalIndexingStart(folder)
+        }
+    }
+
+    /**
+     * Updating index for one folder, but it will happen only when asyncProcessFileChanges will run (starting incremental index)
+     * It works with sending events
+     * */
+    private suspend fun updateIndexFolderOnIncrementalIndexingStart(folder: Path) {
+        LOG.finest("start for folder $folder")
+        val trigramMap = context.trigramMapByFolder[folder] ?: return
+        val paths: List<Path> = trigramMap.getAllRegisteredPaths()
+        LOG.finest("There are ${paths.size} paths: $paths")
+        val unvisitedPaths: MutableSet<Path> = paths.toMutableSet()
+
+        withContext(Dispatchers.IO) {
+            Files.walkFileTree(folder, object : SimpleFileVisitor<Path>() {
+                @Throws(IOException::class)
+                override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
+                    LOG.finest("Visiting file $file")
+                    if (unvisitedPaths.remove(file)) {
+                        //already had this file
+                        val registeredTime: FileTime = trigramMap.getRegisteredPathTime(file)!!
+                        if (registeredTime < file.getLastModifiedTime()) {
+                            reactOnModifiedFile(folder, file)
+                        }
+                    } else {
+                        reactOnCreatedFile(folder, file)
+                    }
+                    return FileVisitResult.CONTINUE
+                }
+            })
+        }
+        for (unvisitedFile in unvisitedPaths) {
+            reactOnDeletedFile(folder, unvisitedFile)
+        }
+
     }
 
     /**
      * Process all incoming file
      * */
     suspend fun asyncProcessFileChanges() = coroutineScope {
-        LOG.info("started")
+        LOG.finest("started")
         for (fileEvent in context.changedFileChannel) {
-            LOG.info("processing event $fileEvent")
+            LOG.finest("processing event $fileEvent")
             if (!isActive) return@coroutineScope
             makeCancelablePoint()
 
             val trigramMap: TrigramMap? = context.trigramMapByFolder[fileEvent.folder]
             if (trigramMap == null) {
-                LOG.info("not found trigram map for folder $fileEvent.folder, we skip it")
+                LOG.finest("not found trigram map for folder $fileEvent.folder, we skip it")
                 continue
             }
 
@@ -58,37 +107,37 @@ internal class TrigramIncrementalIndexer(
                 FileEvent.Kind.DELETED -> processDeletedFile(trigramMap, fileEvent.folder, fileEvent.filePath)
             }
         }
-        LOG.info("finished")
+        LOG.finest("finished")
     }
 
     private fun processCreatedFile(trigramMap: TrigramMap, folder: Path, filePath: Path) {
-        LOG.info("processing created file $filePath in $folder")
+        LOG.finest("processing created file $filePath in $folder")
         val registeredTime: FileTime? = trigramMap.getRegisteredPathTime(filePath)
         if (registeredTime != null) {
             //already have this filePath
-            LOG.info("There is already registered data for file $filePath in folder $folder in trigramMap, so we skip it")
+            LOG.finest("There is already registered data for file $filePath in folder $folder in trigramMap, so we skip it")
             return
         }
-        LOG.info("checked registered time")
+        LOG.finest("checked registered time")
         val tripletSetFromFile: Set<String>? = getTripletSetFromFile(filePath)
         if (tripletSetFromFile == null) {
-            LOG.info(
+            LOG.finest(
                 "Couldn't receive triplets from $filePath in folder $folder, " +
                         "because of bad encoding in file or not plain text, so we skip it"
             )
             return
         }
-        LOG.info("got tripletSetFromFile with size ${tripletSetFromFile.size} from $filePath in $folder")
+        LOG.finest("got tripletSetFromFile with size ${tripletSetFromFile.size} from $filePath in $folder")
         trigramMap.addAllCharTripletsByPathAndRegisterTime(tripletSetFromFile, filePath)
-        LOG.info("finished processing created file $filePath in $folder")
+        LOG.finest("finished processing created file $filePath in $folder")
     }
 
     private fun processModifiedFile(trigramMap: TrigramMap, folder: Path, filePath: Path) {
-        LOG.info("processing modified file $filePath in $folder")
+        LOG.finest("processing modified file $filePath in $folder")
         val registeredTime = trigramMap.getRegisteredPathTime(filePath)
         if (registeredTime != null && registeredTime > filePath.getLastModifiedTime()) {
             //registered time is later than file path lastModification
-            LOG.info(
+            LOG.finest(
                 "Registered time is later than file path lastModification " +
                         "of file $filePath in folder $folder in trigramMap, so we skip it"
             )
@@ -96,19 +145,19 @@ internal class TrigramIncrementalIndexer(
         }
         processDeletedFile(trigramMap, folder, filePath)
         processCreatedFile(trigramMap, folder, filePath)
-        LOG.info("finished processing modified file $filePath in $folder")
+        LOG.finest("finished processing modified file $filePath in $folder")
     }
 
     private fun processDeletedFile(trigramMap: TrigramMap, folder: Path, filePath: Path) {
-        LOG.info("processing deleted file $filePath in $folder")
+        LOG.finest("processing deleted file $filePath in $folder")
         val registeredTime = trigramMap.getRegisteredPathTime(filePath)
         if (registeredTime == null) {
             //already don't have this filePath
-            LOG.info("There is no registered data for file $filePath in folder $folder in trigramMap, so we skip it")
+            LOG.finest("There is no registered data for file $filePath in folder $folder in trigramMap, so we skip it")
             return
         }
         trigramMap.removeAllCharTripletsByPathAndUnregisterTime(filePath)
-        LOG.info("finished processing deleted file $filePath in $folder")
+        LOG.finest("finished processing deleted file $filePath in $folder")
     }
 
     /**
