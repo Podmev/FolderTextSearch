@@ -103,11 +103,11 @@ internal class TrigramIndexer(
             Files.walk(indexingContext.folderPath)
         }.use { it: Stream<Path> ->
             it.asSequence().filter { path -> path.isRegularFile() }.asFlow().onEach { path ->
-                    LOG.finest("visiting file by path $path")
-                    indexingContext.visitedPathChannel.send(path)
-                    val visitedFilesNumber = indexingContext.indexingState.addVisitedPathToBuffer(path)
-                    LOG.finest("successfully visited $visitedFilesNumber")
-                }.collect { }
+                LOG.finest("visiting file by path $path")
+                indexingContext.visitedPathChannel.send(path)
+                val visitedFilesNumber = indexingContext.indexingState.addVisitedPathToBuffer(path)
+                LOG.finest("successfully visited $visitedFilesNumber")
+            }.collect { }
         }
 
         indexingContext.visitedPathChannel.close()
@@ -152,10 +152,10 @@ internal class TrigramIndexer(
         try {
             path.useLines { lines ->
                 lines.forEachIndexed { lineIndex, line ->
-                        constructIndexForLine(
-                            path = path, line = line, lineIndex = lineIndex, indexingContext = indexingContext
-                        )
-                    }
+                    constructIndexForLine(
+                        path = path, line = line, lineIndex = lineIndex, indexingContext = indexingContext
+                    )
+                }
             }
             LOG.finest("finished for path: $path")
             return true

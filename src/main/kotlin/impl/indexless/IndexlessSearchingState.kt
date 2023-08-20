@@ -14,6 +14,7 @@ import java.util.concurrent.Future
  * */
 class IndexlessSearchingState(override val result: Future<List<TokenMatch>>) : SearchingState {
     override val startTime: LocalDateTime = LocalDateTime.now()
+
     /**
      * Finished time, it should be set on moment of finish, from outside
      */
@@ -31,10 +32,14 @@ class IndexlessSearchingState(override val result: Future<List<TokenMatch>>) : S
     /**
      * Function to change status of search
      */
-    fun changeStatus(status: ProgressableStatus){
-        when(status){
-            ProgressableStatus.NOT_STARTED -> {/*do nothing*/}
-            ProgressableStatus.IN_PROGRESS -> {/*do nothing*/}
+    fun changeStatus(status: ProgressableStatus) {
+        when (status) {
+            ProgressableStatus.NOT_STARTED -> {/*do nothing*/
+            }
+
+            ProgressableStatus.IN_PROGRESS -> {/*do nothing*/
+            }
+
             ProgressableStatus.CANCELLING -> throw SearchException("Not supported status Cancelling")
             ProgressableStatus.CANCELLED -> throw SearchException("Not supported status Canceled")
             ProgressableStatus.FINISHED -> finishedTime = LocalDateTime.now()

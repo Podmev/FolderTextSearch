@@ -43,7 +43,7 @@ class CancelTest {
     fun searchingAndCancelAtStartSearchingTest() {
         val searchApi = searchApiGenerator()
         val folder = commonPath
-        val token  = commonToken
+        val token = commonToken
 
         searchApi.syncPerformIndex(folder)
         val previouslyFinishedState = searchApi.searchString(folder, token)
@@ -147,7 +147,7 @@ class CancelTest {
         val totalFilesByteSize = state.totalFilesByteSize!!
         Assertions.assertAll(
             { Assertions.assertFalse(tokenMatches.isEmpty(), "Token matches are not empty") },
-            { Assertions.assertEquals(totalFilesNumber, state.visitedFilesNumber,"visited == total files number") },
+            { Assertions.assertEquals(totalFilesNumber, state.visitedFilesNumber, "visited == total files number") },
             { Assertions.assertEquals(totalFilesByteSize, state.visitedFilesByteSize, "visited == total in bytes") },
             { Assertions.assertEquals(totalFilesByteSize, state.parsedFilesByteSize, "parsed == total in bytes") },
             { Assertions.assertEquals(1.0, state.progress, "progress == 1.0") },

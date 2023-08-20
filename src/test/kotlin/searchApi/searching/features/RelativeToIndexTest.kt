@@ -28,7 +28,7 @@ class RelativeToIndexTest {
         val searchApi = searchApiGenerator()
         searchApi.syncPerformIndex(folder)
         val state = searchApi.searchString(folder, token)
-        Assertions.assertTrue(state.result.get().isNotEmpty(),"Search gives results after indexing")
+        Assertions.assertTrue(state.result.get().isNotEmpty(), "Search gives results after indexing")
     }
 
     /**

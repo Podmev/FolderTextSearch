@@ -106,7 +106,7 @@ class TrigramSearcher : WithLogging() {
     private suspend fun asyncSearchingInPaths(searchingContext: TrigramSearchingContext) = coroutineScope {
         LOG.finest("started for folder: ${searchingContext.folderPath} and token: \"$searchingContext.token\"")
         for (path in searchingContext.narrowedPathChannel) {
-            if(!isActive) break
+            if (!isActive) break
             LOG.finest("received path: $path, isActive:$isActive")
             path.useLines { lines ->
                 lines.withIndex().asFlow().onEach { (lineIndex, line) ->
@@ -124,7 +124,7 @@ class TrigramSearcher : WithLogging() {
     private suspend fun asyncSearchingInFileLines(searchingContext: TrigramSearchingContext) = coroutineScope {
         LOG.finest("started for folder: ${searchingContext.folderPath} and token: \"$searchingContext.token\", isActive:$isActive")
         for (lineInFile in searchingContext.fileLineChannel) {
-            if(!isActive) break
+            if (!isActive) break
             LOG.finest("received lineInFile: $lineInFile, isActive:$isActive")
             searchStringInLine(lineInFile.path, lineInFile.line, searchingContext.token, lineInFile.lineIndex)
                 .onEach { tokenMatch ->
@@ -145,7 +145,7 @@ class TrigramSearcher : WithLogging() {
     private suspend fun asyncReadingTokenMatchesChannel(searchingContext: TrigramSearchingContext) = coroutineScope {
         LOG.finest("started for folder: ${searchingContext.folderPath} and token: \"$searchingContext.token\"")
         for (tokenMatch in searchingContext.tokenMatchChannel) {
-            if(!isActive) break
+            if (!isActive) break
             LOG.finest("received tokenMatch: $tokenMatch, isActive:$isActive")
             searchingContext.resultTokenMatchQueue.add(tokenMatch)
             val tokenMatchesNumber = searchingContext.searchingState.addTokenMatchToBuffer(tokenMatch)
