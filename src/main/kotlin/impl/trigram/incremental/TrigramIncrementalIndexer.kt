@@ -14,6 +14,7 @@ import java.nio.file.SimpleFileVisitor
 import java.nio.file.attribute.BasicFileAttributes
 import java.nio.file.attribute.FileTime
 import kotlin.io.path.getLastModifiedTime
+import kotlin.io.path.isRegularFile
 import kotlin.io.path.useLines
 
 /**
@@ -65,15 +66,17 @@ internal class TrigramIncrementalIndexer(
             Files.walkFileTree(folder, object : SimpleFileVisitor<Path>() {
                 @Throws(IOException::class)
                 override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
-                    LOG.finest("Visiting file $file")
-                    if (unvisitedPaths.remove(file)) {
-                        //already had this file
-                        val registeredTime: FileTime = trigramMap.getRegisteredPathTime(file)!!
-                        if (registeredTime < file.getLastModifiedTime()) {
-                            fileModified(folder, file)
+                    if (file.isRegularFile()) {
+                        LOG.finest("Visiting file $file")
+                        if (unvisitedPaths.remove(file)) {
+                            //already had this file
+                            val registeredTime: FileTime = trigramMap.getRegisteredPathTime(file)!!
+                            if (registeredTime < file.getLastModifiedTime()) {
+                                fileModified(folder, file)
+                            }
+                        } else {
+                            fileCreated(folder, file)
                         }
-                    } else {
-                        fileCreated(folder, file)
                     }
                     return FileVisitResult.CONTINUE
                 }
