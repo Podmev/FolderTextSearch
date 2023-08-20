@@ -15,15 +15,6 @@ import java.nio.file.Path
 import java.util.stream.Stream
 import kotlin.reflect.KFunction3
 
-/*TODO add tests:
-* Empty folder - how to add to git? maybe generated
-* Empty inner folder - how to add to git? maybe generated
-* Test with natural test
-* Test with all lyrics of Beatles songs, find word "love" there. It should be more 500 times
-* Long one line in file and in token
-* Generator for folder hierarchy
-* */
-
 /**
  * Set of unit test for checking search for correctness for all implementations
  * Some tests use ready folders with files from test resources

@@ -162,7 +162,6 @@ class TrigramSearcher : WithLogging() {
         LOG.finest("finished for folder: ${searchingContext.folderPath} and token: \"$searchingContext.token\"")
     }
 
-    //TODO rewrite in concurrent way, I cannot decide how to make reduce concurrently here
     /**
      * Find all file paths, which contains all sequence char triplets from token.
      * */

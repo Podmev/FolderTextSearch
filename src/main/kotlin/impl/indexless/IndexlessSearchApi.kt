@@ -38,7 +38,6 @@ class IndexlessSearchApi : SearchApi, WithLogging() {
         val completableFuture = CompletableFuture<List<TokenMatch>>()
         val indexlessSearchingState = IndexlessSearchingState(completableFuture)
         indexlessSearchingState.changeStatus(ProgressableStatus.IN_PROGRESS)
-        //TODO put in async code search
         val tokenMatches = searchStringInFolder(folderPath, token)
         indexlessSearchingState.changeStatus(ProgressableStatus.FINISHED)
         completableFuture.complete(tokenMatches)
