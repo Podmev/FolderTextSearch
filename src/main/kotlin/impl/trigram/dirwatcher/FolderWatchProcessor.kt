@@ -25,7 +25,7 @@ class FolderWatchProcessor(
     /**
      * Process events from files in infinite loop
      * */
-    suspend fun asyncProcessEvents(fileChangeReactor: FileChangeReactor) = coroutineScope {
+    suspend fun asyncProcessEvents(fileChangeListener: FileChangeListener) = coroutineScope {
         try {
             LOG.finest("started")
             LOG.finest("started while(true)")
@@ -63,7 +63,7 @@ class FolderWatchProcessor(
      * */
     private suspend fun processEventsByWatchKey(
         key: WatchKey,
-        fileChangeReactor: FileChangeReactor
+        fileChangeListener: FileChangeListener
     ): Boolean {
         val pathAndSubPath = watcherHolder.getPathAndSubPath(key)
         if (pathAndSubPath == null) {
@@ -75,7 +75,7 @@ class FolderWatchProcessor(
 
         for (event in key.pollEvents()) {
             makeCancelablePoint()
-            processEvent(folder, innerFolder, event, fileChangeReactor)
+            processEvent(folder, innerFolder, event, fileChangeListener)
         }
         return true
     }
@@ -86,11 +86,11 @@ class FolderWatchProcessor(
      *  - Takes fileName from event - it is context of event
      *  - If filename is not plain text, we ignore it
      *  - Constructs file path by inner folder and fileName
-     *  - Depending on kind of event it fires one of three methods of FileChangeReactor
+     *  - Depending on kind of event it fires one of three methods of FileChangeListener
      * */
     @Suppress("UNCHECKED_CAST")
     private fun processEvent(
-        folder: Path, innerFolder: Path, event: WatchEvent<*>, fileChangeReactor: FileChangeReactor
+        folder: Path, innerFolder: Path, event: WatchEvent<*>, fileChangeListener: FileChangeListener
     ) {
         val kind: WatchEvent.Kind<out Any> = event.kind()
         // This key is registered only for ENTRY_CREATE events,
@@ -103,14 +103,14 @@ class FolderWatchProcessor(
         val filePath = innerFolder.resolve(filename)
         LOG.finest("filename:${filename} is directory: ${filePath.isDirectory()}")
         when {
-            filePath.isDirectory() -> processDirectoryEvent(kind, folder, filePath, fileChangeReactor)
-            else -> processRegularFileEvent(kind, folder, filePath, fileChangeReactor)
+            filePath.isDirectory() -> processDirectoryEvent(kind, folder, filePath, fileChangeListener)
+            else -> processRegularFileEvent(kind, folder, filePath, fileChangeListener)
         }
         LOG.finest("changes $kind of file: folder: $folder, innerFolder:$folder, filename:$filename")
     }
 
     private fun processDirectoryEvent(
-        kind: WatchEvent.Kind<out Any>, folder: Path, innerFolderPath: Path, fileChangeReactor: FileChangeReactor
+        kind: WatchEvent.Kind<out Any>, folder: Path, innerFolderPath: Path, fileChangeListener: FileChangeListener
     ) {
         LOG.finest("start processing directory $kind for $innerFolderPath")
         when (kind) {
@@ -136,13 +136,13 @@ class FolderWatchProcessor(
     }
 
     private fun processRegularFileEvent(
-        kind: WatchEvent.Kind<out Any>, folder: Path, filePath: Path, fileChangeReactor: FileChangeReactor
+        kind: WatchEvent.Kind<out Any>, folder: Path, filePath: Path, fileChangeListener: FileChangeListener
     ) {
         LOG.finest("start processing regular file $kind for $filePath")
         when (kind) {
-            ENTRY_CREATE -> fileChangeReactor.reactOnCreatedFile(folder, filePath)
-            ENTRY_DELETE -> fileChangeReactor.reactOnDeletedFile(folder, filePath)
-            ENTRY_MODIFY -> fileChangeReactor.reactOnModifiedFile(folder, filePath)
+            ENTRY_CREATE -> fileChangeListener.fileCreated(folder, filePath)
+            ENTRY_DELETE -> fileChangeListener.fileDeleted(folder, filePath)
+            ENTRY_MODIFY -> fileChangeListener.fileModified(folder, filePath)
         }
     }
 

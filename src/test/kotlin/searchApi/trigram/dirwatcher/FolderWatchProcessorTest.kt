@@ -1,8 +1,8 @@
 package searchApi.trigram.dirwatcher
 
-import impl.trigram.dirwatcher.FileChangeReactor
+import impl.trigram.dirwatcher.FileChangeListener
 import impl.trigram.dirwatcher.FolderWatchProcessor
-import impl.trigram.dirwatcher.LogFileChangeReactor
+import impl.trigram.dirwatcher.LogFileChangeListener
 import impl.trigram.dirwatcher.WatcherHolder
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -21,7 +21,7 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 
 /**
- * Testing combination FolderWatchProcessor and WatcherHolder with simple FileChangeReactor
+ * Testing combination FolderWatchProcessor and WatcherHolder with simple FileChangeListener
  * */
 class FolderWatchProcessorTest {
     private val commonFolder: Path = commonSetup.commonPath
@@ -51,7 +51,7 @@ class FolderWatchProcessorTest {
     @Test
     fun simpleTest() {
         val watcherHolder = WatcherHolder()
-        val fileChangeReactor = LogFileChangeReactor()
+        val fileChangeListener = LogFileChangeListener()
         val folderWatchProcessor = FolderWatchProcessor(watcherHolder)
 
         val file: File = indexFolder.resolve("a").resolve("a.txt").toFile().also { it.parentFile.mkdirs() }
@@ -62,7 +62,7 @@ class FolderWatchProcessorTest {
 
         runBlocking {
             val eventProcessingJob = launch {
-                folderWatchProcessor.asyncProcessEvents(fileChangeReactor)
+                folderWatchProcessor.asyncProcessEvents(fileChangeListener)
             }
             launch {
                 repeat(1) {
@@ -88,7 +88,7 @@ class FolderWatchProcessorTest {
     @Test
     fun modify3TimesSameFileTest() {
         val watcherHolder = WatcherHolder()
-        val fileChangeReactor = SaveInListFileChangeReactor()
+        val fileChangeListener = SaveInListFileChangeListener()
         val folderWatchProcessor = FolderWatchProcessor(watcherHolder)
 
         val filePath = indexFolder.resolve("a").resolve("a.txt")
@@ -100,7 +100,7 @@ class FolderWatchProcessorTest {
 
         runBlocking {
             launch {
-                folderWatchProcessor.asyncProcessEvents(fileChangeReactor)
+                folderWatchProcessor.asyncProcessEvents(fileChangeListener)
             }
             launch {
                 delay(10)
@@ -114,12 +114,12 @@ class FolderWatchProcessorTest {
             }
         }
         assertAll(
-            { Assertions.assertEquals(emptyList<Path>(), fileChangeReactor.createdFiles, "no created files") },
-            { Assertions.assertEquals(emptyList<Path>(), fileChangeReactor.deletedFiles, "no deleted files") },
+            { Assertions.assertEquals(emptyList<Path>(), fileChangeListener.createdFiles, "no created files") },
+            { Assertions.assertEquals(emptyList<Path>(), fileChangeListener.deletedFiles, "no deleted files") },
             {
                 Assertions.assertEquals(
                     /* expected = */ generateSequence { filePath }.take(3).toList(),
-                    /* actual = */ fileChangeReactor.modifiedFiles,
+                    /* actual = */ fileChangeListener.modifiedFiles,
                     /* message = */ "3 same modified files"
                 )
             },
@@ -134,7 +134,7 @@ class FolderWatchProcessorTest {
     @Test
     fun deleting3FilesTest() {
         val watcherHolder = WatcherHolder()
-        val fileChangeReactor = SaveInListFileChangeReactor()
+        val fileChangeListener = SaveInListFileChangeListener()
         val folderWatchProcessor = FolderWatchProcessor(watcherHolder)
 
         val innerFolderPath = indexFolder.resolve("a")
@@ -150,7 +150,7 @@ class FolderWatchProcessorTest {
 
         runBlocking {
             launch {
-                folderWatchProcessor.asyncProcessEvents(fileChangeReactor)
+                folderWatchProcessor.asyncProcessEvents(fileChangeListener)
             }
             launch {
                 delay(10)
@@ -162,18 +162,18 @@ class FolderWatchProcessorTest {
             }
         }
         assertAll(
-            { Assertions.assertEquals(emptyList<Path>(), fileChangeReactor.createdFiles, "no created files") },
+            { Assertions.assertEquals(emptyList<Path>(), fileChangeListener.createdFiles, "no created files") },
             {
                 Assertions.assertEquals(
                     /* expected = */ filePaths,
-                    /* actual = */ fileChangeReactor.modifiedFiles,
+                    /* actual = */ fileChangeListener.modifiedFiles,
                     /* message = */ "3 same modified files"
                 )
             },
             {
                 Assertions.assertEquals(
                     /* expected = */ filePaths,
-                    /* actual = */ fileChangeReactor.deletedFiles,
+                    /* actual = */ fileChangeListener.deletedFiles,
                     /* message = */ "3 deleted files"
                 )
             },
@@ -186,7 +186,7 @@ class FolderWatchProcessorTest {
     @Test
     fun creating3FilesTest() {
         val watcherHolder = WatcherHolder()
-        val fileChangeReactor = SaveInListFileChangeReactor()
+        val fileChangeListener = SaveInListFileChangeListener()
         val folderWatchProcessor = FolderWatchProcessor(watcherHolder)
 
         val innerFolderPath = indexFolder.resolve("a")
@@ -199,7 +199,7 @@ class FolderWatchProcessorTest {
         watcherHolder.addWatch(indexFolder)
 
         runBlocking {
-            launch { folderWatchProcessor.asyncProcessEvents(fileChangeReactor) }
+            launch { folderWatchProcessor.asyncProcessEvents(fileChangeListener) }
             launch {
                 delay(10)
                 filePath1.toFile().createNewFile()
@@ -212,12 +212,12 @@ class FolderWatchProcessorTest {
             }
         }
         assertAll(
-            { Assertions.assertEquals(emptyList<Path>(), fileChangeReactor.deletedFiles, "no deleted files") },
-            { Assertions.assertEquals(emptyList<Path>(), fileChangeReactor.modifiedFiles, "no modified files") },
+            { Assertions.assertEquals(emptyList<Path>(), fileChangeListener.deletedFiles, "no deleted files") },
+            { Assertions.assertEquals(emptyList<Path>(), fileChangeListener.modifiedFiles, "no modified files") },
             {
                 Assertions.assertEquals(
                     /* expected = */ filePaths,
-                    /* actual = */ fileChangeReactor.createdFiles,
+                    /* actual = */ fileChangeListener.createdFiles,
                     /* message = */ "3 created files"
                 )
             },
@@ -225,7 +225,7 @@ class FolderWatchProcessorTest {
     }
 
     /**
-     * Checking reusage fileChangeReactor, folderWatchProcessor and watcherHolder with setup and cleanup
+     * Checking reusage fileChangeListener, folderWatchProcessor and watcherHolder with setup and cleanup
      * Same actions causes same result
      * */
     @Test
@@ -235,7 +235,7 @@ class FolderWatchProcessorTest {
         val filePath = innerFolderPath.resolve("a.txt")
 
         val watcherHolder = WatcherHolder()
-        val fileChangeReactor = SaveInListFileChangeReactor()
+        val fileChangeListener = SaveInListFileChangeListener()
         val folderWatchProcessor = FolderWatchProcessor(watcherHolder)
         //session 1
 
@@ -243,7 +243,7 @@ class FolderWatchProcessorTest {
         watcherHolder.addWatch(indexFolder)
 
         runBlocking {
-            launch { folderWatchProcessor.asyncProcessEvents(fileChangeReactor) }
+            launch { folderWatchProcessor.asyncProcessEvents(fileChangeListener) }
             launch {
                 delay(10)
                 filePath.toFile().createNewFile()
@@ -255,17 +255,17 @@ class FolderWatchProcessorTest {
                 watcherHolder.cleanUp()
             }
         }
-        val created1 = fileChangeReactor.createdFiles.clone()
-        val modified1 = fileChangeReactor.modifiedFiles.clone()
-        val deleted1 = fileChangeReactor.deletedFiles.clone()
-        fileChangeReactor.cleanAll()
+        val created1 = fileChangeListener.createdFiles.clone()
+        val modified1 = fileChangeListener.modifiedFiles.clone()
+        val deleted1 = fileChangeListener.deletedFiles.clone()
+        fileChangeListener.cleanAll()
 
         //session 2
         watcherHolder.setup()
         watcherHolder.addWatch(indexFolder)
 
         runBlocking {
-            launch { folderWatchProcessor.asyncProcessEvents(fileChangeReactor) }
+            launch { folderWatchProcessor.asyncProcessEvents(fileChangeListener) }
             launch {
                 delay(10)
                 filePath.toFile().createNewFile()
@@ -277,9 +277,9 @@ class FolderWatchProcessorTest {
                 watcherHolder.cleanUp()
             }
         }
-        val created2 = fileChangeReactor.createdFiles
-        val modified2 = fileChangeReactor.modifiedFiles
-        val deleted2 = fileChangeReactor.deletedFiles
+        val created2 = fileChangeListener.createdFiles
+        val modified2 = fileChangeListener.modifiedFiles
+        val deleted2 = fileChangeListener.deletedFiles
 
         assertAll(
             { Assertions.assertEquals(created1, created2, "created files are the same in 2 sessions") },
@@ -294,7 +294,7 @@ class FolderWatchProcessorTest {
     @Test
     fun newInnerFolderCreating3FilesTest() {
         val watcherHolder = WatcherHolder()
-        val fileChangeReactor = SaveInListFileChangeReactor()
+        val fileChangeListener = SaveInListFileChangeListener()
         val folderWatchProcessor = FolderWatchProcessor(watcherHolder)
 
         val innerFolderPath1 = indexFolder.resolve("a")
@@ -311,7 +311,7 @@ class FolderWatchProcessorTest {
         watcherHolder.addWatch(indexFolder)
 
         runBlocking {
-            launch { folderWatchProcessor.asyncProcessEvents(fileChangeReactor) }
+            launch { folderWatchProcessor.asyncProcessEvents(fileChangeListener) }
             launch {
                 delay(10)
                 innerFolderPath2.toFile().mkdir()
@@ -326,12 +326,12 @@ class FolderWatchProcessorTest {
             }
         }
         assertAll(
-            { Assertions.assertEquals(emptyList<Path>(), fileChangeReactor.deletedFiles, "no deleted files") },
-            { Assertions.assertEquals(emptyList<Path>(), fileChangeReactor.modifiedFiles, "no modified files") },
+            { Assertions.assertEquals(emptyList<Path>(), fileChangeListener.deletedFiles, "no deleted files") },
+            { Assertions.assertEquals(emptyList<Path>(), fileChangeListener.modifiedFiles, "no modified files") },
             {
                 Assertions.assertEquals(
                     /* expected = */ filePaths,
-                    /* actual = */ fileChangeReactor.createdFiles,
+                    /* actual = */ fileChangeListener.createdFiles,
                     /* message = */ "3 created files"
                 )
             },
@@ -345,7 +345,7 @@ class FolderWatchProcessorTest {
     @Test
     fun deletingInnerFolderWith3FilesTest() {
         val watcherHolder = WatcherHolder()
-        val fileChangeReactor = SaveInListFileChangeReactor()
+        val fileChangeListener = SaveInListFileChangeListener()
         val folderWatchProcessor = FolderWatchProcessor(watcherHolder)
 
         val innerFolderPath1 = indexFolder.resolve("a")
@@ -365,7 +365,7 @@ class FolderWatchProcessorTest {
         watcherHolder.addWatch(indexFolder)
 
         runBlocking {
-            launch { folderWatchProcessor.asyncProcessEvents(fileChangeReactor) }
+            launch { folderWatchProcessor.asyncProcessEvents(fileChangeListener) }
             launch {
                 delay(10)
                 innerFolderPath2.deleteRecursively()
@@ -374,32 +374,32 @@ class FolderWatchProcessorTest {
             }
         }
         assertAll(
-            { Assertions.assertEquals(emptyList<Path>(), fileChangeReactor.createdFiles, "no created files") },
-            { Assertions.assertEquals(emptyList<Path>(), fileChangeReactor.modifiedFiles, "no modified files") },
+            { Assertions.assertEquals(emptyList<Path>(), fileChangeListener.createdFiles, "no created files") },
+            { Assertions.assertEquals(emptyList<Path>(), fileChangeListener.modifiedFiles, "no modified files") },
             {
                 Assertions.assertEquals(
                     /* expected = */ filePaths,
-                    /* actual = */ fileChangeReactor.deletedFiles,
+                    /* actual = */ fileChangeListener.deletedFiles,
                     /* message = */ "3 deleted files"
                 )
             },
         )
     }
 
-    class SaveInListFileChangeReactor : FileChangeReactor {
+    class SaveInListFileChangeListener : FileChangeListener {
         val modifiedFiles = ArrayList<Path>()
         val createdFiles = ArrayList<Path>()
         val deletedFiles = ArrayList<Path>()
 
-        override fun reactOnCreatedFile(folder: Path, filePath: Path) {
+        override fun fileCreated(folder: Path, filePath: Path) {
             createdFiles.add(filePath)
         }
 
-        override fun reactOnDeletedFile(folder: Path, filePath: Path) {
+        override fun fileDeleted(folder: Path, filePath: Path) {
             deletedFiles.add(filePath)
         }
 
-        override fun reactOnModifiedFile(folder: Path, filePath: Path) {
+        override fun fileModified(folder: Path, filePath: Path) {
             modifiedFiles.add(filePath)
         }
 

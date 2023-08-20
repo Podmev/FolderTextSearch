@@ -1,6 +1,6 @@
 package impl.trigram.incremental
 
-import impl.trigram.dirwatcher.FileChangeReactor
+import impl.trigram.dirwatcher.FileChangeListener
 import impl.trigram.map.TrigramMap
 import kotlinx.coroutines.*
 import utils.WithLogging
@@ -21,20 +21,20 @@ import kotlin.io.path.useLines
  * */
 internal class TrigramIncrementalIndexer(
     trigramMapByFolder: Map<Path, TrigramMap>
-) : FileChangeReactor, WithLogging() {
+) : FileChangeListener, WithLogging() {
     private val context = TrigramIncrementalIndexingContext(trigramMapByFolder)
 
-    override fun reactOnCreatedFile(folder: Path, filePath: Path): Unit = runBlocking {
+    override fun fileCreated(folder: Path, filePath: Path): Unit = runBlocking {
         LOG.finest("Event created file $filePath in folder $folder")
         context.changedFileChannel.send(FileEvent(FileEvent.Kind.CREATED, folder, filePath))
     }
 
-    override fun reactOnDeletedFile(folder: Path, filePath: Path): Unit = runBlocking {
+    override fun fileDeleted(folder: Path, filePath: Path): Unit = runBlocking {
         LOG.finest("Event deleted file $filePath in folder $folder")
         context.changedFileChannel.send(FileEvent(FileEvent.Kind.DELETED, folder, filePath))
     }
 
-    override fun reactOnModifiedFile(folder: Path, filePath: Path): Unit = runBlocking {
+    override fun fileModified(folder: Path, filePath: Path): Unit = runBlocking {
         LOG.finest("Event modified file $filePath in folder $folder")
         context.changedFileChannel.send(FileEvent(FileEvent.Kind.MODIFIED, folder, filePath))
     }
@@ -70,17 +70,17 @@ internal class TrigramIncrementalIndexer(
                         //already had this file
                         val registeredTime: FileTime = trigramMap.getRegisteredPathTime(file)!!
                         if (registeredTime < file.getLastModifiedTime()) {
-                            reactOnModifiedFile(folder, file)
+                            fileModified(folder, file)
                         }
                     } else {
-                        reactOnCreatedFile(folder, file)
+                        fileCreated(folder, file)
                     }
                     return FileVisitResult.CONTINUE
                 }
             })
         }
         for (unvisitedFile in unvisitedPaths) {
-            reactOnDeletedFile(folder, unvisitedFile)
+            fileDeleted(folder, unvisitedFile)
         }
 
     }
