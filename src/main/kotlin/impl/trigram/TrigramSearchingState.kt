@@ -22,11 +22,14 @@ class TrigramSearchingState(override val result: Future<List<TokenMatch>>) : Sea
     /**
      * Finished time, it should be set on moment of finish, from outside
      */
+    @Volatile
     private var finishedTime: LocalDateTime? = null
     override val lastWorkingTime: LocalDateTime
         get() = finishedTime ?: LocalDateTime.now()
 
+    @Volatile
     private var innerStatus: ProgressableStatus = ProgressableStatus.NOT_STARTED
+    private val statusMonitor = Any()
 
     override val status: ProgressableStatus
         get() = innerStatus
@@ -47,7 +50,7 @@ class TrigramSearchingState(override val result: Future<List<TokenMatch>>) : Sea
      * Function to change status of search
      */
     fun changeStatus(status: ProgressableStatus) {
-        synchronized(innerStatus) {
+        synchronized(statusMonitor) {
             val newStatus = trigramChangeStatus(innerStatus, status)
             if (newStatus != innerStatus) {
                 LOG.finest("changing status from $innerStatus to $status")
@@ -78,6 +81,7 @@ class TrigramSearchingState(override val result: Future<List<TokenMatch>>) : Sea
     private val tokenMatchesBuffer: MutableList<TokenMatch> = ArrayList()
 
     //cancel
+    @Volatile
     private var cancellationAction: () -> Unit = {}
 
     override val tokenMatchesNumber: Long
@@ -190,7 +194,6 @@ class TrigramSearchingState(override val result: Future<List<TokenMatch>>) : Sea
         synchronized(visitedPathsBuffer) {
             visitedPathsBuffer.add(path)
         }
-        return
     }
 
     /**

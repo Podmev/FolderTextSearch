@@ -18,11 +18,15 @@ class TrigramIndexingState(override val result: Future<List<Path>>) : IndexingSt
     /**
      * Finished time, it should be set on moment of finish, from outside
      */
+    @Volatile
     private var finishedTime: LocalDateTime? = null
+
     override val lastWorkingTime: LocalDateTime
         get() = finishedTime ?: LocalDateTime.now()
 
+    @Volatile
     private var innerStatus: ProgressableStatus = ProgressableStatus.NOT_STARTED
+    private val statusMonitor = Any()
 
     override val status: ProgressableStatus
         get() = innerStatus
@@ -43,7 +47,7 @@ class TrigramIndexingState(override val result: Future<List<Path>>) : IndexingSt
      * Function to change status of search
      */
     fun changeStatus(status: ProgressableStatus) {
-        synchronized(innerStatus) {
+        synchronized(statusMonitor) {
             val newStatus = trigramChangeStatus(innerStatus, status)
             if (newStatus != innerStatus) {
                 innerStatus = newStatus
@@ -65,6 +69,7 @@ class TrigramIndexingState(override val result: Future<List<Path>>) : IndexingSt
     private val indexedPathsBuffer: MutableList<Path> = ArrayList()
 
     //cancel
+    @Volatile
     private var cancellationAction: () -> Unit = {}
 
     override val visitedFilesNumber: Long
