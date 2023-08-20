@@ -26,7 +26,7 @@ Kotlin library for simple text search inside chosen folder on file system.
 10. [Used stack](#used-stack)
 11. [Continuous integration](#ci)
 
-## <a id="requirements"></a> Requirements
+## <a name="requirements"></a> Requirements
 
 This library is supposed to consist of two parts: text index builder and search query executor.
 
