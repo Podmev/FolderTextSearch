@@ -78,32 +78,24 @@ class TrigramSearcher : WithLogging() {
      * */
     private suspend fun asyncWalkTokenAndNarrowPaths(searchingContext: TrigramSearchingContext) = coroutineScope {
         LOG.finest("started for folder: ${searchingContext.folderPath} and token: \"${searchingContext.token}\"")
-        //TODO make async way getPathsByToken
         val narrowedPaths = getPathsByToken(searchingContext.trigramMap, searchingContext.token)
         LOG.finest("got ${narrowedPaths.size} narrowed paths from trigramMap by token \"${searchingContext.token}\"")
         makeCancelablePoint()
-        //TODO remove temporary block --start--
-        //commands should be in flow and set total after, so we can cancel easily
-        //can be extra flow for it
+
         narrowedPaths.forEach {
             makeCancelablePoint()
             searchingContext.searchingState.addVisitedPath(it)
         }
         searchingContext.searchingState.setTotalFilesByteSize()
         searchingContext.searchingState.setTotalFilesNumber()
-        //TODO remove temporary block --end--
 
         narrowedPaths.asSequence().asFlow().onEach { path ->
             searchingContext.narrowedPathChannel.send(path)
             LOG.finest("sent path to channel narrowedPathChannel: $path, isActive:$isActive")
-            //searchingContext.searchingState.addVisitedPath(path)
         }.collect {}
 
         searchingContext.narrowedPathChannel.close()
         LOG.finest("closed channel narrowedPathChannel")
-
-//        searchingContext.searchingState.setTotalFilesByteSize()
-//        searchingContext.searchingState.setTotalFilesNumber()
 
         LOG.finest("finished for folder: ${searchingContext.folderPath} and token: \"${searchingContext.token}\"")
     }
