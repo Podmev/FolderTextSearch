@@ -1,9 +1,7 @@
 package impl.trigram.dirwatcher
 
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.isActive
-import kotlinx.coroutines.withContext
 import utils.WithLogging
 import utils.coroutines.makeCancelablePoint
 import java.io.IOException
@@ -11,6 +9,7 @@ import java.nio.file.*
 import java.nio.file.StandardWatchEventKinds.*
 import java.nio.file.attribute.BasicFileAttributes
 import kotlin.io.path.isDirectory
+import kotlin.io.path.isRegularFile
 
 /**
  * Service to process events files from registered folders
@@ -36,8 +35,8 @@ class FolderWatchProcessor(
                 makeCancelablePoint()
                 LOG.finest("before taking key")
                 // wait for key to be signaled
-                val key: WatchKey = withContext(Dispatchers.IO) { watcherHolder.watcher.take() }
-                if (!processEventsByWatchKey(key, fileChangeReactor)) {
+                val key: WatchKey = watcherHolder.watcher.take()
+                if (!processEventsByWatchKey(key, fileChangeListener)) {
                     LOG.finest("couldn't process watch key - so we go to next iteration")
                     continue
                 }
@@ -121,7 +120,9 @@ class FolderWatchProcessor(
                     @Throws(IOException::class)
                     override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
                         LOG.finest("sending created file from new subfolder: $innerFolderPath: $file")
-                        fileChangeReactor.reactOnCreatedFile(folder, file)
+                        if (file.isRegularFile()) {
+                            fileChangeListener.fileCreated(folder, file)
+                        }
                         return FileVisitResult.CONTINUE
                     }
                 })
