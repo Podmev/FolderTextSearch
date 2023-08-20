@@ -23,6 +23,7 @@ Kotlin library for simple text search inside chosen folder on file system.
 8. [Implementations](#implementations)
 9. [Tests](#tests)
     - [Big tests](#big-tests)
+    - [Setup big test](#setup-big-test)
 10. [Used stack](#used-stack)
 11. [Continuous integration](#ci)
 
@@ -293,7 +294,7 @@ There are 2 implementations of *SearchApi*:
     - feature tests for complete implementation of SearchApi
     - manual tests with a lot of output for some external folder as source of searching, for example Intellij-Idea
       project
-- Many tests checking search on source files of same project
+- Many tests checking search on source files of the same project
 - Feature tests for indexing
     - concurrency
     - incremental
@@ -316,13 +317,20 @@ There are 2 implementations of *SearchApi*:
 
 ### <a id="big-tests"></a> Big tests
 
-- Results of indexing and searching in intellij-idea a lot of output can be found in directory **docs/intellijIndexLogs
+- Results of indexing and searching in Intellij-Idea a lot of output can be found in directory **docs/intellijIndexLogs
   ** in root of project
 - Output files are organized by dates of executing, including previous bugs and output of previous version of project
-- For example, indexing in *intellij-idea* project in *java* folder works about 4-5 minutes
-- For example, searching in *intellij-idea* project in *java* folder
+- For example, indexing in *Intellij-Idea* project in *java* folder works about 4-5 minutes
+- For example, searching in *Intellij-Idea* project in *java* folder
     - token "class" works about 25-30 seconds, because it is very popular token - more 10500 times for 48000 files
     - less popular token works about 50 milliseconds
+
+### <a id="setup-big-test"></a> Setup big test
+
+- Clone project Intellij Idea beside the project https://github.com/JetBrains/intellij-community
+- Run tests though *searchApi/bigTest/main.kt* in *test* directory
+- It can be chosen different api to run in file *IntellijIdeaTrigramTest*
+- Current progress and stats of indexing and searching will go to console output
 
 ## <a id="used-stack"></a> Used stack
 
