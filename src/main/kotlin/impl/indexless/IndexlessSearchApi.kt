@@ -31,7 +31,7 @@ class IndexlessSearchApi : SearchApi, WithLogging() {
     /**
      * Naive straight-forward implementation to search tokens without any index
      * */
-    override fun searchString(folderPath: Path, token: String, settings: SearchSettings): SearchingState {
+    override fun searchString(folderPath: Path, token: String): SearchingState {
         validateToken(token)
         validatePath(folderPath)
 
@@ -51,12 +51,11 @@ class IndexlessSearchApi : SearchApi, WithLogging() {
      * */
     override fun indexAndSearchString(
         folderPath: Path,
-        token: String,
-        settings: SearchSettings
+        token: String
     ): IndexingAndSearchingState =
         IndexlessIndexingAndSearchingState(
             indexingState = createIndexAtFolder(folderPath),
-            searchingState = searchString(folderPath, token, settings)
+            searchingState = searchString(folderPath, token)
         )
 
     override fun startIncrementalIndexing(withInitialUpdate: Boolean): Boolean {

@@ -89,7 +89,7 @@ class TrigramSearchApi(trigramMapType: TrigramMapType = TrigramMapType.TIMED) : 
      * If some index is calculation at the moment, it throws exception.
      * */
     @OptIn(DelicateCoroutinesApi::class)
-    override fun searchString(folderPath: Path, token: String, settings: SearchSettings): SearchingState {
+    override fun searchString(folderPath: Path, token: String): SearchingState {
         LOG.finest("started")
         if (indexInProcess.get()) {
             throw BusySearchException("Cannot search while indexing")
@@ -118,7 +118,7 @@ class TrigramSearchApi(trigramMapType: TrigramMapType = TrigramMapType.TIMED) : 
      * */
     @OptIn(DelicateCoroutinesApi::class)
     override fun indexAndSearchString(
-        folderPath: Path, token: String, settings: SearchSettings
+        folderPath: Path, token: String
     ): IndexingAndSearchingState {
         validatePath(folderPath)
         validateToken(token)

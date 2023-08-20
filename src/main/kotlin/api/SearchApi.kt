@@ -21,8 +21,7 @@ interface SearchApi {
      * */
     fun searchString(
         folderPath: Path,
-        token: String,
-        settings: SearchSettings = defaultSearchSettings
+        token: String
     ): SearchingState
 
     /**
@@ -30,8 +29,7 @@ interface SearchApi {
      * */
     fun indexAndSearchString(
         folderPath: Path,
-        token: String,
-        settings: SearchSettings = defaultSearchSettings
+        token: String
     ): IndexingAndSearchingState
 
     /**
