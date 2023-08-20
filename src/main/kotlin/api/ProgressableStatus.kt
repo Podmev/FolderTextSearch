@@ -3,60 +3,38 @@ package api
 /**
  * Status of ProgressableState
  * Maybe we need more statuses - Interrupted, Timeout, Error
+ * @param isTerminatingStatus - tells if status is terminating: canceled or finished or failed
  */
-enum class ProgressableStatus {
+enum class ProgressableStatus(
+    val isTerminatingStatus: Boolean
+) {
     /**
      * Initial status
      */
-    NOT_STARTED {
-        override val isTerminatingStatus: Boolean
-            get() = false
-    },
+    NOT_STARTED(false),
 
     /**
      * Main working status
      */
-    IN_PROGRESS {
-        override val isTerminatingStatus: Boolean
-            get() = false
-    },
+    IN_PROGRESS(false),
 
     /**
      * Set this status, on call method cancel
      */
-    CANCELLING {
-        override val isTerminatingStatus: Boolean
-            get() = false
-    },
+    CANCELLING(false),
 
     /**
      * On successful cancel.
      */
-    CANCELLED {
-        override val isTerminatingStatus: Boolean
-            get() = true
-    },
+    CANCELLED(true),
 
     /**
      * On successful finish.
      */
-    FINISHED {
-        override val isTerminatingStatus: Boolean
-            get() = true
-    },
+    FINISHED(true),
 
     /**
      * On error.
      * */
-    FAILED {
-        override val isTerminatingStatus: Boolean
-            get() = true
-    };
-
-
-    /**
-     * Tells if status is terminating: canceled or finished or failed
-     */
-    abstract val isTerminatingStatus: Boolean
-
+    FAILED(true);
 }
