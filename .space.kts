@@ -3,7 +3,6 @@ import circlet.pipelines.script.ScriptApi
 job("Build and run tests") {
     startOn {
         gitPush { enabled = true }
-        //schedule { "0 8 * * *" } every day at 8 am
     }
 
     failOn {
