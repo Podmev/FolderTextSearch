@@ -6,6 +6,7 @@ import api.tools.searchapi.index.syncPerformIndexWithLoggingAndCancel
 import api.tools.searchapi.search.syncPerformSearchWithLogging
 import api.tools.searchapi.search.syncSearchToken
 import impl.trigram.TrigramSearchApi
+import impl.trigram.map.TrigramMapType
 import searchApi.common.commonSetup
 import utils.prettyDiffTime
 import java.nio.file.Path
@@ -74,6 +75,19 @@ class IntellijIdeaTrigramTest {
     }
 
     fun searchOneTokenAfterIndex() {
+        val token = "class"
+        val folder = commonPath
+        val startTime = LocalDateTime.now()
+        println(startTime)
+        searchApi.syncPerformIndexWithLogging(folder)
+        val actualTokenMatches = searchApi.syncPerformSearchWithLogging(folder, token)
+        val finishTime = LocalDateTime.now()
+        println("total time: ${prettyDiffTime(startTime, finishTime)}")
+        println(actualTokenMatches.size)
+    }
+
+    fun searchOneTokenAfterIndexWithSimpleTrigramMap() {
+        val searchApi: SearchApi = TrigramSearchApi(TrigramMapType.SIMPLE)
         val token = "class"
         val folder = commonPath
         val startTime = LocalDateTime.now()
