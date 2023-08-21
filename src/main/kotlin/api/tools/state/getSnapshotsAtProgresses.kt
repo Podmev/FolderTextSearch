@@ -2,9 +2,7 @@ package api.tools.state
 
 import api.*
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Takes state snapshots at different time of indexing.
@@ -51,24 +49,22 @@ fun getSearchingSnapshotsAtProgresses(
 fun <State : ProgressableState, Snapshot> getSnapshotsAtProgresses(
     state: State, getSnapshot: (State) -> Snapshot, progressStep: Double, checkProgressEveryMillis: Long
 ): Map<Double, Snapshot> = runBlocking {
-    val snapshotMap = ConcurrentHashMap<Double, Snapshot>()
-    val job = launch {
-        var curLookingProgress = 0.0
-        while (!state.finished) {
-            val progress = state.progress
-            if (curLookingProgress <= progress && progress < curLookingProgress + progressStep) {
-                snapshotMap[curLookingProgress] = getSnapshot(state)
-                curLookingProgress += progressStep
-            } else if (progress > curLookingProgress + progressStep) {
-                //progress went too far, we need to apply step already
-                curLookingProgress += progressStep
-            }
-            delay(checkProgressEveryMillis)
+    val snapshotMap = HashMap<Double, Snapshot>()
+    // as runBlocking executes in the current block, launch + join is effectively unnecessary
+    var curLookingProgress = 0.0
+    while (!state.finished) {
+        val progress = state.progress
+        if (curLookingProgress <= progress && progress < curLookingProgress + progressStep) {
+            snapshotMap[curLookingProgress] = getSnapshot(state)
+            curLookingProgress += progressStep
+        } else if (progress > curLookingProgress + progressStep) {
+            //progress went too far, we need to apply step already
+            curLookingProgress += progressStep
         }
-        if (!snapshotMap.containsKey(1.0)) {
-            snapshotMap[1.0] = getSnapshot(state)
-        }
+        delay(checkProgressEveryMillis)
     }
-    job.join()
+    if (!snapshotMap.containsKey(1.0) && state.progress == 1.0) {
+        snapshotMap[1.0] = getSnapshot(state)
+    }
     snapshotMap
 }
