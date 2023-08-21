@@ -1,7 +1,7 @@
 package impl.trigram.map
 
-import api.exception.RuntimeSearchException
 import utils.WithLogging
+import utils.copy
 import java.nio.file.Path
 import java.nio.file.attribute.FileTime
 import kotlin.io.path.getLastModifiedTime
@@ -11,7 +11,9 @@ import kotlin.io.path.getLastModifiedTime
  * Here: charTriplet is 3 sequencial characters, like "abc", "d3d", "213"
  * Used single flow to put everything in one thread
  *
+ * not-synchronized
  *
+ * There is some shared code between SimpleTrigramMap and TimedTrigramMap, but not enough to make common base class
  * */
 class TimedTrigramMap : TrigramMap, WithLogging() {
     private val pathsByTriplet: MutableMap<String, MutableSet<Path>> = HashMap()
@@ -36,15 +38,10 @@ class TimedTrigramMap : TrigramMap, WithLogging() {
         return pathsByTriplet[charTriplet] ?: emptySet()
     }
 
-    //OPTIMIZE
     /**
      * Deep cloning map with recreated sets
      * */
-    override fun clonePathsByTripletsMap(): Map<String, Set<Path>> = buildMap {
-        for ((triplet, paths) in pathsByTriplet) put(key = triplet, value = buildSet {
-            for (path in paths) add(path)
-        })
-    }
+    override fun clonePathsByTripletsMap(): Map<String, Set<Path>> = pathsByTriplet.copy()
 
     /**
      * Registes modification time of path, actual at current moment
@@ -66,12 +63,8 @@ class TimedTrigramMap : TrigramMap, WithLogging() {
         timeByPath[path] = path.getLastModifiedTime()
         tripletsByPath[path] = charTriplets.toMutableSet()
         for (charTriplet in charTriplets) {
-            val foundPaths: MutableSet<Path>? = pathsByTriplet[charTriplet]
-            if (foundPaths != null) {
-                foundPaths.add(path)
-            } else {
-                pathsByTriplet[charTriplet] = mutableSetOf(path)
-            }
+            val foundPaths: MutableSet<Path> = pathsByTriplet.computeIfAbsent(charTriplet) { mutableSetOf() }
+            foundPaths.add(path)
         }
         LOG.finest("finished with $pathsByTriplet, $tripletsByPath")
     }
@@ -81,7 +74,7 @@ class TimedTrigramMap : TrigramMap, WithLogging() {
         timeByPath.remove(path)
         val oldTriplets = tripletsByPath[path]
         if (oldTriplets != null) {
-            for (charTriplet in oldTriplets.iterator()) {
+            for (charTriplet in oldTriplets) {
                 pathsByTriplet[charTriplet]?.remove(path)
             }
         }
@@ -92,38 +85,26 @@ class TimedTrigramMap : TrigramMap, WithLogging() {
     private fun addCharTripletByPathToPathsByTriplet(
         charTriplet: String, path: Path
     ) {
-        val existingPathsWithTriplet: MutableSet<Path>? = pathsByTriplet[charTriplet]
-        if (existingPathsWithTriplet != null) {
-            val isAdded = existingPathsWithTriplet.add(path)
-            if (isAdded) {
-                LOG.finest("add by triplet \"$charTriplet\" (now total ${existingPathsWithTriplet.size}) new path: $path")
-            } else {
-                LOG.finest("duplicate by triplet \"$charTriplet\" (saved before) path $path")
-            }
-            return
+
+        val existingPathsWithTriplet: MutableSet<Path> = pathsByTriplet.computeIfAbsent(charTriplet) { mutableSetOf() }
+        val isAdded = existingPathsWithTriplet.add(path)
+        if (isAdded) {
+            LOG.finest("add by triplet \"$charTriplet\" (now total ${existingPathsWithTriplet.size}) new path: $path")
+        } else {
+            LOG.finest("duplicate by triplet \"$charTriplet\" (saved before) path $path")
         }
-        pathsByTriplet[charTriplet] = mutableSetOf(path)
     }
 
     private fun addCharTripletByPathToTripletsByPath(
         charTriplet: String, path: Path
     ) {
-        val existingTripletsWithPath: MutableSet<String>? = tripletsByPath[path]
-        if (existingTripletsWithPath != null) {
-            val isAdded = existingTripletsWithPath.add(charTriplet)
-            if (isAdded) {
-                LOG.finest("add new triplet \"$charTriplet\" (now total ${existingTripletsWithPath.size}) by path: $path")
-            } else {
-                LOG.finest("duplicate triplet \"$charTriplet\" (saved before) by path $path")
-            }
-            return
+        val existingTripletsWithPath: MutableSet<String> = tripletsByPath.computeIfAbsent(path) { mutableSetOf() }
+        val isAdded = existingTripletsWithPath.add(charTriplet)
+        if (isAdded) {
+            LOG.finest("add new triplet \"$charTriplet\" (now total ${existingTripletsWithPath.size}) by path: $path")
+        } else {
+            LOG.finest("duplicate triplet \"$charTriplet\" (saved before) by path $path")
         }
-        tripletsByPath[path] = mutableSetOf(charTriplet)
     }
 
-    private fun validateCharTriplet(charTriplet: String) {
-        if (charTriplet.length != 3) {
-            throw RuntimeSearchException("Char triplet does have 3 characters, but ${charTriplet.length} $charTriplet")
-        }
-    }
 }

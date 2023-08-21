@@ -1,7 +1,7 @@
 package impl.trigram.map
 
-import api.exception.RuntimeSearchException
 import utils.WithLogging
+import utils.copy
 import java.nio.file.Path
 import java.nio.file.attribute.FileTime
 
@@ -19,19 +19,13 @@ class SimpleTrigramMap : TrigramMap, WithLogging() {
     override fun addCharTripletByPath(charTriplet: String, path: Path) {
         validateCharTriplet(charTriplet)
 
-        val existingPathsWithTriplet: MutableSet<Path>? = pathsByTriplets[charTriplet]
-        if (existingPathsWithTriplet != null) {
-            val isAdded = existingPathsWithTriplet.add(path)
-            if (isAdded) {
-                LOG.finest("add by triplet \"$charTriplet\" (now total ${existingPathsWithTriplet.size}) new path: $path")
-            } else {
-                LOG.finest("duplicate by triplet \"$charTriplet\" (saved before) path $path")
-            }
-            return
+        val existingPathsWithTriplet: MutableSet<Path> = pathsByTriplets.computeIfAbsent(charTriplet) { mutableSetOf() }
+        val isAdded = existingPathsWithTriplet.add(path)
+        if (isAdded) {
+            LOG.finest("add by triplet \"$charTriplet\" (now total ${existingPathsWithTriplet.size}) new path: $path")
+        } else {
+            LOG.finest("duplicate by triplet \"$charTriplet\" (saved before) path $path")
         }
-        pathsByTriplets[charTriplet] = mutableSetOf(path)
-        LOG.finest("add by triplet \"$charTriplet\" new path: $path")
-
     }
 
     /**
@@ -42,25 +36,10 @@ class SimpleTrigramMap : TrigramMap, WithLogging() {
         return pathsByTriplets[charTriplet] ?: emptySet()
     }
 
-    private fun validateCharTriplet(charTriplet: String) {
-        if (charTriplet.length != 3) {
-            throw RuntimeSearchException("Char triplet does have 3 characters, but ${charTriplet.length} $charTriplet")
-        }
-    }
-
-    //OPTIMIZE
     /**
      * Deep cloning map with recreated sets
      * */
-    override fun clonePathsByTripletsMap(): Map<String, Set<Path>> = buildMap {
-        for ((triplet, paths) in pathsByTriplets)
-            put(
-                key = triplet,
-                value = buildSet {
-                    for (path in paths) add(path)
-                }
-            )
-    }
+    override fun clonePathsByTripletsMap(): Map<String, Set<Path>> = pathsByTriplets.copy()
 
     override fun registerPathTime(path: Path, lastModificationTime: FileTime) {
         /*do nothing*/
@@ -69,6 +48,7 @@ class SimpleTrigramMap : TrigramMap, WithLogging() {
     override fun getRegisteredPathTime(path: Path): FileTime? = null
 
     override fun getAllRegisteredPathsWithTime(): List<Pair<Path, FileTime>> = emptyList()
+
     override fun getAllRegisteredPaths(): List<Path> = emptyList()
 
     override fun addAllCharTripletsByPathAndRegisterTime(charTriplets: Set<String>, path: Path) {
