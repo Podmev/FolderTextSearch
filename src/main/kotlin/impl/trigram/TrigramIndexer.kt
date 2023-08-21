@@ -6,8 +6,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.onFailure
 import kotlinx.coroutines.channels.onSuccess
 import kotlinx.coroutines.channels.trySendBlocking
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.onEach
 import utils.WithLogging
 import java.nio.charset.MalformedInputException
 import java.nio.file.Files
@@ -103,13 +101,12 @@ internal class TrigramIndexer(
         withContext(Dispatchers.IO) {
             Files.walk(indexingContext.folderPath)
         }.use { it: Stream<Path> ->
-            //using flow to send in channel
-            it.asSequence().filter { path -> path.isRegularFile() }.asFlow().onEach { path ->
+            for (path in it.asSequence().filter { path -> path.isRegularFile() }) {
                 LOG.finest("visiting file by path $path")
                 indexingContext.visitedPathChannel.send(path)
                 val visitedFilesNumber = indexingContext.indexingState.addVisitedPathToBuffer(path)
                 LOG.finest("successfully visited $visitedFilesNumber")
-            }.collect { }
+            }
         }
 
         indexingContext.visitedPathChannel.close()
@@ -162,10 +159,10 @@ internal class TrigramIndexer(
         try {
             path.useLines { lines ->
                 lines.forEachIndexed { lineIndex, line ->
-                    constructIndexForLine(
-                        path = path, line = line, lineIndex = lineIndex, indexingContext = indexingContext
-                    )
-                }
+                        constructIndexForLine(
+                            path = path, line = line, lineIndex = lineIndex, indexingContext = indexingContext
+                        )
+                    }
             }
             LOG.finest("finished for path: $path")
             return true
