@@ -4,6 +4,7 @@ import utils.WithLogging
 import java.io.IOException
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
+import java.util.logging.Level
 
 /**
  * Structure that encapsulates data for watching files for different trees of files:
@@ -14,6 +15,8 @@ import java.nio.file.attribute.BasicFileAttributes
  * */
 class WatcherHolder : WithLogging() {
     private var innerWatcher: WatchService = createNewWatcherService()
+
+    private val lock = Any()
 
     /**
      * Watcher for listening file events.
@@ -56,7 +59,7 @@ class WatcherHolder : WithLogging() {
      * @param [subFolder] this folder is used when we need to add only subFolder of main folder
      * */
     fun addWatch(folder: Path, subFolder: Path = folder): Boolean {
-        synchronized(innerWatcher) {
+        synchronized(lock) {
             LOG.finest("started for path: $folder${if (subFolder != folder) ", subfolder = $subFolder" else ""}")
             if (hasWatchByFolder(folder) && subFolder == folder) return false
             LOG.finest("registering: $folder")
@@ -87,7 +90,7 @@ class WatcherHolder : WithLogging() {
      * Removes watchKey and associated entries from maps.
      * */
     fun removeWatch(folder: Path): Boolean {
-        synchronized(innerWatcher) {
+        synchronized(lock) {
             val innerMap = watchMapByFolder[folder] ?: return false
             for (key in innerMap.keys) {
                 key.cancel()
@@ -103,7 +106,7 @@ class WatcherHolder : WithLogging() {
      * After this method all maps are empty.
      * */
     fun removeAllWatches() {
-        synchronized(innerWatcher) {
+        synchronized(lock) {
             for ((watchKey, _) in watchMapByKey) {
                 watchKey.cancel()
             }
@@ -136,7 +139,7 @@ class WatcherHolder : WithLogging() {
      * Generates one watchKey and saves associated data in maps.
      * */
     private fun register(folder: Path, innerFolder: Path) {
-        val watchKey: WatchKey = registerWatch(innerFolder, watcher)
+        val watchKey: WatchKey = registerWatch(innerFolder, watcher) ?: return
         saveToWatchMapByKey(watchKey, folder, innerFolder)
         saveToWatchMapByFolder(watchKey, folder, innerFolder)
     }
@@ -152,25 +155,21 @@ class WatcherHolder : WithLogging() {
      * Saves watchKey, innerFolder and folder in watchMapByFolder.
      * */
     private fun saveToWatchMapByFolder(watchKey: WatchKey, folder: Path, innerFolder: Path) {
-        val innerMap: MutableMap<WatchKey, Path>? = watchMapByFolder[folder]
-        if (innerMap != null) {
-            innerMap[watchKey] = innerFolder
-            return
-        }
-        watchMapByFolder[folder] = mutableMapOf(Pair(watchKey, innerFolder))
+        val innerMap: MutableMap<WatchKey, Path> = watchMapByFolder.computeIfAbsent(folder) { mutableMapOf() }
+        innerMap[watchKey] = innerFolder
     }
 
     /**
      * Registers folder recursively by walking only subfolders.
      * */
     @Throws(IOException::class)
-    private fun registerAll(start: Path, mafinestlder: Path) {
+    private fun registerAll(start: Path, mainFolder: Path) {
         // register folder and sub-folders
         Files.walkFileTree(start, object : SimpleFileVisitor<Path>() {
             @Throws(IOException::class)
             override fun preVisitDirectory(folder: Path, attrs: BasicFileAttributes): FileVisitResult {
                 LOG.finest("preVisit folder: $folder")
-                register(mafinestlder, folder)
+                register(mainFolder, folder)
                 return FileVisitResult.CONTINUE
             }
         })
@@ -180,7 +179,7 @@ class WatcherHolder : WithLogging() {
      * Registers folder in watcher for events: create, modify and delete.
      * Returns watchKey, which will be used in maps and listening process.
      * */
-    private fun registerWatch(folder: Path, watcher: WatchService): WatchKey {
+    private fun registerWatch(folder: Path, watcher: WatchService): WatchKey? {
         return try {
             folder.register(
                 watcher,
@@ -189,8 +188,10 @@ class WatcherHolder : WithLogging() {
                 StandardWatchEventKinds.ENTRY_MODIFY
             )
         } catch (x: IOException) {
-            System.err.println(x)
-            throw x
+            LOG.severe("")
+            x.printStackTrace()
+            LOG.log(Level.SEVERE, "Couldn't register watcher for folder $folder: ${x.message}", x)
+            return null
         }
     }
 }
