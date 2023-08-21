@@ -74,20 +74,17 @@ class TrigramSearcher : WithLogging() {
      * */
     private suspend fun asyncWalkTokenAndNarrowPaths(searchingContext: TrigramSearchingContext) = coroutineScope {
         LOG.finest("started for folder: ${searchingContext.folderPath} and token: \"${searchingContext.token}\"")
-        //TODO make async way getPathsByToken
+
         val narrowedPaths = getPathsByToken(searchingContext.trigramMap, searchingContext.token)
         LOG.finest("got ${narrowedPaths.size} narrowed paths from trigramMap by token \"${searchingContext.token}\"")
         makeCancelablePoint()
-        //TODO remove temporary block --start--
-        //commands should be in flow and set total after, so we can cancel easily
-        //can be extra flow for it
+
         narrowedPaths.forEach {
             makeCancelablePoint()
             searchingContext.searchingState.addVisitedPath(it)
         }
         searchingContext.searchingState.setTotalFilesByteSize()
         searchingContext.searchingState.setTotalFilesNumber()
-        //TODO remove temporary block --end--
 
         for (path in narrowedPaths.asSequence()) {
             searchingContext.narrowedPathChannel.send(path)
@@ -96,9 +93,6 @@ class TrigramSearcher : WithLogging() {
 
         searchingContext.narrowedPathChannel.close()
         LOG.finest("closed channel narrowedPathChannel")
-
-//        searchingContext.searchingState.setTotalFilesByteSize()
-//        searchingContext.searchingState.setTotalFilesNumber()
 
         LOG.finest("finished for folder: ${searchingContext.folderPath} and token: \"${searchingContext.token}\"")
     }
@@ -174,7 +168,6 @@ class TrigramSearcher : WithLogging() {
         LOG.finest("finished for folder: ${searchingContext.folderPath} and token: \"$searchingContext.token\"")
     }
 
-    //TODO rewrite in concurrent way, I cannot decide how to make reduce concurrently here
     /**
      * Find all file paths, which contains all sequence char triplets from token.
      * */

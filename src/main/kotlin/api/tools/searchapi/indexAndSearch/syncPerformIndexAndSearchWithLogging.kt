@@ -11,7 +11,6 @@ import utils.diffTime
 import utils.prettyMillis
 import java.nio.file.Path
 
-//TODO optimize parts with indexing and logging
 /**
  * Util function to index in folder and then search token in folder with detailed logging,
  * then after it is done returns tokens.
