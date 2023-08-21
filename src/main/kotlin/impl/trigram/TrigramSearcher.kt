@@ -159,7 +159,7 @@ class TrigramSearcher : WithLogging() {
     private suspend fun asyncReadingTokenMatchesChannel(searchingContext: TrigramSearchingContext) = coroutineScope {
         LOG.finest("started for folder: ${searchingContext.folderPath} and token: \"$searchingContext.token\"")
         for (tokenMatch in searchingContext.tokenMatchChannel) {
-            if(!isActive) break
+            if (!isActive) break
             LOG.finest("received tokenMatch: $tokenMatch, isActive:$isActive")
             searchingContext.resultTokenMatchQueue.add(tokenMatch)
             val tokenMatchesNumber = searchingContext.searchingState.addTokenMatchToBuffer(tokenMatch)

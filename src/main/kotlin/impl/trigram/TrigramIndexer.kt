@@ -165,10 +165,10 @@ internal class TrigramIndexer(
         try {
             path.useLines { lines ->
                 lines.forEachIndexed { lineIndex, line ->
-                        constructIndexForLine(
-                            path = path, line = line, lineIndex = lineIndex, indexingContext = indexingContext
-                        )
-                    }
+                    constructIndexForLine(
+                        path = path, line = line, lineIndex = lineIndex, indexingContext = indexingContext
+                    )
+                }
             }
             LOG.finest("finished for path: $path")
             return true

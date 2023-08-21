@@ -78,6 +78,7 @@ class TrigramSearchApi(trigramMapType: TrigramMapType = TrigramMapType.TIMED) : 
                 indexInProcess.set(false)
             }
         }
+
         fun cancelIndexing() {
             indexingState.changeStatus(ProgressableStatus.CANCELLING)
             deferred.cancel("Manual cancel indexing")
