@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test
 import searchApi.common.commonSetup
 import java.io.File
 import java.nio.file.Path
+import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -19,7 +20,7 @@ import kotlin.test.BeforeTest
  * */
 class IncrementalTest {
     private val commonFolder: Path = commonSetup.commonPath
-    private val indexFolder: Path = commonFolder.resolve("tempFolder")
+    private val indexFolder: Path = commonFolder.resolve("tempFolder${UUID.randomUUID()}")
     private val commonToken: String = "abc"
 
     @BeforeTest

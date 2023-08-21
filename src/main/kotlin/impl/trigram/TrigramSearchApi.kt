@@ -73,13 +73,11 @@ class TrigramSearchApi(trigramMapType: TrigramMapType = TrigramMapType.TIMED) : 
         val indexingState = TrigramIndexingState(completableFuture)
 
         val deferred = GlobalScope.async {
-            try {
-                indexer.asyncIndexing(folderPath, completableFuture, indexingState, trigramMapByFolder)
-            } finally {
+            indexer.asyncIndexing(folderPath, completableFuture, indexingState, trigramMapByFolder) {
+                //finalize
                 indexInProcess.set(false)
             }
         }
-
         fun cancelIndexing() {
             indexingState.changeStatus(ProgressableStatus.CANCELLING)
             deferred.cancel("Manual cancel indexing")
@@ -140,14 +138,13 @@ class TrigramSearchApi(trigramMapType: TrigramMapType = TrigramMapType.TIMED) : 
 
         val deferred = GlobalScope.async {
             val trigramMapDeferred = async {
-                try {
-                    indexer.asyncIndexing(
-                        folderPath = folderPath,
-                        future = completableIndexFuture,
-                        indexingState = indexingState,
-                        trigramMapByFolder = trigramMapByFolder,
-                    )
-                } finally {
+                indexer.asyncIndexing(
+                    folderPath = folderPath,
+                    future = completableIndexFuture,
+                    indexingState = indexingState,
+                    trigramMapByFolder = trigramMapByFolder,
+                ) {
+                    //finalize
                     indexInProcess.set(false)
                 }
             }

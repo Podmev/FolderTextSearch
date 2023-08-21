@@ -37,12 +37,15 @@ internal class TrigramIndexer(
      * In the end it fills result list of indexed files in CompletableFuture object
      *
      * It can be called only one per time, TrigramSearchApi controls it
+     *
+     * @param finalize: function to run before setting up future
      * */
     suspend fun asyncIndexing(
         folderPath: Path,
         future: CompletableFuture<List<Path>>,
         indexingState: TrigramIndexingState,
-        trigramMapByFolder: MutableMap<Path, TrigramMap>
+        trigramMapByFolder: MutableMap<Path, TrigramMap>,
+        finalize: () -> Unit
     ): TrigramMap = coroutineScope {
         try {
             indexingState.changeStatus(ProgressableStatus.IN_PROGRESS)
@@ -72,16 +75,19 @@ internal class TrigramIndexer(
             //here we wait all coroutines to finish
             val resultPathList = resultPathQueue.toList()
             indexingState.changeStatus(ProgressableStatus.FINISHED)
+            finalize()
             future.complete(resultPathList)
             LOG.finest("finished for folder: $folderPath, indexed ${resultPathList.size} files")
             return@coroutineScope resultTrigramMap!!
         } catch (ex: CancellationException) {
             indexingState.changeStatus(ProgressableStatus.CANCELLED)
+            finalize()
             future.complete(emptyList())
             throw ex // Must let the CancellationException propagate
         } catch (th: Throwable) {
             indexingState.changeStatus(ProgressableStatus.FAILED)
             indexingState.setFailReason(th)
+            finalize()
             future.complete(emptyList())
             LOG.severe("exception during making index: ${th.message}")
             th.printStackTrace()

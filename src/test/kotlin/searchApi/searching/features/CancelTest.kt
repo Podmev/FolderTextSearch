@@ -17,6 +17,8 @@ import java.util.stream.Stream
 
 /**
  * Checks correctness of cancel of searching in SearchApi.
+ *
+ * Sometimes these tests fail, because they are too fast and we cannot catch correct moment
  * */
 @Suppress("DeferredResultUnused")
 class CancelTest {
