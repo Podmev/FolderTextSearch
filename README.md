@@ -12,6 +12,7 @@ Kotlin library for simple text search inside chosen folder on file system.
     - [Creating index for folder and searching string in folder as one request](#index-search-feature)
     - [Incremental indexing](#incremental-feature)
     - [Browsing & modification stored index](#modification-index-feature)
+   - [Choosing trigramMap type](#choosing-trigram-map-type)
 4. [Limitations](#limitations)
 5. [Examples](#examples)
 6. [Roadmap (unordered)](#roadmap)
@@ -133,6 +134,15 @@ These instructions will get you a copy of the project up and running on your loc
 - Delete index for all folders
 - Delete index for specific folder
 - Check if there is index for folder
+
+### <a id="choosing-trigram-map-type"></a> Choosing trigramMap type
+
+- For TrigramSearchApi there are options for using internal structure - TrigramMap
+- TrigramMap has 2 implementations: simple and timed
+- Simple is a bit faster, but doesn't support incremental indexing
+- Timed is a bit slower and does support incremental indexing
+- By default, it is timed implementation
+- Implementation can be chosen in constructor of TrigramSearchApi
 
 ## <a id="limitations"></a> Limitations
 
