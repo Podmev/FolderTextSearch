@@ -19,26 +19,11 @@ data class ConcurrencyTestCase(
 /**
  * Relation second folder to first
  * */
-enum class FolderCombination {
-    SAME_FOLDER {
-        override val folder1: Path = commonSetup.srcFolder
-        override val folder2: Path = commonSetup.srcFolder
-    },
-    SUB_FOLDER {
-        override val folder1: Path = commonSetup.srcFolder
-        override val folder2: Path = commonSetup.srcFolder.resolve("main")
-    },
-    PARENT_FOLDER {
-        override val folder1: Path = commonSetup.srcFolder.resolve("main")
-        override val folder2: Path = commonSetup.srcFolder
-    },
-    DIFFERENT_FOLDER {
-        override val folder1: Path = commonSetup.srcFolder.resolve("main")
-        override val folder2: Path = commonSetup.srcFolder.resolve("test")
-    };
-
-    abstract val folder1: Path
-    abstract val folder2: Path
+enum class FolderCombination(val folder1: Path, val folder2: Path) {
+    SAME_FOLDER(commonSetup.srcFolder, commonSetup.srcFolder),
+    SUB_FOLDER(commonSetup.srcFolder, commonSetup.srcFolder.resolve("main")),
+    PARENT_FOLDER(commonSetup.srcFolder.resolve("main"), commonSetup.srcFolder),
+    DIFFERENT_FOLDER(commonSetup.srcFolder.resolve("main"), commonSetup.srcFolder.resolve("test"))
 }
 
 /**
@@ -59,18 +44,9 @@ enum class NumberOfInstances {
 /**
  * Combination of tokens
  * */
-enum class TokenCombination {
-    SAME_TOKEN {
-        override val token1: String = "index"
-        override val token2: String = token1
-    },
-    DIFFERENT_TOKEN {
-        override val token1: String = "index"
-        override val token2: String = "search"
-    };
-
-    abstract val token1: String
-    abstract val token2: String
+enum class TokenCombination(val token1: String, val token2: String) {
+    SAME_TOKEN("index", "index"),
+    DIFFERENT_TOKEN("index", "search")
 }
 
 /**

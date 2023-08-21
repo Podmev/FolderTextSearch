@@ -19,26 +19,11 @@ data class ConcurrencyTestCase(
 /**
  * Relation second folder to first
  * */
-enum class FolderCombination {
-    SAME_FOLDER {
-        override val folder1: Path = commonSetup.srcFolder
-        override val folder2: Path = commonSetup.srcFolder
-    },
-    SUB_FOLDER {
-        override val folder1: Path = commonSetup.srcFolder
-        override val folder2: Path = commonSetup.srcFolder.resolve("main")
-    },
-    PARENT_FOLDER {
-        override val folder1: Path = commonSetup.srcFolder.resolve("main")
-        override val folder2: Path = commonSetup.srcFolder
-    },
-    DIFFERENT_FOLDER {
-        override val folder1: Path = commonSetup.srcFolder.resolve("main")
-        override val folder2: Path = commonSetup.srcFolder.resolve("test")
-    };
-
-    abstract val folder1: Path
-    abstract val folder2: Path
+enum class FolderCombination(val folder1: Path, val folder2: Path) {
+    SAME_FOLDER(commonSetup.srcFolder, commonSetup.srcFolder),
+    SUB_FOLDER(commonSetup.srcFolder, commonSetup.srcFolder.resolve("main")),
+    PARENT_FOLDER(commonSetup.srcFolder.resolve("main"), commonSetup.srcFolder),
+    DIFFERENT_FOLDER(commonSetup.srcFolder.resolve("main"), commonSetup.srcFolder.resolve("test"))
 }
 
 /**
@@ -59,26 +44,11 @@ enum class NumberOfInstances {
 /**
  * Has of no index for each of 2 folders
  * */
-enum class IndexPresence {
-    NO_INDEX {
-        override val hasFolder1Index: Boolean = false
-        override val hasFolder2Index: Boolean = false
-    },
-    ONLY_FIRST {
-        override val hasFolder1Index: Boolean = true
-        override val hasFolder2Index: Boolean = false
-    },
-    ONLY_SECOND {
-        override val hasFolder1Index: Boolean = false
-        override val hasFolder2Index: Boolean = true
-    },
-    BOTH_INDICES {
-        override val hasFolder1Index: Boolean = true
-        override val hasFolder2Index: Boolean = true
-    };
-
-    abstract val hasFolder1Index: Boolean
-    abstract val hasFolder2Index: Boolean
+enum class IndexPresence(val hasFolder1Index: Boolean, val hasFolder2Index: Boolean) {
+    NO_INDEX(false, false),
+    ONLY_FIRST(true, false),
+    ONLY_SECOND(false, true),
+    BOTH_INDICES(true, true)
 }
 
 /**
