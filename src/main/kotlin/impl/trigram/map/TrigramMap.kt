@@ -29,7 +29,7 @@ interface TrigramMap {
     /**
      * Registes modification time of path, actual at current moment
      * */
-    fun registerPathTime(path: Path)
+    fun registerPathTime(path: Path, lastModificationTime: FileTime)
 
     /**
      * Gets modification time of path saved here before

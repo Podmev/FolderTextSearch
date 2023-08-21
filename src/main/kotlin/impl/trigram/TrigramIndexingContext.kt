@@ -3,6 +3,7 @@ package impl.trigram
 import impl.trigram.map.TrigramMap
 import kotlinx.coroutines.channels.Channel
 import java.nio.file.Path
+import java.nio.file.attribute.FileTime
 import java.util.*
 
 /**
@@ -32,8 +33,13 @@ internal class TrigramIndexingContext(
      * walking files, parsing files, saving triplets
      * */
     private val channelCapacity = Channel.UNLIMITED
+
     val visitedPathChannel = Channel<Path>(channelCapacity)
-    val indexedPathChannel = Channel<Path>(channelCapacity)
+
+    /**
+     * We need to send modification time of file together with file, because it can be changed later
+     * */
+    val indexedPathChannel = Channel<Pair<Path, FileTime>>(channelCapacity)
     val tripletInPathChannel = Channel<Pair<String, Path>>(channelCapacity)
 
 }

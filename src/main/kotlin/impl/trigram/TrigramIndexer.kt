@@ -15,9 +15,9 @@ import java.nio.file.Path
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.LinkedBlockingQueue
-import java.util.concurrent.atomic.AtomicBoolean
 import java.util.stream.Stream
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.io.path.getLastModifiedTime
 import kotlin.io.path.isRegularFile
 import kotlin.io.path.useLines
 import kotlin.streams.asSequence
@@ -37,13 +37,14 @@ internal class TrigramIndexer(
      *  - reading paths of already indexed files to save progress,
      *  - reading found triplets in each file to save in trigramMap,
      * In the end it fills result list of indexed files in CompletableFuture object
+     *
+     * It can be called only one per time, TrigramSearchApi controls it
      * */
     suspend fun asyncIndexing(
         folderPath: Path,
         future: CompletableFuture<List<Path>>,
         indexingState: TrigramIndexingState,
-        trigramMapByFolder: MutableMap<Path, TrigramMap>,
-        indexInProcess: AtomicBoolean
+        trigramMapByFolder: MutableMap<Path, TrigramMap>
     ): TrigramMap = coroutineScope {
         try {
             indexingState.changeStatus(ProgressableStatus.IN_PROGRESS)
@@ -53,9 +54,11 @@ internal class TrigramIndexer(
             var resultTrigramMap = foundTrigramMap
             coroutineScope {
                 if (foundTrigramMap == null) {
+                    //Here we don't worry about other thread calling the same method - TrigramSearchApi allows only 1 per time
                     val trigramMap = createNewTrigramMap()
                     LOG.finest("created new trigramMap for folder $folderPath")
                     val indexingContext = TrigramIndexingContext(folderPath, indexingState, resultPathQueue, trigramMap)
+                    // Here we need extra scope to wait make actions after - all jobs will be finished
                     coroutineScope {
                         launch { asyncWalkingFiles(indexingContext) }
                         launch { asyncIndexingFiles(indexingContext) }
@@ -64,25 +67,23 @@ internal class TrigramIndexer(
                     }
                     trigramMapByFolder[folderPath] = trigramMap
                     resultTrigramMap = trigramMap
+                    // Here we already register watch for folder for incremental indexing
                     addPathFolderWatch(folderPath)
                 }
             }
             //here we wait all coroutines to finish
             val resultPathList = resultPathQueue.toList()
             indexingState.changeStatus(ProgressableStatus.FINISHED)
-            indexInProcess.set(false)
             future.complete(resultPathList)
             LOG.finest("finished for folder: $folderPath, indexed ${resultPathList.size} files")
             return@coroutineScope resultTrigramMap!!
         } catch (ex: CancellationException) {
             indexingState.changeStatus(ProgressableStatus.CANCELLED)
-            indexInProcess.set(false)
             future.complete(emptyList())
             throw ex // Must let the CancellationException propagate
         } catch (th: Throwable) {
             indexingState.changeStatus(ProgressableStatus.FAILED)
             indexingState.setFailReason(th)
-            indexInProcess.set(false)
             future.complete(emptyList())
             LOG.severe("exception during making index: ${th.message}")
             th.printStackTrace()
@@ -102,6 +103,7 @@ internal class TrigramIndexer(
         withContext(Dispatchers.IO) {
             Files.walk(indexingContext.folderPath)
         }.use { it: Stream<Path> ->
+            //using flow to send in channel
             it.asSequence().filter { path -> path.isRegularFile() }.asFlow().onEach { path ->
                 LOG.finest("visiting file by path $path")
                 indexingContext.visitedPathChannel.send(path)
@@ -127,17 +129,25 @@ internal class TrigramIndexer(
      * */
     private suspend fun asyncIndexingFiles(
         indexingContext: TrigramIndexingContext
-    ) = coroutineScope {
+    ) {
         LOG.finest("started for folder: ${indexingContext.folderPath}")
 
-        for (path in indexingContext.visitedPathChannel) {
-            if (!isActive) break
-            val successful = constructIndexForFile(path, indexingContext)
-            if (!successful) LOG.finest("skipped file $path")
-            indexingContext.indexedPathChannel.trySendBlocking(path)
-                .onSuccess { LOG.finest("send successfully path $path to indexedPathChannel") }
-                .onFailure { t: Throwable? -> LOG.severe("Cannot send path in indexedPathChannel: ${t?.message}") }
+        // we need a coroutineScope to wait for all coroutines to finish
+        coroutineScope {
+            for (path in indexingContext.visitedPathChannel) {
+                if (!isActive) break
+                //all indices are run independently
+                launch {
+                    val successful = constructIndexForFile(path, indexingContext)
+                    if (!successful) LOG.finest("skipped file $path")
+                    indexingContext.indexedPathChannel.trySendBlocking(Pair(path, path.getLastModifiedTime()))
+                        .onSuccess { LOG.finest("send successfully path $path to indexedPathChannel") }
+                        .onFailure { t: Throwable? -> LOG.severe("Cannot send path in indexedPathChannel: ${t?.message}") }
+                }
+            }
         }
+
+        //close channel only after all indexing coroutines are finished
         indexingContext.indexedPathChannel.close()
         LOG.finest("closed indexedPathChannel")
         indexingContext.tripletInPathChannel.close()
@@ -194,12 +204,14 @@ internal class TrigramIndexer(
         indexingContext: TrigramIndexingContext
     ) = coroutineScope {
         LOG.finest("started")
-        for (path in indexingContext.indexedPathChannel) {
+        for ((path, modificationTime) in indexingContext.indexedPathChannel) {
             if (!isActive) break
             LOG.finest("received indexed path and saving to state: $path")
             val indexedFilesNumber = indexingContext.indexingState.addIndexedPathToBuffer(path)
             indexingContext.resultPathQueue.add(path)
-            indexingContext.trigramMap.registerPathTime(path)
+
+            //using modification time of file on moment before starting reading and not after
+            indexingContext.trigramMap.registerPathTime(path, modificationTime)
             LOG.finest("successfully indexed $indexedFilesNumber files")
         }
         LOG.finest("finished")

@@ -62,7 +62,7 @@ class SimpleTrigramMap : TrigramMap, WithLogging() {
             )
     }
 
-    override fun registerPathTime(path: Path) {
+    override fun registerPathTime(path: Path, lastModificationTime: FileTime) {
         /*do nothing*/
     }
 

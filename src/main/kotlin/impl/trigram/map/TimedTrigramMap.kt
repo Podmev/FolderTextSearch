@@ -49,9 +49,8 @@ class TimedTrigramMap : TrigramMap, WithLogging() {
     /**
      * Registes modification time of path, actual at current moment
      * */
-    override fun registerPathTime(path: Path) {
-        val modifiedTime: FileTime = path.getLastModifiedTime()
-        timeByPath[path] = modifiedTime
+    override fun registerPathTime(path: Path, lastModificationTime: FileTime) {
+        timeByPath[path] = lastModificationTime
     }
 
     /**

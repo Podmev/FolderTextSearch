@@ -33,6 +33,7 @@ class TrigramSearchApi(trigramMapType: TrigramMapType = TrigramMapType.TIMED) : 
     /**
      * Flag for indexing activity
      * True - it is going some indexing, false - no
+     * It is checked for starting indexing, which changes state
      * */
     private val indexInProcess = AtomicBoolean(false)
 
@@ -70,13 +71,18 @@ class TrigramSearchApi(trigramMapType: TrigramMapType = TrigramMapType.TIMED) : 
         val completableFuture = CompletableFuture<List<Path>>()
 
         val indexingState = TrigramIndexingState(completableFuture)
+
         val deferred = GlobalScope.async {
-            indexer.asyncIndexing(folderPath, completableFuture, indexingState, trigramMapByFolder, indexInProcess)
+            try {
+                indexer.asyncIndexing(folderPath, completableFuture, indexingState, trigramMapByFolder)
+            } finally {
+                indexInProcess.set(false)
+            }
         }
 
         fun cancelIndexing() {
             indexingState.changeStatus(ProgressableStatus.CANCELLING)
-            deferred.cancel(CancellationException())
+            deferred.cancel("Manual cancel indexing")
             LOG.finest("deferred.cancel()")
         }
         indexingState.addCancellationAction(::cancelIndexing)
@@ -134,13 +140,16 @@ class TrigramSearchApi(trigramMapType: TrigramMapType = TrigramMapType.TIMED) : 
 
         val deferred = GlobalScope.async {
             val trigramMapDeferred = async {
-                indexer.asyncIndexing(
-                    folderPath = folderPath,
-                    future = completableIndexFuture,
-                    indexingState = indexingState,
-                    trigramMapByFolder = trigramMapByFolder,
-                    indexInProcess = indexInProcess
-                )
+                try {
+                    indexer.asyncIndexing(
+                        folderPath = folderPath,
+                        future = completableIndexFuture,
+                        indexingState = indexingState,
+                        trigramMapByFolder = trigramMapByFolder,
+                    )
+                } finally {
+                    indexInProcess.set(false)
+                }
             }
             val trigramMap: TrigramMap = trigramMapDeferred.await()
             searcher.asyncSearching(folderPath, token, trigramMap, completableSearchFuture, searchingState)
