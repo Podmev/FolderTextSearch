@@ -178,6 +178,8 @@ Simple example to make index and find tokens in folder
 
 ## <a id="roadmap"></a> Roadmap (unordered)
 
+- Optimize progress on last steps when it is 99,99 %
+- Optimize saving index for less than one file, so search can be even faster
 - Saving and loading index on disk, making it persistent
     - on request
     - automatic by time

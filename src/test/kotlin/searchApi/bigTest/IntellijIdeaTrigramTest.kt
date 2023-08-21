@@ -75,7 +75,7 @@ class IntellijIdeaTrigramTest {
     }
 
     fun searchOneTokenAfterIndex() {
-        val token = "class"
+        val token = "volatile"
         val folder = commonPath
         val startTime = LocalDateTime.now()
         println(startTime)

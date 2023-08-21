@@ -11,6 +11,7 @@ package searchApi.bigTest
  * CurProjectTrigramTest().searchOneTokenAfterIndex()
  * ```
  * IntellijIdeaTrigramTest:
+ * better to use JVM options -Xms256m -Xmx8192m
  * ```
  * IntellijIdeaTrigramTest().justIndex()
  * IntellijIdeaTrigramTest().justIndexWithCancel()
