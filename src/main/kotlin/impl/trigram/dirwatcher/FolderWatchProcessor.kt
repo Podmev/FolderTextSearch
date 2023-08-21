@@ -1,7 +1,9 @@
 package impl.trigram.dirwatcher
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.withContext
 import utils.WithLogging
 import utils.coroutines.makeCancelablePoint
 import java.io.IOException
@@ -35,7 +37,7 @@ class FolderWatchProcessor(
                 makeCancelablePoint()
                 LOG.finest("before taking key")
                 // wait for key to be signaled
-                val key: WatchKey = watcherHolder.watcher.take()
+                val key: WatchKey = withContext(Dispatchers.IO) { watcherHolder.watcher.take() }
                 if (!processEventsByWatchKey(key, fileChangeListener)) {
                     LOG.finest("couldn't process watch key - so we go to next iteration")
                     continue

@@ -23,6 +23,7 @@ import kotlin.test.BeforeTest
 /**
  * Testing combination FolderWatchProcessor and WatcherHolder with simple FileChangeListener
  * */
+//@Ignore
 class FolderWatchProcessorTest {
     private val commonFolder: Path = commonSetup.commonPath
 

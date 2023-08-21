@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test
 import searchApi.common.commonSetup
 import java.io.File
 import java.nio.file.Path
+import java.util.*
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 
@@ -18,7 +19,11 @@ import kotlin.test.BeforeTest
  * */
 class NoIncrementalTest {
     private val commonFolder: Path = commonSetup.commonPath
-    private val indexFolder: Path = commonFolder.resolve("tempFolder")
+
+    /**
+     * Using unique temp folder name to cut influence from different tests
+     * */
+    private val indexFolder: Path = commonFolder.resolve("tempFolder${UUID.randomUUID()}")
     private val commonToken: String = "abc"
 
     @BeforeTest
