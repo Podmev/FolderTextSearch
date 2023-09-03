@@ -9,9 +9,11 @@ import kotlin.io.path.getLastModifiedTime
 /**
  * Structure for saving index, based on saving set of file paths where it can be found 3 sequencial characters
  * Here: charTriplet is 3 sequencial characters, like "abc", "d3d", "213"
- * Used single flow to put everything in one thread
+ * Used single flow to put everything in one thread in regular indexing
+ * To exclude interfering of search and incremental indexing TimedTrigramMap is partly synchronized.
  *
- * not-synchronized
+ * Not synchronized parts are only addCharTripletByPath for optimization of indexing,
+ * which is separated by design from search and incremental indexing.
  *
  * There is some shared code between SimpleTrigramMap and TimedTrigramMap, but not enough to make common base class
  * */
@@ -22,6 +24,8 @@ class TimedTrigramMap : TrigramMap, WithLogging() {
 
     /**
      * Add new char triplet to structure with file path containing it.
+     * Not synchronized, because it is used in regular indexing,
+     * and it is separated from searching and incremental indexing
      * */
     override fun addCharTripletByPath(charTriplet: String, path: Path) {
         validateCharTriplet(charTriplet)
@@ -32,19 +36,28 @@ class TimedTrigramMap : TrigramMap, WithLogging() {
 
     /**
      * Get all file paths containing char triplet
+     * Synchronized to exclude situation interfering with incremental indexing
+     * (addAllCharTripletsByPathAndRegisterTime, removeAllCharTripletsByPathAndUnregisterTime)
+     * Also cloning set from pathsByTriplet to exclude changes from other places
      * */
+    @Synchronized
     override fun getPathsByCharTriplet(charTriplet: String): Set<Path> {
         validateCharTriplet(charTriplet)
-        return pathsByTriplet[charTriplet] ?: emptySet()
+        return pathsByTriplet[charTriplet]?.toSet() ?: emptySet()
     }
 
     /**
      * Deep cloning map with recreated sets
+     * Synchronized to exclude situation interfering with incremental indexing
+     * (addAllCharTripletsByPathAndRegisterTime, removeAllCharTripletsByPathAndUnregisterTime)
      * */
+    @Synchronized
     override fun clonePathsByTripletsMap(): Map<String, Set<Path>> = pathsByTriplet.copy()
 
     /**
      * Registes modification time of path, actual at current moment
+     * Not synchronized, because it is used in regular indexing,
+     * and it is separated from searching and incremental indexing
      * */
     override fun registerPathTime(path: Path, lastModificationTime: FileTime) {
         timeByPath[path] = lastModificationTime
@@ -52,12 +65,25 @@ class TimedTrigramMap : TrigramMap, WithLogging() {
 
     /**
      * Gets modification time of path saved here before
+     *
+     * No need to be synchronized - not invoked while changing TimedTrigramMap
      * */
     override fun getRegisteredPathTime(path: Path): FileTime? = timeByPath[path]
 
+    /**
+     * No need to be synchronized - not invoked while changing TimedTrigramMap
+     * */
     override fun getAllRegisteredPathsWithTime(): List<Pair<Path, FileTime>> = timeByPath.toList()
+
+    /**
+     * No need to be synchronized - not invoked while changing TimedTrigramMap
+     * */
     override fun getAllRegisteredPaths(): List<Path> = timeByPath.keys.toList()
 
+    /**
+     * Synchronized to exclude situation interfering with search (getPathsByCharTriplet)
+     * */
+    @Synchronized
     override fun addAllCharTripletsByPathAndRegisterTime(charTriplets: Set<String>, path: Path) {
         LOG.finest("started")
         timeByPath[path] = path.getLastModifiedTime()
@@ -69,6 +95,10 @@ class TimedTrigramMap : TrigramMap, WithLogging() {
         LOG.finest("finished with $pathsByTriplet, $tripletsByPath")
     }
 
+    /**
+     * Synchronized to exclude situation interfering with search (getPathsByCharTriplet)
+     * */
+    @Synchronized
     override fun removeAllCharTripletsByPathAndUnregisterTime(path: Path) {
         LOG.finest("started")
         timeByPath.remove(path)
