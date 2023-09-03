@@ -1,0 +1,367 @@
+intellij-community/java/compiler/impl/src/com/intellij/compiler/backwardRefs/CompilerReferenceServiceBase.java:  protected volatile Reader myReader;
+intellij-community/java/compiler/impl/src/com/intellij/compiler/backwardRefs/DirtyScopeHolder.java:  private volatile GlobalSearchScope myExcludedFilesScope; // calculated outside myLock
+intellij-community/java/compiler/impl/src/com/intellij/compiler/CompilerConfigurationImpl.java:  private volatile Collection<BackendCompiler> myRegisteredCompilers = Collections.emptyList();
+intellij-community/java/compiler/impl/src/com/intellij/compiler/CompilerManagerImpl.java:  private volatile Set<FileType> myCachedCompilableTypes;
+intellij-community/java/compiler/impl/src/com/intellij/compiler/CompilerManagerImpl.java:  private volatile ExternalJavacManager myExternalJavacManager;
+intellij-community/java/compiler/impl/src/com/intellij/compiler/impl/ProblemsViewImpl.java:  private volatile ProblemsViewPanel myPanel;
+intellij-community/java/compiler/impl/src/com/intellij/compiler/progress/BuildOutputService.java:    private volatile boolean isNewLinePosition = true;
+intellij-community/java/compiler/impl/src/com/intellij/compiler/progress/CompilerMessagesService.java:  private volatile ProgressIndicator myIndicator = new EmptyProgressIndicator();
+intellij-community/java/compiler/impl/src/com/intellij/compiler/progress/CompilerTask.java:  private volatile ProgressIndicator myIndicator = new EmptyProgressIndicator();
+intellij-community/java/compiler/impl/src/com/intellij/compiler/server/AutoMakeMessageHandler.java:  private volatile boolean myUnprocessedFSChangesDetected = false;
+intellij-community/java/compiler/impl/src/com/intellij/compiler/server/BuildManager.java:    private volatile int myListenPort = -1;
+intellij-community/java/compiler/impl/src/com/intellij/compiler/server/BuildManager.java:  private volatile boolean myBuildProcessDebuggingEnabled;
+intellij-community/java/compiler/impl/src/com/intellij/compiler/server/BuildMessageDispatcher.java:    volatile CmdlineRemoteProto.Message.ControllerMessage params;
+intellij-community/java/compiler/impl/src/com/intellij/compiler/server/BuildMessageDispatcher.java:    volatile Channel channel;
+intellij-community/java/compiler/impl/src/com/intellij/compiler/server/PreloadedProcessMessageHandler.java:  private volatile BuilderMessageHandler myDelegateHandler;
+intellij-community/java/compiler/impl/src/com/intellij/packaging/impl/artifacts/ArtifactPointerImpl.java:  private volatile @NotNull String myName;
+intellij-community/java/compiler/impl/src/com/intellij/packaging/impl/artifacts/ArtifactPointerImpl.java:  private volatile AtomicReference<Artifact> myArtifact;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/engine/DebuggerManagerThreadImpl.java:  private volatile boolean myDisposed;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/engine/DebugProcessImpl.java:  private volatile VirtualMachineProxyImpl myVirtualMachineProxy = null;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/engine/DebugProcessImpl.java:  private volatile ExecutionResult myExecutionResult;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/engine/DebugProcessImpl.java:  private volatile RemoteConnection myConnection;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/engine/DebugProcessImpl.java:  private volatile Map<String, Connector.Argument> myArguments;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/engine/DebugProcessImpl.java:  private volatile @NotNull DebuggerManagerThreadImpl myDebuggerManagerThread;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/engine/DebugProcessImpl.java:  private volatile SteppingBreakpoint mySteppingBreakpoint;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/engine/dfaassist/DfaAssist.java:  private volatile CancellablePromise<?> myComputation;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/engine/dfaassist/DfaAssist.java:  private volatile ScheduledFuture<?> myScheduledCleanup;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/engine/JavaDebugProcess.java:  private volatile XBreakpointHandler<?>[] myBreakpointHandlers;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/engine/JavaDebugProcess.java:    private volatile boolean myAutoModeEnabled;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/engine/JavaExecutionStack.java:  private volatile List<XStackFrame> myTopFrames;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/engine/JavaExecutionStack.java:  private volatile boolean myTopFramesReady = false;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/engine/JavaValue.java:  private volatile XExpression evaluationExpression = null;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/engine/requests/MethodReturnValueWatcher.java:  private volatile boolean myTrackingEnabled;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/engine/SuspendContextImpl.java:  private volatile boolean myIsResumed;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/engine/SuspendContextImpl.java:  public volatile boolean myInProgress;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/impl/DebuggerSession.java:  private volatile int myIgnoreFiltersFrameCountThreshold = 0;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/impl/EventQueue.java:  private volatile E myCurrentEvent;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/impl/EventQueue.java:  private volatile boolean myIsClosed = false;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/impl/HotSwapProgress.java:  private volatile boolean myIsCancelled;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/impl/InvokeThread.java:    private volatile Future<?> myRequestFuture;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/impl/InvokeThread.java:  private volatile WorkerThreadRequest myCurrentRequest = null;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/jdi/StackFrameProxyImpl.java:  private volatile int myFrameIndex = -1;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/jdi/StackFrameProxyImpl.java:  private volatile StackFrame myStackFrame;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/jdi/StackFrameProxyImpl.java:  private volatile ThreeState myIsObsolete = ThreeState.UNSURE;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/jdi/ThreadReferenceProxyImpl.java:  private volatile int myFrameCount = -1;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/memory/filtering/FilteringTask.java:  private volatile boolean myIsCancelled;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/memory/tracking/ConstructorInstancesTracker.java:  private volatile boolean myIsBackgroundMode;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/memory/tracking/ConstructorInstancesTracker.java:  private volatile boolean myIsBackgroundTrackingEnabled;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/memory/tracking/ConstructorInstancesTracker.java:    private volatile boolean myIsEnabled = false;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/memory/tracking/ConstructorInstancesTracker.java:    private volatile boolean myIsDeleted = false;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/memory/ui/InstancesView.java:  private volatile FilteringTask myFilteringTask;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/memory/ui/InstancesView.java:  private volatile Future<?> myFilteringTaskFuture;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/memory/utils/StackFrameItem.java:    private volatile boolean myWithSeparator;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/settings/DebuggerSettings.java:  public volatile boolean ENABLE_MEMORY_AGENT =
+intellij-community/java/debugger/impl/src/com/intellij/debugger/settings/DebuggerSettings.java:  public volatile boolean WATCH_RETURN_VALUES = false;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/settings/DebuggerSettings.java:  public volatile boolean AUTO_VARIABLES_MODE = false;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/settings/DebuggerSettings.java:  public volatile boolean KILL_PROCESS_IMMEDIATELY = false;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/settings/DebuggerSettings.java:  public volatile boolean ALWAYS_DEBUG = true;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/ui/breakpoints/BreakpointWithHighlighter.java:  private volatile Icon myIcon = getSetIcon(false);
+intellij-community/java/debugger/impl/src/com/intellij/debugger/ui/breakpoints/CollectionBreakpoint.java:  private volatile boolean myClsPrepared = false;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/ui/breakpoints/CollectionBreakpoint.java:  private volatile boolean myIsStatic = false;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/ui/breakpoints/CollectionBreakpoint.java:  private volatile boolean myIsPrivate = false;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/ui/breakpoints/CollectionBreakpoint.java:  private volatile boolean myIsFinal = false;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/ui/breakpoints/CollectionBreakpoint.java:  private volatile boolean myAllMethodsEntryRequestIsEnabled = false;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/ui/impl/TipManager.java:  private volatile boolean myIsDisposed = false;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/ui/impl/UpdatableDebuggerView.java:  private volatile boolean myRefreshNeeded = true;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/ui/impl/UpdatableDebuggerView.java:  private volatile boolean myUpdateEnabled;
+intellij-community/java/debugger/impl/src/com/intellij/debugger/ui/impl/watch/ValueDescriptorImpl.java:  private volatile boolean myValueReady;
+intellij-community/java/execution/impl/src/com/intellij/execution/configurations/JavaCommandLineState.java:  @Nullable private volatile TargetDebuggerConnection myTargetDebuggerConnection;
+intellij-community/java/execution/impl/src/com/intellij/execution/JavaTestFrameworkRunnableState.java:  @Nullable private volatile TargetProgressIndicator myTargetProgressIndicator = null;
+intellij-community/java/execution/impl/src/com/intellij/execution/testDiscovery/TestDiscoveryDataSocketListener.java:  private volatile boolean myClosed;
+intellij-community/java/execution/impl/src/com/intellij/execution/testDiscovery/TestDiscoveryDataSocketListener.java:  private volatile boolean myFinished;
+intellij-community/java/execution/impl/src/com/intellij/execution/testDiscovery/TestDiscoveryIndex.java:  private volatile DiscoveredTestDataHolder myHolder;
+intellij-community/java/execution/openapi/src/com/intellij/execution/filters/ExceptionInfoCache.java:    private volatile List<PsiClass> myExceptionClasses;
+intellij-community/java/idea-ui/src/com/intellij/jarRepository/JarRepositoryManager.java:  private static volatile File ourLocalRepositoryPath;
+intellij-community/java/idea-ui/src/com/intellij/openapi/roots/ui/configuration/libraries/impl/LibraryPresentationManagerImpl.java:  private volatile Map<LibraryKind, LibraryPresentationProvider<?>> myPresentationProviders;
+intellij-community/java/idea-ui/src/com/intellij/util/descriptors/impl/ConfigFileImpl.java:  private volatile Reference<PsiFile> myPsiFile;
+intellij-community/java/java-analysis-impl/resources/messages/InspectionGadgetsBundle.properties:while.loop.spins.on.field.fix.volatile=Make ''{0}'' volatile
+intellij-community/java/java-analysis-impl/resources/messages/InspectionGadgetsBundle.properties:while.loop.spins.on.field.fix.volatile.spinwait=Make ''{0}'' volatile and add Thread.onSpinWait()
+intellij-community/java/java-analysis-impl/resources/messages/InspectionGadgetsBundle.properties:volatile.array.field.display.name=Volatile array field
+intellij-community/java/java-analysis-impl/resources/messages/InspectionGadgetsBundle.properties:non.atomic.operation.on.volatile.field.display.name=Non-atomic operation on 'volatile' field
+intellij-community/java/java-analysis-impl/resources/messages/InspectionGadgetsBundle.properties:non.atomic.operation.on.volatile.field.problem.descriptor=Non-atomic operation on volatile field <code>#ref</code> #loc
+intellij-community/java/java-analysis-impl/resources/messages/InspectionGadgetsBundle.properties:volatile.field.problem.descriptor=Volatile field <code>#ref</code> of type ''{0}'' #loc
+intellij-community/java/java-analysis-impl/resources/messages/InspectionGadgetsBundle.properties:double.checked.locking.quickfix=Make ''{0}'' volatile
+intellij-community/java/java-analysis-impl/resources/messages/InspectionGadgetsBundle.properties:field.missing.volatile.modifier.problem.descriptor=Field ''{0}'' does not have ''volatile'' modifier
+intellij-community/java/java-analysis-impl/resources/messages/InspectionGadgetsBundle.properties:double.checked.locking.fix.family.name=Make field volatile
+intellij-community/java/java-analysis-impl/src/com/intellij/codeInsight/daemon/impl/analysis/ErrorFixExtensionPoint.java:  private static volatile Map<String, List<ErrorFixExtensionPoint>> ourCodeToFix;
+intellij-community/java/java-analysis-impl/src/com/intellij/codeInsight/daemon/impl/analysis/HighlightControlFlowUtil.java:    private volatile boolean myIsWriteRefFound;
+intellij-community/java/java-analysis-impl/src/com/intellij/codeInsight/daemon/impl/analysis/RefCountHolder.java:  private volatile boolean ready; // true when analysis completed and inner maps can be queried
+intellij-community/java/java-analysis-impl/src/com/intellij/codeInspection/bytecodeAnalysis/PurityAnalysis.java:        // Absent fields are considered non-volatile
+intellij-community/java/java-analysis-impl/src/com/intellij/codeInspection/ex/EntryPointsManagerBase.java:  private volatile List<String> ADDITIONAL_ANNOS;
+intellij-community/java/java-analysis-impl/src/com/intellij/codeInspection/reference/RefJavaManagerImpl.java:  private volatile RefPackage myCachedDefaultPackage;  // cached value. benign race
+intellij-community/java/java-analysis-impl/src/com/intellij/codeInspection/reference/RefMethodImpl.java:  private volatile String myReturnValueTemplate = RETURN_VALUE_UNDEFINED; // guarded by this
+intellij-community/java/java-analysis-impl/src/com/siyeh/ig/threading/AtomicFieldUpdaterIssuesInspection.java:        registerError(lastArgument, InspectionGadgetsBundle.message("field.missing.volatile.modifier.problem.descriptor", fieldName));
+intellij-community/java/java-analysis-impl/src/com/siyeh/ig/threading/NonAtomicOperationOnVolatileFieldInspection.java:    return InspectionGadgetsBundle.message("non.atomic.operation.on.volatile.field.problem.descriptor");
+intellij-community/java/java-analysis-impl/src/com/siyeh/ig/threading/NonAtomicOperationOnVolatileFieldInspection.java:      final PsiReferenceExpression volatileFieldRef = findNonSynchronizedVolatileFieldRef(lhs);
+intellij-community/java/java-analysis-impl/src/com/siyeh/ig/threading/NonAtomicOperationOnVolatileFieldInspection.java:      if (volatileFieldRef == null) {
+intellij-community/java/java-analysis-impl/src/com/siyeh/ig/threading/NonAtomicOperationOnVolatileFieldInspection.java:      final PsiElement referenceNameElement = volatileFieldRef.getReferenceNameElement();
+intellij-community/java/java-analysis-impl/src/com/siyeh/ig/threading/NonAtomicOperationOnVolatileFieldInspection.java:      final PsiReferenceExpression volatileFieldRef = findNonSynchronizedVolatileFieldRef(operand);
+intellij-community/java/java-analysis-impl/src/com/siyeh/ig/threading/NonAtomicOperationOnVolatileFieldInspection.java:      if (volatileFieldRef == null) {
+intellij-community/java/java-analysis-impl/src/com/siyeh/ig/threading/NonAtomicOperationOnVolatileFieldInspection.java:      final PsiElement referenceNameElement = volatileFieldRef.getReferenceNameElement();
+intellij-community/java/java-analysis-impl/src/com/siyeh/ig/threading/VolatileArrayFieldInspection.java:      "volatile.field.problem.descriptor", typeString);
+intellij-community/java/java-analysis-impl/src/com/siyeh/ig/threading/WhileLoopSpinsOnFieldInspection.java:        return InspectionGadgetsBundle.message("while.loop.spins.on.field.fix.volatile.spinwait", myFieldName);
+intellij-community/java/java-analysis-impl/src/com/siyeh/ig/threading/WhileLoopSpinsOnFieldInspection.java:      return InspectionGadgetsBundle.message("while.loop.spins.on.field.fix.volatile", myFieldName);
+intellij-community/java/java-impl/src/com/intellij/codeInsight/daemon/impl/quickfix/ChangeToAppendFix.java:  private volatile TypeInfo myTypeInfo;
+intellij-community/java/java-impl/src/com/intellij/codeInsight/daemon/impl/quickfix/ModifierFix.java:  private volatile @IntentionName String myName;
+intellij-community/java/java-impl/src/com/intellij/codeInsight/ExpectedTypeInfoImpl.java:import static com.intellij.openapi.util.NullableLazyValue.volatileLazyNullable;
+intellij-community/java/java-impl/src/com/intellij/codeInsight/ExpectedTypeInfoImpl.java:    expectedNameLazyValue = volatileLazyNullable(expectedNameComputable);
+intellij-community/java/java-impl/src/com/intellij/codeInspection/ui/EntryPointsNode.java:  private volatile boolean myExcluded;
+intellij-community/java/java-impl/src/com/intellij/jarRepository/RemoteRepositoriesConfiguration.java:  private volatile List<RemoteRepositoryDescription> myRepositories; // a reference to a non-modifiable repository list
+intellij-community/java/java-impl/src/inspectionDescriptions/AtomicFieldUpdaterIssues.html:    private static volatile int value = 0;
+intellij-community/java/java-impl/src/inspectionDescriptions/AtomicFieldUpdaterNotStaticFinal.html:Because only one atomic field updater is needed for updating a <code>volatile</code> field in all instances
+intellij-community/java/java-impl/src/inspectionDescriptions/AtomicFieldUpdaterNotStaticFinal.html:    private volatile int id;
+intellij-community/java/java-impl/src/inspectionDescriptions/AtomicFieldUpdaterNotStaticFinal.html:    private volatile int id;
+intellij-community/java/java-impl/src/inspectionDescriptions/BusyWait.html:     volatile int x;
+intellij-community/java/java-impl/src/inspectionDescriptions/DoubleCheckedLocking.html:  Unfortunately it is not thread-safe when used on a field that is not declared <code>volatile</code>.
+intellij-community/java/java-impl/src/inspectionDescriptions/DoubleCheckedLocking.html:  When using Java 1.4 or earlier, double-checked locking doesn't work even with a <code>volatile</code> field.
+intellij-community/java/java-impl/src/inspectionDescriptions/FieldAccessedSynchronizedAndUnsynchronized.html:<code>volatile</code> fields as well as accesses in constructors and initializers are ignored by this inspection.
+intellij-community/java/java-impl/src/inspectionDescriptions/NonAtomicOperationOnVolatileField.html:Reports non-atomic operations on volatile fields.
+intellij-community/java/java-impl/src/inspectionDescriptions/NonAtomicOperationOnVolatileField.html:  private volatile int v = 1;
+intellij-community/java/java-impl/src/inspectionDescriptions/VolatileArrayField.html:Reports array fields that are declared <code>volatile</code>. Such declarations
+intellij-community/java/java-impl/src/inspectionDescriptions/VolatileArrayField.html:may be confusing because accessing the array itself follows the rules for <code>volatile</code>
+intellij-community/java/java-impl/src/inspectionDescriptions/VolatileArrayField.html:    private volatile int[] idx = new int[0];
+intellij-community/java/java-impl/src/inspectionDescriptions/VolatileArrayField.html:  If such volatile access is needed for array contents, consider using
+intellij-community/java/java-impl/src/inspectionDescriptions/WhileLoopSpinsOnField.html:value of a non-<code>volatile</code> field, waiting for it to be changed by another thread.
+intellij-community/java/java-impl/src/inspectionDescriptions/WhileLoopSpinsOnField.html:on a <code>volatile</code> field, which may significantly improve performance on some hardware.
+intellij-community/java/java-impl/src/inspectionDescriptions/WhileLoopSpinsOnField.html:    volatile boolean ready = false;
+intellij-community/java/java-impl/src/META-INF/InspectionGadgets.xml:                     key="non.atomic.operation.on.volatile.field.display.name" groupBundle="messages.InspectionsBundle"
+intellij-community/java/java-impl/src/META-INF/InspectionGadgets.xml:    <localInspection groupPath="Java" language="JAVA" shortName="VolatileArrayField" bundle="messages.InspectionGadgetsBundle" key="volatile.array.field.display.name"
+intellij-community/java/java-impl-inspections/src/com/intellij/codeInspection/varScopeCanBeNarrowed/FieldCanBeLocalInspection.java:        // Assume that fields marked as volatile can be modified concurrently
+intellij-community/java/java-impl-refactorings/src/com/intellij/refactoring/typeMigration/TypeMigrationProcessor.java:  public volatile static boolean ourSkipFailedConversionInTestMode;
+intellij-community/java/java-impl-refactorings/src/com/intellij/refactoring/typeMigration/usageInfo/OverriddenUsageInfo.java:  private volatile String myMigrateMethodName;
+intellij-community/java/java-indexing-api/src/com/intellij/psi/search/searches/MethodReferencesSearch.java:    private volatile SearchScope myEffectiveScope;
+intellij-community/java/java-indexing-impl/src/com/intellij/psi/impl/search/RelaxedDirectInheritorChecker.java:    myClasses = NotNullLazyValue.volatileLazy(() -> getClassesAndTheirAmbiguities(myBaseClass.getProject(), myBaseClassName));
+intellij-community/java/java-psi-api/src/com/intellij/psi/infos/MethodCandidateInfo.java:  @ApplicabilityLevelConstant private volatile int myApplicabilityLevel;
+intellij-community/java/java-psi-api/src/com/intellij/psi/infos/MethodCandidateInfo.java:  @ApplicabilityLevelConstant private volatile int myPertinentApplicabilityLevel;
+intellij-community/java/java-psi-api/src/com/intellij/psi/infos/MethodCandidateInfo.java:  private volatile @NlsContexts.DetailedDescription String myInferenceError;
+intellij-community/java/java-psi-api/src/com/intellij/psi/infos/MethodCandidateInfo.java:  private volatile boolean myApplicabilityError;
+intellij-community/java/java-psi-api/src/com/intellij/psi/infos/MethodCandidateInfo.java:  private volatile boolean myErased;
+intellij-community/java/java-psi-api/src/com/intellij/psi/PsiKeyword.java:  @NlsSafe String VOLATILE = "volatile";
+intellij-community/java/java-psi-api/src/com/intellij/psi/PsiModifier.java:  String VOLATILE = "volatile";
+intellij-community/java/java-psi-api/src/com/intellij/psi/util/MethodSignatureBase.java:  private volatile PsiType[] myErasedParameterTypes;
+intellij-community/java/java-psi-impl/src/com/intellij/codeInsight/BaseExternalAnnotationsManager.java:    private volatile PsiAnnotation myAnnotation;
+intellij-community/java/java-psi-impl/src/com/intellij/codeInsight/generation/OverrideImplementExploreUtil.java:import static com.intellij.openapi.util.NullableLazyValue.volatileLazyNullable;
+intellij-community/java/java-psi-impl/src/com/intellij/codeInsight/generation/OverrideImplementExploreUtil.java:    volatileLazyNullable(() -> ApplicationManager.getApplication().getService(MemberImplementorExplorersProvider.class));
+intellij-community/java/java-psi-impl/src/com/intellij/lang/java/lexer/_JavaLexer.flex:  "volatile" { return JavaTokenType.VOLATILE_KEYWORD; }
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/compiled/ClsElementImpl.java:  private volatile Pair<TextRange, Identikit.ByType> myMirror;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/compiled/ClsFieldImpl.java:import static com.intellij.openapi.util.NullableLazyValue.volatileLazyNullable;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/compiled/ClsFieldImpl.java:    myInitializer = volatileLazyNullable(() -> {
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/compiled/ClsFileImpl.java:  private volatile SoftReference<StubTree> myStub;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/compiled/ClsFileImpl.java:  private volatile Reference<TreeElement> myMirrorFileElement;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/compiled/ClsFileImpl.java:  private volatile ClsPackageStatementImpl myPackageStatement;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/compiled/ClsMethodImpl.java:import static com.intellij.openapi.util.NullableLazyValue.volatileLazyNullable;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/compiled/ClsMethodImpl.java:      StringUtil.isEmptyOrSpaces(text) ? null : volatileLazyNullable(() -> ClsParsingUtil.createMemberValueFromText(text, getManager(), this));
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/compiled/ClsParameterImpl.java:  private volatile String myMirrorName;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/compiled/ClsReferenceParameterListImpl.java:  private volatile PsiType[] myTypeParametersCachedTypes;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/file/PsiPackageImpl.java:  private volatile CachedValue<PsiModifierList> myAnnotationList;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/file/PsiPackageImpl.java:  private volatile CachedValue<Collection<PsiDirectory>> myDirectories;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/file/PsiPackageImpl.java:  private volatile CachedValue<Collection<PsiDirectory>> myDirectoriesWithLibSources;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/file/PsiPackageImpl.java:  private volatile SoftReference<Map<String, PsiClass[]>> myClassCache;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/file/PsiPackageImpl.java:  private volatile SoftReference<Map<GlobalSearchScope, Map<String, PsiClass[]>>> myDumbModeFullCache;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/file/PsiPackageImpl.java:  private volatile SoftReference<Map<Pair<GlobalSearchScope, String>, PsiClass[]>> myDumbModePartialCache;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/java/stubs/impl/PsiClassReferenceListStubImpl.java:  private volatile PsiClassType [] myTypes;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/java/stubs/impl/PsiLiteralStub.java:  private volatile IElementType myLiteralType;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/light/LightReferenceListBuilder.java:  private volatile PsiClassType[] myCachedTypes;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/light/LightVariableBuilder.java:  private volatile LightModifierList myModifierList;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/light/LightVariableBuilder.java:  private volatile Icon myBaseIcon = IconManager.getInstance().getPlatformIcon(PlatformIcons.Variable);
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/ScopedClassHierarchy.java:  private volatile Map<PsiClass, PsiClassType.ClassResolveResult> mySupersWithSubstitutors;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/ScopedClassHierarchy.java:  private volatile List<PsiClassType.ClassResolveResult> myImmediateSupersWithCapturing;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/source/JavaFileElementType.java:  private static volatile int TEST_STUB_VERSION_MODIFIER = 0;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/source/PsiClassImpl.java:  private volatile String myCachedName;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/source/PsiFieldImpl.java:  private volatile Reference<PsiType> myCachedType;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/source/PsiImportListImpl.java:  private volatile Map<String,PsiImportStatement> myClassNameToImportMap;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/source/PsiImportListImpl.java:  private volatile Map<String,PsiImportStatement> myPackageNameToImportMap;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/source/PsiImportListImpl.java:  private volatile Map<String,PsiImportStatementBase> myNameToSingleImportMap;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/source/PsiImportStaticReferenceElementImpl.java:  private volatile String myCanonicalText;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/source/PsiJavaCodeReferenceElementImpl.java:  private volatile String myCachedQName;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/source/PsiJavaCodeReferenceElementImpl.java:  private volatile String myCachedNormalizedText;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/source/PsiJavaCodeReferenceElementImpl.java:  private volatile Kind myKindWhenDummy = Kind.CLASS_NAME_KIND;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/source/PsiJavaFileBaseImpl.java:  private volatile String myPackageName;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/source/PsiJavaFileBaseImpl.java:        NotNullLazyValue<Iterable<ResultWithContext>> lazy = NotNullLazyValue.volatileLazy(() -> findExplicitDeclarations(name, ownClasses, typeImports, staticImports));
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/source/PsiMethodImpl.java:  private volatile String myCachedName;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/source/PsiModifierListImpl.java:  private volatile ModifierCache myModifierCache;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/source/PsiParameterImpl.java:  private volatile Reference<PsiType> myCachedType;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/source/PsiParameterImpl.java:  private volatile String myCachedName;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/source/PsiRecordComponentImpl.java:  private volatile Reference<PsiType> myCachedType;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/source/PsiTypeElementImpl.java:      volatile WeakReference<PsiJavaCodeReferenceElement> myCache = ref;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/source/tree/java/PsiCaseLabelElementListImpl.java:  private volatile PsiCaseLabelElement[] myElements;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/source/tree/java/PsiCodeBlockImpl.java:  private volatile Set<String> myVariablesSet;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/source/tree/java/PsiCodeBlockImpl.java:  private volatile Set<String> myClassesSet;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/source/tree/java/PsiCodeBlockImpl.java:  private volatile boolean myConflict;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/source/tree/java/PsiExpressionListImpl.java:  private volatile PsiExpression[] myExpressions;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/source/tree/java/PsiLocalVariableImpl.java:  private volatile String myCachedName;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/source/tree/java/PsiNameValuePairImpl.java:  private volatile Reference<PsiAnnotationMemberValue> myDetachedValue;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/source/tree/java/PsiPolyadicExpressionImpl.java:  private volatile PsiExpression[] cachedOperands;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/source/tree/java/PsiReferenceExpressionImpl.java:  private volatile String myCachedQName;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/source/tree/java/PsiReferenceExpressionImpl.java:  private volatile String myCachedNormalizedText;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/source/tree/java/PsiTryStatementImpl.java:  private volatile PsiParameter[] myCachedCatchParameters;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/source/tree/JavaSharedImplUtil.java:    private volatile PsiAnnotation[] myCache;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/impl/TypeCorrector.java:    private volatile PsiSubstitutor myLazySubstitutor;
+intellij-community/java/java-psi-impl/src/com/intellij/psi/NonClasspathClassFinder.java:  private volatile PackageDirectoryCache myCache;
+intellij-community/java/java-tests/testData/codeInsight/atomicReferenceImplicitUsage/IntegerCAS.java:  private volatile int num;
+intellij-community/java/java-tests/testData/codeInsight/atomicReferenceImplicitUsage/IntegerGet.java:  private volatile int <warning descr="Private field 'num' is never assigned">num</warning>;
+intellij-community/java/java-tests/testData/codeInsight/atomicReferenceImplicitUsage/IntegerGetAndSet.java:  private volatile int num;
+intellij-community/java/java-tests/testData/codeInsight/atomicReferenceImplicitUsage/IntegerIncrement.java:  private volatile int num;
+intellij-community/java/java-tests/testData/codeInsight/atomicReferenceImplicitUsage/IntegerSet.java:  private volatile int num;
+intellij-community/java/java-tests/testData/codeInsight/atomicReferenceImplicitUsage/LongCAS.java:  private volatile long num;
+intellij-community/java/java-tests/testData/codeInsight/atomicReferenceImplicitUsage/LongGet.java:  private volatile long <warning descr="Private field 'num' is never assigned">num</warning>;
+intellij-community/java/java-tests/testData/codeInsight/atomicReferenceImplicitUsage/LongGetAndSet.java:  private volatile long num;
+intellij-community/java/java-tests/testData/codeInsight/atomicReferenceImplicitUsage/LongIncrement.java:  private volatile long num;
+intellij-community/java/java-tests/testData/codeInsight/atomicReferenceImplicitUsage/LongSet.java:  private volatile long num;
+intellij-community/java/java-tests/testData/codeInsight/atomicReferenceImplicitUsage/ReferenceCAS.java:  private volatile String str;
+intellij-community/java/java-tests/testData/codeInsight/atomicReferenceImplicitUsage/ReferenceGet.java:  private volatile String <warning descr="Private field 'str' is never assigned">str</warning>;
+intellij-community/java/java-tests/testData/codeInsight/atomicReferenceImplicitUsage/ReferenceGetAndSet.java:  private volatile String str;
+intellij-community/java/java-tests/testData/codeInsight/atomicReferenceImplicitUsage/ReferenceSet.java:  private volatile String str;
+intellij-community/java/java-tests/testData/codeInsight/daemonCodeAnalyzer/advHighlighting/IllegalModifiersCombination.java:  <error descr="Illegal combination of modifiers: 'public' and 'private'">public</error> volatile
+intellij-community/java/java-tests/testData/codeInsight/daemonCodeAnalyzer/advHighlighting/IllegalModifiersCombination.java:  <error descr="Illegal combination of modifiers: 'final' and 'volatile'">final</error>
+intellij-community/java/java-tests/testData/codeInsight/daemonCodeAnalyzer/advHighlighting/IllegalModifiersCombination.java:  <error descr="Illegal combination of modifiers: 'volatile' and 'final'">volatile</error> private int f4 = 0;
+intellij-community/java/java-tests/testData/codeInsight/daemonCodeAnalyzer/advHighlighting/IllegalModifiersCombination.java:  static volatile private int cf2;
+intellij-community/java/java-tests/testData/codeInsight/daemonCodeAnalyzer/advHighlighting/IllegalModifiersCombination.java:  protected volatile transient int cf4;
+intellij-community/java/java-tests/testData/codeInsight/daemonCodeAnalyzer/advHighlighting/ModifierAllowed.java:<error descr="Modifier 'volatile' not allowed here">volatile</error>
+Binary file intellij-community/java/java-tests/testData/codeInspection/bytecodeAnalysis/data/classes/bytecodeAnalysis/data/Test01.class matches
+Binary file intellij-community/java/java-tests/testData/codeInspection/bytecodeAnalysis/data/classes/bytecodeAnalysis/data/Test02.class matches
+intellij-community/java/java-tests/testData/codeInspection/bytecodeAnalysis/data/src/data/Test01.java:  volatile boolean volatileFlag;
+intellij-community/java/java-tests/testData/codeInspection/bytecodeAnalysis/data/src/data/Test02.java:    return test01.volatileFlag;
+intellij-community/java/java-tests/testData/ig/com/siyeh/igfixes/threading/make_field_volatile/Simple.after.java:  private static volatile Object s_instance;
+intellij-community/java/java-tests/testData/ig/com/siyeh/igtest/bugs/cast_to_incompatible_interface/CastToIncompatibleInterface.java:  volatile NonGeneric ng;
+intellij-community/java/java-tests/testData/ig/com/siyeh/igtest/controlflow/loop_condition_not_updated/LoopConditionNotUpdatedInsideLoop.java:    volatile boolean x;
+intellij-community/java/java-tests/testData/ig/com/siyeh/igtest/style/field_final/FieldMayBeFinal.java:  private volatile String triggeringPolicy;
+intellij-community/java/java-tests/testData/ig/com/siyeh/igtest/threading/ArithmeticOnVolatileFieldInspection.java:    private volatile int foo;
+intellij-community/java/java-tests/testData/ig/com/siyeh/igtest/threading/ArithmeticOnVolatileFieldInspection.java:    private volatile double bar;
+intellij-community/java/java-tests/testData/ig/com/siyeh/igtest/threading/busy_wait/BusyWait.java:  volatile int x;
+intellij-community/java/java-tests/testData/ig/com/siyeh/igtest/threading/double_checked_locking/DoubleCheckedLocking.java:  private static volatile Integer v_instance = null;
+intellij-community/java/java-tests/testData/ig/com/siyeh/igtest/threading/double_checked_locking/DoubleCheckedLocking.java:  /** non-volatile instance. */
+intellij-community/java/java-tests/testData/ig/com/siyeh/igtest/threading/VolatileLongOrDoubleInspection.java:    private volatile long foo =4L;
+intellij-community/java/java-tests/testData/ig/com/siyeh/igtest/threading/VolatileLongOrDoubleInspection.java:    private volatile double bar =4L;
+intellij-community/java/java-tests/testData/ig/com/siyeh/igtest/threading/VolatileLongOrDoubleInspection.java:    private volatile int[] bar2 = new int[3];
+intellij-community/java/java-tests/testData/ig/com/siyeh/igtest/threading/while_loop_spins_on_field/afterSimple.java:// "Make 'b' volatile" "true-preview"
+intellij-community/java/java-tests/testData/ig/com/siyeh/igtest/threading/while_loop_spins_on_field/afterSimple.java:    private volatile boolean b;
+intellij-community/java/java-tests/testData/ig/com/siyeh/igtest/threading/while_loop_spins_on_field/afterSimpleCodeBlockJava9.java:// "Make 'b' volatile and add Thread.onSpinWait()" "true-preview"
+intellij-community/java/java-tests/testData/ig/com/siyeh/igtest/threading/while_loop_spins_on_field/afterSimpleCodeBlockJava9.java:    private volatile boolean b;
+intellij-community/java/java-tests/testData/ig/com/siyeh/igtest/threading/while_loop_spins_on_field/afterSimpleHasSpinWaitJava9.java:// "Make 'b' volatile" "true-preview"
+intellij-community/java/java-tests/testData/ig/com/siyeh/igtest/threading/while_loop_spins_on_field/afterSimpleHasSpinWaitJava9.java:    private volatile boolean b;
+intellij-community/java/java-tests/testData/ig/com/siyeh/igtest/threading/while_loop_spins_on_field/afterSimpleJava9.java:// "Make 'b' volatile and add Thread.onSpinWait()" "true-preview"
+intellij-community/java/java-tests/testData/ig/com/siyeh/igtest/threading/while_loop_spins_on_field/afterSimpleJava9.java:    private volatile boolean b;
+intellij-community/java/java-tests/testData/ig/com/siyeh/igtest/threading/while_loop_spins_on_field/afterVolatileJava9.java:    private volatile boolean b;
+intellij-community/java/java-tests/testData/ig/com/siyeh/igtest/threading/while_loop_spins_on_field/beforeSimple.java:// "Make 'b' volatile" "true-preview"
+intellij-community/java/java-tests/testData/ig/com/siyeh/igtest/threading/while_loop_spins_on_field/beforeSimpleCodeBlockJava9.java:// "Make 'b' volatile and add Thread.onSpinWait()" "true-preview"
+intellij-community/java/java-tests/testData/ig/com/siyeh/igtest/threading/while_loop_spins_on_field/beforeSimpleHasSpinWaitJava9.java:// "Make 'b' volatile" "true-preview"
+intellij-community/java/java-tests/testData/ig/com/siyeh/igtest/threading/while_loop_spins_on_field/beforeSimpleJava9.java:// "Make 'b' volatile and add Thread.onSpinWait()" "true-preview"
+intellij-community/java/java-tests/testData/ig/com/siyeh/igtest/threading/while_loop_spins_on_field/beforeVolatile.java:    private volatile boolean b;
+intellij-community/java/java-tests/testData/ig/com/siyeh/igtest/threading/while_loop_spins_on_field/beforeVolatileJava9.java:    private volatile boolean b;
+intellij-community/java/java-tests/testData/ig/com/siyeh/igtest/threading/while_loop_spins_on_field/WhileLoopSpinsOnField.java:    private volatile int testVolatileInt = 3;
+intellij-community/java/java-tests/testData/inspection/dataFlow/contractCheck/UnknownIfCondition.java:  private volatile boolean field;
+intellij-community/java/java-tests/testData/inspection/dataFlow/fixture/MutableVolatileNullableFieldsTreatment.java:  @Nullable volatile Object data;
+intellij-community/java/java-tests/testData/inspection/dataFlow/fixture/NullableAnonymousVolatile.java:    private volatile Object obj;
+intellij-community/java/java-tests/testData/inspection/dataFlow/fixture/NullableAnonymousVolatileNotNull.java:    @NotNull private volatile Object obj;
+intellij-community/java/java-tests/testData/inspection/dataFlow/fixture/VolatileFieldNPEFixes.java:  @Nullable volatile String x;
+intellij-community/java/java-tests/testData/inspection/guarded/cheapReadWriteLock.java:  @GuardedBy("this") private volatile int value;
+intellij-community/java/java-tests/testData/inspection/guarded/incompleteCode.java:  @GuardedBy(<error descr="Incompatible types. Found: 'int', required: 'java.lang.String'">1</error>) private volatile int value;
+intellij-community/java/java-tests/testData/inspection/idempotentLoopBody/IdempotentLoopBody.java:  volatile int x;
+intellij-community/java/java-tests/testData/ipp/com/siyeh/ipp/collections/to_mutable_collection/VolatileField.java:  volatile Map<String, String> map;
+intellij-community/java/java-tests/testData/ipp/com/siyeh/ipp/collections/to_mutable_collection/VolatileField_after.java:  volatile Map<String, String> map;
+intellij-community/java/java-tests/testData/ipp/com/siyeh/ipp/whileloop/extract_while_loop_condition_to_if_statement/NoBody.java:  private volatile boolean flag;
+intellij-community/java/java-tests/testData/ipp/com/siyeh/ipp/whileloop/extract_while_loop_condition_to_if_statement/NoBody_after.java:  private volatile boolean flag;
+intellij-community/java/java-tests/testData/ipp/com/siyeh/ipp/whileloop/extract_while_loop_condition_to_if_statement/True.java:  private volatile boolean flag;
+intellij-community/java/java-tests/testData/psi/autodetect/bigFile.java:    private volatile boolean myIsDirty;
+intellij-community/java/java-tests/testData/psi/autodetect/continuationIndents_DoNotCount.java:           "  private volatile boolean b;\n" +
+intellij-community/java/java-tests/testData/psi/cls/mirror/Class.txt:    private transient volatile java.lang.reflect.Constructor<T> cachedConstructor;
+intellij-community/java/java-tests/testData/psi/cls/mirror/Class.txt:    private transient volatile java.lang.Class<?> newInstanceCallerCache;
+intellij-community/java/java-tests/testData/psi/cls/mirror/Class.txt:    private transient volatile java.lang.ref.SoftReference<java.lang.Class.ReflectionData<T>> reflectionData;
+intellij-community/java/java-tests/testData/psi/cls/mirror/Class.txt:    private transient volatile int classRedefinedCount;
+intellij-community/java/java-tests/testData/psi/cls/mirror/Class.txt:    private transient volatile sun.reflect.generics.repository.ClassRepository genericInfo;
+intellij-community/java/java-tests/testData/psi/cls/mirror/Class.txt:    private transient volatile T[] enumConstants;
+intellij-community/java/java-tests/testData/psi/cls/mirror/Class.txt:    private transient volatile java.util.Map<java.lang.String,T> enumConstantDirectory;
+intellij-community/java/java-tests/testData/psi/cls/mirror/Class.txt:    private transient volatile java.lang.Class.AnnotationData annotationData;
+intellij-community/java/java-tests/testData/psi/cls/mirror/Class.txt:    private transient volatile sun.reflect.annotation.AnnotationType annotationType;
+intellij-community/java/java-tests/testData/psi/cls/mirror/Class.txt:        volatile java.lang.reflect.Field[] declaredFields;
+intellij-community/java/java-tests/testData/psi/cls/mirror/Class.txt:        volatile java.lang.reflect.Field[] publicFields;
+intellij-community/java/java-tests/testData/psi/cls/mirror/Class.txt:        volatile java.lang.reflect.Method[] declaredMethods;
+intellij-community/java/java-tests/testData/psi/cls/mirror/Class.txt:        volatile java.lang.reflect.Method[] publicMethods;
+intellij-community/java/java-tests/testData/psi/cls/mirror/Class.txt:        volatile java.lang.reflect.Constructor<T>[] declaredConstructors;
+intellij-community/java/java-tests/testData/psi/cls/mirror/Class.txt:        volatile java.lang.reflect.Constructor<T>[] publicConstructors;
+intellij-community/java/java-tests/testData/psi/cls/mirror/Class.txt:        volatile java.lang.reflect.Field[] declaredPublicFields;
+intellij-community/java/java-tests/testData/psi/cls/mirror/Class.txt:        volatile java.lang.reflect.Method[] declaredPublicMethods;
+intellij-community/java/java-tests/testData/psi/cls/mirror/Class.txt:        volatile java.lang.Class<?>[] interfaces;
+intellij-community/java/java-tests/testData/psi/formatter/java/performance/bigFile.java:    private volatile boolean myIsDirty;
+intellij-community/java/java-tests/testData/psi/parser-full/declarationParsing/method/Errors1.java:<error descr="Modifier 'volatile' not allowed here">volatile</error>
+intellij-community/java/java-tests/testData/psi/parser-full/declarationParsing/method/Errors1.txt:    PsiJavaToken:STRING_LITERAL('"Modifier 'volatile' not allowed here"')
+intellij-community/java/java-tests/testData/psi/parser-full/declarationParsing/method/Errors1.txt:  PsiModifierList:volatile
+intellij-community/java/java-tests/testData/psi/parser-full/declarationParsing/method/Errors1.txt:    PsiKeyword:volatile('volatile')
+intellij-community/java/java-tests/testData/refactoring/inlineMethod/VolatilePassed.java:  private volatile X volatileX;
+intellij-community/java/java-tests/testData/refactoring/inlineMethod/VolatilePassed.java:    <caret>inner(volatileX);
+intellij-community/java/java-tests/testData/refactoring/inlineMethod/VolatilePassed.java.after:  private volatile X volatileX;
+intellij-community/java/java-tests/testData/refactoring/inlineMethod/VolatilePassed.java.after:      X localX = volatileX;
+intellij-community/java/java-tests/testSrc/com/intellij/codeInsight/daemon/impl/DaemonRespondToChangesTest.java:  private volatile boolean runHeavyProcessing;
+intellij-community/java/java-tests/testSrc/com/intellij/codeInsight/daemon/impl/DaemonRespondToChangesTest.java:    static volatile boolean doAnnotate = true;
+intellij-community/java/java-tests/testSrc/com/intellij/codeInsight/daemon/impl/DaemonRespondToChangesTest.java:  private static volatile TextRange expectedVisibleRange;
+intellij-community/java/java-tests/testSrc/com/intellij/codeInsight/daemon/impl/MinimumSeverityHintTest.java:  private static volatile HighlightSeverity MY_CRAZY_SEVERITY;
+intellij-community/java/java-tests/testSrc/com/intellij/codeInsight/daemon/impl/MinimumSeverityHintTest.java:    volatile boolean started;
+intellij-community/java/java-tests/testSrc/com/intellij/codeInsight/daemon/impl/UnresolvedQuickFixProviderTest.java:  private static volatile boolean ALLOW_UNRESOLVED_REFERENCE_QUICK_FIXES;
+intellij-community/java/java-tests/testSrc/com/intellij/java/codeInsight/completion/AtomicFieldUpdaterCompletionTest.kt:  public volatile int base;
+intellij-community/java/java-tests/testSrc/com/intellij/java/codeInsight/completion/AtomicFieldUpdaterCompletionTest.kt:  public volatile int updateableIntFirst;
+intellij-community/java/java-tests/testSrc/com/intellij/java/codeInsight/completion/AtomicFieldUpdaterCompletionTest.kt:  public volatile int updateableIntSecond;
+intellij-community/java/java-tests/testSrc/com/intellij/java/codeInsight/completion/AtomicFieldUpdaterCompletionTest.kt:  public volatile long updateableLong;
+intellij-community/java/java-tests/testSrc/com/intellij/java/codeInsight/completion/AtomicFieldUpdaterCompletionTest.kt:  public volatile int[] updateableArray;
+intellij-community/java/java-tests/testSrc/com/intellij/java/codeInsight/completion/AtomicFieldUpdaterCompletionTest.kt:  public volatile Object updateableObject;
+intellij-community/java/java-tests/testSrc/com/intellij/java/codeInsight/completion/AtomicFieldUpdaterCompletionTest.kt:  public volatile String updateableString;
+intellij-community/java/java-tests/testSrc/com/intellij/java/codeInsight/completion/AtomicFieldUpdaterCompletionTest.kt:  public static volatile String nonUpdateableStringSecond;
+intellij-community/java/java-tests/testSrc/com/intellij/java/codeInsight/completion/AtomicFieldUpdaterCompletionTest.kt:  public volatile byte nonUpdateableType;
+intellij-community/java/java-tests/testSrc/com/intellij/java/codeInsight/completion/AtomicFieldUpdaterCompletionTest.kt:  public volatile Runnable other;
+intellij-community/java/java-tests/testSrc/com/intellij/java/codeInsight/completion/KeywordCompletionTest.java:    "package", "public", "private", "protected", "transient", "volatile", "static", "import", "final", "class", "interface", "abstract", "default", "record"};
+intellij-community/java/java-tests/testSrc/com/intellij/java/codeInsight/completion/KeywordCompletionTest.java:    "package", "public", "private", "protected", "transient", "volatile", "static", "import", "final", "class", "interface", "abstract", "default"};
+intellij-community/java/java-tests/testSrc/com/intellij/java/codeInsight/completion/KeywordCompletionTest.java:  public void testMethodScope2() { doTest(1, "final", "public", "static", "volatile", "abstract"); }
+intellij-community/java/java-tests/testSrc/com/intellij/java/codeInsight/completion/KeywordCompletionTest.java:  public void testMethodScope3() { doTest(1, "final", "public", "static", "volatile", "abstract", "throws", "instanceof"); }
+intellij-community/java/java-tests/testSrc/com/intellij/java/codeInsight/daemon/LightAnnotatorHighlightingTest.java:    private static volatile boolean FIX_ENABLED;
+intellij-community/java/java-tests/testSrc/com/intellij/java/codeInsight/daemon/ModuleHighlightingTest.kt:          requires <error descr="Modifier 'private' not allowed here">private</error> <error descr="Modifier 'volatile' not allowed here">volatile</error> M3;
+intellij-community/java/java-tests/testSrc/com/intellij/java/codeInsight/navigation/AtomicFieldUpdaterNavigationTest.kt:  public volatile Object base;
+intellij-community/java/java-tests/testSrc/com/intellij/java/codeInsight/navigation/AtomicFieldUpdaterNavigationTest.kt:  public volatile int pvi;
+intellij-community/java/java-tests/testSrc/com/intellij/java/codeInsight/navigation/AtomicFieldUpdaterNavigationTest.kt:  public volatile long pvl;
+intellij-community/java/java-tests/testSrc/com/intellij/java/codeInsight/navigation/AtomicFieldUpdaterNavigationTest.kt:  public volatile String pvs;
+intellij-community/java/java-tests/testSrc/com/intellij/java/codeInspection/PurityInferenceFromSourceTest.groovy:  void "test volatile field read"() {
+intellij-community/java/java-tests/testSrc/com/intellij/java/codeInspection/PurityInferenceFromSourceTest.groovy:volatile int x;
+intellij-community/java/java-tests/testSrc/com/intellij/java/index/StringIndex.java:  private volatile Throwable myRebuildThrowable;
+intellij-community/java/java-tests/testSrc/com/intellij/java/psi/ClsPsiTest.java:    assertEquals("private volatile", aClass.getFields()[1].getModifierList().getText());
+intellij-community/java/java-tests/testSrc/com/intellij/java/psi/codeStyle/arrangement/JavaRearrangerByTypeAndModifierTest.groovy:   private volatile int privateVolatileField;
+intellij-community/java/java-tests/testSrc/com/intellij/java/psi/codeStyle/arrangement/JavaRearrangerByTypeAndModifierTest.groovy:   private volatile int privateVolatileField;
+intellij-community/java/java-tests/testSrc/com/intellij/java/psi/JavaStubBuilderTest.java:               private volatile boolean b;
+intellij-community/java/java-tests/testSrc/com/intellij/java/psi/PsiConcurrencyStressTest.java:  private volatile PsiJavaFile myFile;
+intellij-community/java/java-tests/testSrc/com/intellij/java/psi/PsiConcurrencyStressTest.java:  private volatile boolean writeActionInProgress;
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/errorhandling/CatchMayIgnoreExceptionInspectionTest.java:               volatile Throwable exception;
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/fixes/threading/MakeFieldVolatileFixTest.java:    myRelativePath = "threading/make_field_volatile";
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/AtomicFieldUpdaterIssuesInspectionTest.java:           "  private volatile int value = 0;" +
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/AtomicFieldUpdaterIssuesInspectionTest.java:           "  private static volatile int value = 0;" +
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/AtomicFieldUpdaterIssuesInspectionTest.java:           "    AtomicIntegerFieldUpdater.newUpdater(A.class, /*Field 'value' does not have 'volatile' modifier*/\"value\"/**/);" +
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/AtomicFieldUpdaterIssuesInspectionTest.java:           "  volatile int value = 0;" +
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/AtomicFieldUpdaterIssuesInspectionTest.java:           "  private volatile long value = 0;" +
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/AtomicFieldUpdaterIssuesInspectionTest.java:           "  private volatile int value = 0;" +
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/AtomicFieldUpdaterIssuesInspectionTest.java:           "  private volatile int[] value = new int[]{0};" +
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/AtomicFieldUpdaterIssuesInspectionTest.java:           "  private volatile T value = null;" +
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/AtomicFieldUpdaterIssuesInspectionTest.java:           "  private volatile int value = 0;" +
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/AtomicFieldUpdaterIssuesInspectionTest.java:             import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;class Z {  private volatile int value = 0;  static class A {
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/AtomicFieldUpdaterIssuesInspectionTest.java:           "  protected volatile String value;" +
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/AtomicFieldUpdaterIssuesInspectionTest.java:               private volatile int field;
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/AtomicFieldUpdaterIssuesInspectionTest.java:      "  protected volatile String s;" +
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/AtomicFieldUpdaterIssuesInspectionTest.java:      "  volatile String s;" +
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/AtomicFieldUpdaterNotStaticFinalInspectionTest.java:           "  private volatile long l = 0;" +
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/AtomicFieldUpdaterNotStaticFinalInspectionTest.java:           "  private volatile long l = 0;" +
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/DoubleCheckedLockingInspectionTest.java:             class X {    private volatile boolean initialized;
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/DoubleCheckedLockingInspectionTest.java:               private volatile int myListenPort = -1;
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/NonAtomicOperationOnVolatileFieldInspectionTest.java:                 private volatile int v;
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/NonAtomicOperationOnVolatileFieldInspectionTest.java:           "  private volatile int v = 1;" +
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/NonAtomicOperationOnVolatileFieldInspectionTest.java:           "    (/*Non-atomic operation on volatile field 'v'*/v/**/)++;" +
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/NonAtomicOperationOnVolatileFieldInspectionTest.java:           "  private volatile int v = 1;" +
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/NonAtomicOperationOnVolatileFieldInspectionTest.java:           "    ++(/*Non-atomic operation on volatile field 'v'*/v/**/);" +
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/NonAtomicOperationOnVolatileFieldInspectionTest.java:           "  private volatile int v = 1;" +
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/NonAtomicOperationOnVolatileFieldInspectionTest.java:           "    (/*Non-atomic operation on volatile field 'v'*/v/**/) = 3 + v;" +
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/NonAtomicOperationOnVolatileFieldInspectionTest.java:           "  private volatile int v = 1;" +
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/NonAtomicOperationOnVolatileFieldInspectionTest.java:           "    (this)./*Non-atomic operation on volatile field 'v'*/v/**/ = 2 * (this).v;" +
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/NonAtomicOperationOnVolatileFieldInspectionTest.java:           "  private volatile int count = 0;" +
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/NonAtomicOperationOnVolatileFieldInspectionTest.java:           "          (Segment.this./*Non-atomic operation on volatile field 'count'*/count/**/)++;" +
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/NonAtomicOperationOnVolatileFieldInspectionTest.java:           "  private volatile int v = 1;" +
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/NonAtomicOperationOnVolatileFieldInspectionTest.java:           "    /*Non-atomic operation on volatile field 'v'*/v/**/ = 2 * this.v;" +
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/WhileLoopSpinsOnFieldInspectionTest.java:    IntentionAction action = myFixture.findSingleIntention("Make 'f' volatile and add Thread.onSpinWait()");
+intellij-community/java/java-tests/testSrc/com/siyeh/ig/threading/WhileLoopSpinsOnFieldInspectionTest.java:          volatile boolean f;
+intellij-community/java/openapi/src/org/jetbrains/idea/maven/utils/library/RepositoryLibraryDescription.java:  private static volatile Map<String, RepositoryLibraryDescription> ourStaticallyDefinedLibraries;
+intellij-community/java/typeMigration/testData/intentions/atomic/before13.java:  volatile int <caret>i = 0;
+intellij-community/java/typeMigration/testData/intentions/threadLocal/before8.java:  volatile int <caret>i = 0;

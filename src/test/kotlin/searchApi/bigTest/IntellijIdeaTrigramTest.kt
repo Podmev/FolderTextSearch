@@ -1,6 +1,7 @@
 package searchApi.bigTest
 
 import api.SearchApi
+import api.TokenMatch
 import api.tools.searchapi.index.syncPerformIndexWithLogging
 import api.tools.searchapi.index.syncPerformIndexWithLoggingAndCancel
 import api.tools.searchapi.search.syncPerformSearchWithLogging
@@ -11,6 +12,9 @@ import searchApi.common.commonSetup
 import utils.prettyDiffTime
 import java.nio.file.Path
 import java.time.LocalDateTime
+import java.util.*
+import kotlin.io.path.absolute
+import kotlin.io.path.readLines
 
 /**
  * Searching in Intellij Idea project
@@ -86,6 +90,31 @@ class IntellijIdeaTrigramTest {
         println(actualTokenMatches.size)
     }
 
+    fun searchOneTokenAfterIndexGrepFormat() {
+        val token = "volatile"
+        val folder = commonPath
+        val startTime = LocalDateTime.now()
+        println(startTime)
+        searchApi.syncPerformIndexWithLogging(folder)
+        val actualTokenMatches = searchApi.syncPerformSearchWithLogging(folder, token)
+        val finishTime = LocalDateTime.now()
+        println("total time: ${prettyDiffTime(startTime, finishTime)}")
+        println(actualTokenMatches.size)
+        val sortedTokenMatches: List<TokenMatch> = actualTokenMatches.sortedWith(
+            compareBy({ it.filePath.toString().lowercase(Locale.getDefault()) },
+                { it.line },
+                { it.column })
+        )
+        val root = commonSetup.projectPath.absolute().parent
+        for (tokenMatch in sortedTokenMatches) {
+            val lines = tokenMatch.filePath.readLines()
+            val line = lines[tokenMatch.line.toInt() - 1]
+            val relativePath = root.relativize(tokenMatch.filePath)
+            val linuxPath = relativePath.toString().replace("\\", "/")
+            println("$linuxPath:$line")
+        }
+    }
+
     fun searchOneTokenAfterIndexWithSimpleTrigramMap() {
         val searchApi: SearchApi = TrigramSearchApi(TrigramMapType.SIMPLE)
         val token = "class"
@@ -111,4 +140,6 @@ class IntellijIdeaTrigramTest {
     }
 
 }
+
+
 

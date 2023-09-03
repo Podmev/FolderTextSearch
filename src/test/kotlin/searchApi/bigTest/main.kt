@@ -18,8 +18,10 @@ package searchApi.bigTest
  * IntellijIdeaTrigramTest().indexWithSearchOneToken()
  * IntellijIdeaTrigramTest().indexWithSearchManyTokens()
  * IntellijIdeaTrigramTest().searchOneTokenAfterIndex()
+ * IntellijIdeaTrigramTest().searchOneTokenAfterIndexGrepFormat()
+ * IntellijIdeaTrigramTest().searchOneTokenAfterIndexWithSimpleTrigramMap()
  * ```
  * */
 fun main() {
-    IntellijIdeaTrigramTest().searchOneTokenAfterIndex()
+    IntellijIdeaTrigramTest().searchOneTokenAfterIndexGrepFormat()
 }

@@ -8,7 +8,7 @@ import kotlin.io.path.absolute
  * Global consts for tests
  * */
 object commonSetup {
-    private val projectPath: Path = Paths.get("")
+    val projectPath: Path = Paths.get("")
     val commonPath: Path =
         projectPath.resolve("src").resolve("test").resolve("resources").resolve("searchTestFolders")
 
